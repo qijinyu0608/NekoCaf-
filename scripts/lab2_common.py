@@ -25,6 +25,8 @@ ARTIFACT_NAMES = {
     "D2-4": "C4ModelSet",
     "D2-5": "OpenAPIContracts",
     "D2-6": "ERDataDictionary",
+    "D2-7": "ADRSet",
+    "D2-8": "ArchitectureRoadmap",
 }
 
 META = {

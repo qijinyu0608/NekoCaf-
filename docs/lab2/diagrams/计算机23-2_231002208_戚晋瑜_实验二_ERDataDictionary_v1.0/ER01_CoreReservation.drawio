@@ -1,0 +1,74 @@
+<?xml version='1.0' encoding='utf-8'?>
+<mxfile host="app.diagrams.net" modified="2026-05-07T00:00:00Z" agent="Codex" version="24.7.10">
+  <diagram id="diagram-1" name="Page-1">
+    <mxGraphModel dx="1600" dy="1200" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1654" pageHeight="1169" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="m1" value="Member\nmember_id\ntenant_id\nopenid_hash\nmobile [GDPR]\nstatus" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#F4E7DB;strokeColor=#5A5A5A;" vertex="1" parent="1">
+          <mxGeometry x="70" y="120" width="250" height="150" as="geometry" />
+        </mxCell>
+        <mxCell id="m2" value="MemberProfile\nprofile_id\nmember_id\nnickname [GDPR]\nallergy_note [GDPR]\nfavorite_theme" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#F4E7DB;strokeColor=#5A5A5A;" vertex="1" parent="1">
+          <mxGeometry x="70" y="340" width="250" height="150" as="geometry" />
+        </mxCell>
+        <mxCell id="m3" value="LoyaltyPointAccount\naccount_id\nmember_id\ncurrent_points\nlevel_code" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#F4E7DB;strokeColor=#5A5A5A;" vertex="1" parent="1">
+          <mxGeometry x="70" y="560" width="250" height="150" as="geometry" />
+        </mxCell>
+        <mxCell id="m4" value="Coupon\ncoupon_id\nmember_id\ntitle\nstatus\nexpire_at" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#F4E7DB;strokeColor=#5A5A5A;" vertex="1" parent="1">
+          <mxGeometry x="70" y="780" width="250" height="150" as="geometry" />
+        </mxCell>
+        <mxCell id="r1" value="Store\nstore_id\ntenant_id\nstore_name\ncity_code\ntimezone" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#F4E7DB;strokeColor=#5A5A5A;" vertex="1" parent="1">
+          <mxGeometry x="520" y="80" width="250" height="150" as="geometry" />
+        </mxCell>
+        <mxCell id="r2" value="BusinessCalendar\ncalendar_id\nstore_id\nbusiness_date\nopen_at\nclose_at" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#F4E7DB;strokeColor=#5A5A5A;" vertex="1" parent="1">
+          <mxGeometry x="520" y="260" width="250" height="150" as="geometry" />
+        </mxCell>
+        <mxCell id="r3" value="TableSlot\nslot_id\nstore_id\ntable_code\nstart_at\ncapacity" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#F4E7DB;strokeColor=#5A5A5A;" vertex="1" parent="1">
+          <mxGeometry x="520" y="440" width="250" height="150" as="geometry" />
+        </mxCell>
+        <mxCell id="r4" value="Reservation\nreservation_id\nmember_id\nslot_id\nstatus\nparty_size" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#F4E7DB;strokeColor=#5A5A5A;" vertex="1" parent="1">
+          <mxGeometry x="900" y="220" width="250" height="150" as="geometry" />
+        </mxCell>
+        <mxCell id="r5" value="WaitlistEntry\nwaitlist_id\nstore_id\nmember_id\nrequested_slot\nstatus" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#F4E7DB;strokeColor=#5A5A5A;" vertex="1" parent="1">
+          <mxGeometry x="900" y="460" width="250" height="150" as="geometry" />
+        </mxCell>
+        <mxCell id="o1" value="ReservationOrder\norder_id\nreservation_id\ndeposit_amount\npayment_status\ncancel_rule_code" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#DDE9E2;strokeColor=#5A5A5A;" vertex="1" parent="1">
+          <mxGeometry x="1250" y="220" width="250" height="150" as="geometry" />
+        </mxCell>
+        <mxCell id="o2" value="PreorderDraft\ndraft_id\norder_id\nmenu_snapshot_id\ndraft_payload" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#DDE9E2;strokeColor=#5A5A5A;" vertex="1" parent="1">
+          <mxGeometry x="1250" y="460" width="250" height="150" as="geometry" />
+        </mxCell>
+        <mxCell id="e1" value="1:1" style="endArrow=block;html=1;rounded=0;strokeColor=#5A5A5A;" edge="1" parent="1" source="m1" target="m2">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e2" value="1:1" style="endArrow=block;html=1;rounded=0;strokeColor=#5A5A5A;" edge="1" parent="1" source="m1" target="m3">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e3" value="1:N" style="endArrow=block;html=1;rounded=0;strokeColor=#5A5A5A;" edge="1" parent="1" source="m1" target="m4">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e4" value="1:N" style="endArrow=block;html=1;rounded=0;strokeColor=#5A5A5A;" edge="1" parent="1" source="r1" target="r2">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e5" value="1:N" style="endArrow=block;html=1;rounded=0;strokeColor=#5A5A5A;" edge="1" parent="1" source="r1" target="r3">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e6" value="1:N" style="endArrow=block;html=1;rounded=0;strokeColor=#5A5A5A;" edge="1" parent="1" source="r3" target="r4">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e7" value="1:N" style="endArrow=block;html=1;rounded=0;strokeColor=#5A5A5A;" edge="1" parent="1" source="m1" target="r4">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e8" value="1:N" style="endArrow=block;html=1;rounded=0;strokeColor=#5A5A5A;" edge="1" parent="1" source="r1" target="r5">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e9" value="1:1" style="endArrow=block;html=1;rounded=0;strokeColor=#5A5A5A;" edge="1" parent="1" source="r4" target="o1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e10" value="1:1" style="endArrow=block;html=1;rounded=0;strokeColor=#5A5A5A;" edge="1" parent="1" source="o1" target="o2">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

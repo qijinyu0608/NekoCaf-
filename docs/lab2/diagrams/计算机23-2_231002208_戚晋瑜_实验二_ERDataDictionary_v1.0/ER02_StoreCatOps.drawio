@@ -1,0 +1,38 @@
+<?xml version='1.0' encoding='utf-8'?>
+<mxfile host="app.diagrams.net" modified="2026-05-07T00:00:00Z" agent="Codex" version="24.7.10">
+  <diagram id="diagram-1" name="Page-1">
+    <mxGraphModel dx="1600" dy="1200" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1654" pageHeight="1169" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="s1" value="StoreShiftBoard\nboard_id\nstore_id\nbusiness_date\nboard_status" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#DDE9E2;strokeColor=#5A5A5A;" vertex="1" parent="1">
+          <mxGeometry x="140" y="220" width="280" height="170" as="geometry" />
+        </mxCell>
+        <mxCell id="s2" value="ShiftSchedule\nshift_id\nstore_id\nstaff_code\nstart_at\nend_at" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#DDE9E2;strokeColor=#5A5A5A;" vertex="1" parent="1">
+          <mxGeometry x="140" y="480" width="280" height="170" as="geometry" />
+        </mxCell>
+        <mxCell id="s3" value="AuditLog\nlog_id\ntenant_id\noperator_id\naction_code\ntrace_id" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#DDE9E2;strokeColor=#5A5A5A;" vertex="1" parent="1">
+          <mxGeometry x="140" y="740" width="280" height="170" as="geometry" />
+        </mxCell>
+        <mxCell id="c1" value="CatProfile\ncat_id\nstore_id\ncat_name\nhealth_level\ninteraction_mode" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#E8EEF5;strokeColor=#5A5A5A;" vertex="1" parent="1">
+          <mxGeometry x="780" y="300" width="280" height="170" as="geometry" />
+        </mxCell>
+        <mxCell id="c2" value="HealthRecord\nrecord_id\ncat_id\ntemperature\nmood_score\nfeed_amount" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#E8EEF5;strokeColor=#5A5A5A;" vertex="1" parent="1">
+          <mxGeometry x="780" y="560" width="280" height="170" as="geometry" />
+        </mxCell>
+        <mxCell id="e1" value="1:N" style="endArrow=block;html=1;rounded=0;strokeColor=#5A5A5A;" edge="1" parent="1" source="s1" target="s2">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e2" value="1:N" style="endArrow=block;html=1;rounded=0;strokeColor=#5A5A5A;" edge="1" parent="1" source="s1" target="c1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e3" value="1:N" style="endArrow=block;html=1;rounded=0;strokeColor=#5A5A5A;" edge="1" parent="1" source="c1" target="c2">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e4" value="1:N" style="endArrow=block;html=1;rounded=0;strokeColor=#5A5A5A;" edge="1" parent="1" source="s2" target="s3">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

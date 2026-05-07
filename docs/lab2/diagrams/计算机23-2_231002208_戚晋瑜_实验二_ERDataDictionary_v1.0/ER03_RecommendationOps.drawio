@@ -1,0 +1,32 @@
+<?xml version='1.0' encoding='utf-8'?>
+<mxfile host="app.diagrams.net" modified="2026-05-07T00:00:00Z" agent="Codex" version="24.7.10">
+  <diagram id="diagram-1" name="Page-1">
+    <mxGraphModel dx="1600" dy="1200" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1654" pageHeight="1169" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="r1" value="RecommendationRule\nrule_id\ntenant_id\nrule_type\nweight" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#E8EEF5;strokeColor=#5A5A5A;" vertex="1" parent="1">
+          <mxGeometry x="150" y="260" width="250" height="170" as="geometry" />
+        </mxCell>
+        <mxCell id="r2" value="RecommendationSession\nsession_id\nmember_id\nprompt_snapshot\nexplanation_text\ncreated_at" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#E8EEF5;strokeColor=#5A5A5A;" vertex="1" parent="1">
+          <mxGeometry x="520" y="260" width="250" height="170" as="geometry" />
+        </mxCell>
+        <mxCell id="r3" value="Campaign\ncampaign_id\ntenant_id\ncampaign_name\nchannel_code" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#E8EEF5;strokeColor=#5A5A5A;" vertex="1" parent="1">
+          <mxGeometry x="890" y="260" width="250" height="170" as="geometry" />
+        </mxCell>
+        <mxCell id="r4" value="NotificationTask\ntask_id\nchannel_code\npayload_json\ndelivery_status" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#E8EEF5;strokeColor=#5A5A5A;" vertex="1" parent="1">
+          <mxGeometry x="1260" y="260" width="250" height="170" as="geometry" />
+        </mxCell>
+        <mxCell id="e1" value="匹配规则" style="endArrow=block;html=1;rounded=0;strokeColor=#5A5A5A;" edge="1" parent="1" source="r1" target="r2">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e2" value="活动触达" style="endArrow=block;html=1;rounded=0;strokeColor=#5A5A5A;" edge="1" parent="1" source="r2" target="r3">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e3" value="投递任务" style="endArrow=block;html=1;rounded=0;strokeColor=#5A5A5A;" edge="1" parent="1" source="r3" target="r4">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

@@ -1,0 +1,7 @@
+{
+  "MEMBER_NOT_FOUND": "会员不存在或不属于当前租户",
+  "RESERVATION_NOT_FOUND": "预约不存在或已被归档",
+  "SLOT_CONFLICT": "桌位资源已被其他请求抢占",
+  "CAT_RESTRICTION": "猫咪互动限制阻断当前预约",
+  "FORBIDDEN": "鉴权通过但无资源访问权限"
+}

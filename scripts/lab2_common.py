@@ -22,6 +22,9 @@ ARTIFACT_NAMES = {
     "D2-1": "QualityUtilityTree",
     "D2-2": "EventStormingContextMap",
     "D2-3": "ArchitectureATAM",
+    "D2-4": "C4ModelSet",
+    "D2-5": "OpenAPIContracts",
+    "D2-6": "ERDataDictionary",
 }
 
 META = {

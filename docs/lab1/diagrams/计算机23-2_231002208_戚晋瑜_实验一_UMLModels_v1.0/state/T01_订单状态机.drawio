@@ -1,0 +1,53 @@
+<?xml version='1.0' encoding='utf-8'?>
+<mxfile host="app.diagrams.net" modified="2026-05-07T00:00:00Z" agent="Codex" version="24.7.10">
+  <diagram id="diagram-1" name="Page-1">
+    <mxGraphModel dx="1200" dy="800" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1654" pageHeight="1169" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="2" value="待确认" style="ellipse;whiteSpace=wrap;html=1;fillColor=#FFF8F0;strokeColor=#5A5A5A;" vertex="1" parent="1">
+          <mxGeometry x="150" y="200" width="140" height="70" as="geometry" />
+        </mxCell>
+        <mxCell id="3" value="已确认" style="ellipse;whiteSpace=wrap;html=1;fillColor=#FFF8F0;strokeColor=#5A5A5A;" vertex="1" parent="1">
+          <mxGeometry x="410" y="200" width="140" height="70" as="geometry" />
+        </mxCell>
+        <mxCell id="4" value="已到店" style="ellipse;whiteSpace=wrap;html=1;fillColor=#FFF8F0;strokeColor=#5A5A5A;" vertex="1" parent="1">
+          <mxGeometry x="670" y="200" width="140" height="70" as="geometry" />
+        </mxCell>
+        <mxCell id="5" value="已入座" style="ellipse;whiteSpace=wrap;html=1;fillColor=#FFF8F0;strokeColor=#5A5A5A;" vertex="1" parent="1">
+          <mxGeometry x="930" y="200" width="140" height="70" as="geometry" />
+        </mxCell>
+        <mxCell id="6" value="已离店" style="ellipse;whiteSpace=wrap;html=1;fillColor=#D6F0E0;strokeColor=#5A5A5A;" vertex="1" parent="1">
+          <mxGeometry x="1190" y="200" width="140" height="70" as="geometry" />
+        </mxCell>
+        <mxCell id="7" value="已取消" style="ellipse;whiteSpace=wrap;html=1;fillColor=#F9E2D2;strokeColor=#5A5A5A;" vertex="1" parent="1">
+          <mxGeometry x="540" y="420" width="140" height="70" as="geometry" />
+        </mxCell>
+        <mxCell id="8" value="已爽约" style="ellipse;whiteSpace=wrap;html=1;fillColor=#F9E2D2;strokeColor=#5A5A5A;" vertex="1" parent="1">
+          <mxGeometry x="860" y="420" width="140" height="70" as="geometry" />
+        </mxCell>
+        <mxCell id="21" value="支付/确认" style="endArrow=block;html=1;rounded=0;strokeColor=#5A5A5A;" edge="1" parent="1" source="2" target="3">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="22" value="到店" style="endArrow=block;html=1;rounded=0;strokeColor=#5A5A5A;" edge="1" parent="1" source="3" target="4">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="23" value="入座" style="endArrow=block;html=1;rounded=0;strokeColor=#5A5A5A;" edge="1" parent="1" source="4" target="5">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="24" value="离店" style="endArrow=block;html=1;rounded=0;strokeColor=#5A5A5A;" edge="1" parent="1" source="5" target="6">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="25" value="用户取消" style="endArrow=block;html=1;rounded=0;strokeColor=#5A5A5A;" edge="1" parent="1" source="2" target="7">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="26" value="规则内取消" style="endArrow=block;html=1;rounded=0;strokeColor=#5A5A5A;" edge="1" parent="1" source="3" target="7">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="27" value="超时未到店" style="endArrow=block;html=1;rounded=0;strokeColor=#5A5A5A;" edge="1" parent="1" source="3" target="8">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

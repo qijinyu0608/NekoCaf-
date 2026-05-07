@@ -1,0 +1,9 @@
+@startuml cross_seq
+participant 网关
+participant 会员服务
+participant 推荐服务
+participant 预约服务
+网关 -> 会员服务 : 查询会员资料
+会员服务 -> 推荐服务 : 计算偏好
+推荐服务 -> 预约服务 : 推荐桌位
+@enduml

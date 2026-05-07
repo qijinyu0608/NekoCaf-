@@ -1,0 +1,34 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1654" height="1169" viewBox="0 0 1654 1169">
+<rect width="100%" height="100%" fill="#ffffff"/>
+<text x="60" y="72" font-size="28" fill="#5A5A5A" font-family="PingFang SC, Songti SC">A01 桌位预约活动图</text>
+<ellipse cx="175.0" cy="145.0" rx="45.0" ry="25.0" fill="#D6F0E0" stroke="#5A5A5A" stroke-width="2"/>
+<text x="175.0" y="156" text-anchor="middle" font-size="20" fill="#5A5A5A" font-family="PingFang SC, Songti SC">开始</text>
+<rect x="300" y="120" width="180" height="72" rx="18" ry="18" fill="#F3E7DA" stroke="#5A5A5A" stroke-width="2"/>
+<text x="390.0" y="156" text-anchor="middle" font-size="20" fill="#5A5A5A" font-family="PingFang SC, Songti SC">选择门店</text>
+<text x="390.0" y="186" text-anchor="middle" font-size="20" fill="#5A5A5A" font-family="PingFang SC, Songti SC">与日期</text>
+<rect x="560" y="120" width="180" height="72" rx="18" ry="18" fill="#F3E7DA" stroke="#5A5A5A" stroke-width="2"/>
+<text x="650.0" y="156" text-anchor="middle" font-size="20" fill="#5A5A5A" font-family="PingFang SC, Songti SC">查询可预约</text>
+<text x="650.0" y="186" text-anchor="middle" font-size="20" fill="#5A5A5A" font-family="PingFang SC, Songti SC">时段</text>
+<polygon points="880.0,118 940,158.0 880.0,198 820,158.0" fill="#F9E2D2" stroke="#5A5A5A" stroke-width="2"/>
+<text x="880.0" y="154" text-anchor="middle" font-size="20" fill="#5A5A5A" font-family="PingFang SC, Songti SC">有空位？</text>
+<rect x="1010" y="80" width="210" height="72" rx="18" ry="18" fill="#F3E7DA" stroke="#5A5A5A" stroke-width="2"/>
+<text x="1115.0" y="116" text-anchor="middle" font-size="20" fill="#5A5A5A" font-family="PingFang SC, Songti SC">选择偏好并</text>
+<text x="1115.0" y="146" text-anchor="middle" font-size="20" fill="#5A5A5A" font-family="PingFang SC, Songti SC">创建预约</text>
+<rect x="1280" y="80" width="180" height="72" rx="18" ry="18" fill="#F3E7DA" stroke="#5A5A5A" stroke-width="2"/>
+<text x="1370.0" y="116" text-anchor="middle" font-size="20" fill="#5A5A5A" font-family="PingFang SC, Songti SC">触发推荐</text>
+<text x="1370.0" y="146" text-anchor="middle" font-size="20" fill="#5A5A5A" font-family="PingFang SC, Songti SC">与通知</text>
+<rect x="1010" y="220" width="180" height="72" rx="18" ry="18" fill="#F3E7DA" stroke="#5A5A5A" stroke-width="2"/>
+<text x="1100.0" y="256" text-anchor="middle" font-size="20" fill="#5A5A5A" font-family="PingFang SC, Songti SC">加入等位</text>
+<ellipse cx="1355.0" cy="245.0" rx="45.0" ry="25.0" fill="#D6F0E0" stroke="#5A5A5A" stroke-width="2"/>
+<text x="1355.0" y="256" text-anchor="middle" font-size="20" fill="#5A5A5A" font-family="PingFang SC, Songti SC">结束</text>
+<line x1="220" y1="145" x2="300" y2="156" stroke="#5A5A5A" stroke-width="3"/>
+<line x1="480" y1="156" x2="560" y2="156" stroke="#5A5A5A" stroke-width="3"/>
+<line x1="740" y1="156" x2="820" y2="156" stroke="#5A5A5A" stroke-width="3"/>
+<text x="981.0" y="132.0" font-size="16" fill="#D86F45" font-family="PingFang SC, Songti SC">是</text>
+<line x1="940" y1="156" x2="1010" y2="116" stroke="#5A5A5A" stroke-width="3"/>
+<line x1="1220" y1="116" x2="1280" y2="116" stroke="#5A5A5A" stroke-width="3"/>
+<line x1="1370" y1="152" x2="1355" y2="220" stroke="#5A5A5A" stroke-width="3"/>
+<text x="981.0" y="214.0" font-size="16" fill="#D86F45" font-family="PingFang SC, Songti SC">否</text>
+<line x1="940" y1="180" x2="1010" y2="256" stroke="#5A5A5A" stroke-width="3"/>
+<line x1="1190" y1="256" x2="1310" y2="245" stroke="#5A5A5A" stroke-width="3"/>
+</svg>

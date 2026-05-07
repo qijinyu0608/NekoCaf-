@@ -1,0 +1,4 @@
+@startuml L3_Component_Reservation
+!include https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Component.puml
+' TODO 预约服务的组件级视图
+@enduml

@@ -1,0 +1,24 @@
+openapi: 3.0.3
+info:
+  title: Reservation Service API
+  version: 0.1.0
+  description: NekoCafé 桌位预约服务
+servers:
+  - url: https://api.nekocafe.com/v1
+paths:
+  /reservations:
+    get:
+      summary: TODO 列出预约
+      responses:
+        "200":
+          description: OK
+    post:
+      summary: TODO 创建预约
+      responses:
+        "201":
+          description: Created
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer

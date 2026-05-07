@@ -1,0 +1,12 @@
+@startuml main_usecase
+' NekoCafé 主用例图占位
+left to right direction
+actor 顾客
+actor 店员
+rectangle NekoCafé {
+  usecase "浏览门店" as UC1
+  usecase "预约桌位" as UC2
+}
+顾客 --> UC1
+顾客 --> UC2
+@enduml

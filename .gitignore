@@ -1,0 +1,17 @@
+.DS_Store
+.joycode/
+node_modules/
+node_modules
+.venv/
+__pycache__/
+.pytest_cache/
+.mypy_cache/
+*.pyc
+*.pyo
+*.log
+docs/lab1/.build/
+docs/**/exports/rendered/
+assets/**/.DS_Store
+project/.coverage
+project/htmlcov/
+project/.ruff_cache/

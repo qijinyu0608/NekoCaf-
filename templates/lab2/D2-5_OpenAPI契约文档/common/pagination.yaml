@@ -1,0 +1,4 @@
+components:
+  parameters:
+    page: { name: page, in: query, schema: { type: integer, default: 1 } }
+    size: { name: size, in: query, schema: { type: integer, default: 20 } }

@@ -1,0 +1,8 @@
+@startuml cat_checkin
+start
+:录入猫咪体重;
+:选择健康标签;
+:上传照片;
+:保存档案;
+stop
+@enduml

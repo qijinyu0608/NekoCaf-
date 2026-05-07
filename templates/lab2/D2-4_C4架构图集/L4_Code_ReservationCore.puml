@@ -1,0 +1,8 @@
+@startuml L4_Code_ReservationCore
+' Level 4 代码图：选 1 个组件给出关键类协作
+class ReservationService
+class TableSlotRepo
+class ConcurrencyGuard
+ReservationService --> TableSlotRepo
+ReservationService --> ConcurrencyGuard
+@enduml

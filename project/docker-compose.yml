@@ -1,0 +1,15 @@
+version: "3.9"
+
+services:
+  reservation:
+    build:
+      context: .
+      dockerfile: infra/docker/reservation.Dockerfile
+    ports:
+      - "8001:8001"
+  member:
+    build:
+      context: .
+      dockerfile: infra/docker/member.Dockerfile
+    ports:
+      - "8002:8002"

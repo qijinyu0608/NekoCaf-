@@ -1,0 +1,10 @@
+@startuml order_seq
+' 下单顺序图占位
+actor 顾客
+participant 网关
+participant 预约服务
+participant 订单服务
+顾客 -> 网关 : 提交订单
+网关 -> 预约服务 : 查询桌位
+预约服务 -> 订单服务 : 创建订单
+@enduml

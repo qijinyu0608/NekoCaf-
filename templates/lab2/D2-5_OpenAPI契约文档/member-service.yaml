@@ -1,0 +1,11 @@
+openapi: 3.0.3
+info:
+  title: Member Service API
+  version: 0.1.0
+paths:
+  /members/{id}:
+    get:
+      summary: TODO 查询会员
+      responses:
+        "200":
+          description: OK

@@ -1,0 +1,11 @@
+@startuml book_activity
+start
+:选择门店;
+:选择时段;
+if (有空位?) then (是)
+  :确认预约;
+else (否)
+  :加入等位;
+endif
+stop
+@enduml

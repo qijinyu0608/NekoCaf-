@@ -8,7 +8,7 @@ from docx.enum.table import WD_CELL_VERTICAL_ALIGNMENT
 from docx.enum.text import WD_ALIGN_PARAGRAPH, WD_BREAK
 from docx.oxml import OxmlElement
 from docx.oxml.ns import qn
-from docx.shared import Cm, Pt
+from docx.shared import Cm, Pt, RGBColor
 from PIL import Image, ImageDraw, ImageFont
 
 from lab1_common import (
@@ -67,6 +67,7 @@ def apply_page_style(doc: Document) -> None:
         style = doc.styles[style_name]
         style.font.name = "黑体"
         style.font.size = Pt(size)
+        style.font.color.rgb = RGBColor(0, 0, 0)
         style._element.rPr.rFonts.set(qn("w:eastAsia"), "黑体")
         style.paragraph_format.space_before = Pt(8)
         style.paragraph_format.space_after = Pt(4)

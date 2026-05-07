@@ -470,16 +470,17 @@ def build_d1_6() -> None:
     doc.add_paragraph("通知失败重试、猫咪异常健康分流和活动触达授权边界是本轮新增补充项，其中前两项已纳入基线，活动合规问题保留待进一步评审。")
 
     doc.add_heading("4 缺陷处置追踪", level=1)
-    track_table = doc.add_table(rows=1, cols=4)
+    track_table = doc.add_table(rows=1, cols=5)
     track_table.style = "Table Grid"
-    for idx, value in enumerate(["缺陷ID", "处置人", "关闭方式", "关闭日期"]):
+    for idx, value in enumerate(["缺陷ID", "处置人", "关闭方式", "修复依据", "关闭日期"]):
         track_table.rows[0].cells[idx].text = value
     for defect in DEFECTS:
         cells = track_table.add_row().cells
         cells[0].text = defect[0]
         cells[1].text = META["student_name"]
         cells[2].text = defect[5]
-        cells[3].text = META["date"] if defect[6] == "已修复" else "待后续评审"
+        cells[3].text = f"{defect[2]} 对应条目已在 D1-2 / D1-3 / D1-5 v1.0 中修订" if defect[6] == "已修复" else "保留到实验二继续评审并补充修订依据"
+        cells[4].text = META["date"] if defect[6] == "已修复" else "待后续评审"
 
     doc.add_heading("5 结论与基线建议", level=1)
     doc.add_paragraph("除 D-006 活动合规授权边界需要在实验二细化外，其余关键缺陷均已收敛。本轮建议冻结 requirements-v1.0 作为实验二输入，并保留 TBD 清单中的三项议题做后续架构与测试展开。")

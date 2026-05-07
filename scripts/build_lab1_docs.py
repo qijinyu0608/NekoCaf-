@@ -396,15 +396,16 @@ def build_d1_3() -> None:
         add_image(doc, image_path, 15.0, caption)
     doc.add_heading("附录 B 待解决问题清单（TBD List）", level=2)
     add_table_caption(doc, "表 5-1 TBD 清单")
-    tbd_table = doc.add_table(rows=1, cols=3)
+    tbd_table = doc.add_table(rows=1, cols=4)
     tbd_table.style = "Table Grid"
-    for idx, value in enumerate(["TBD ID", "问题", "计划关闭时间"]):
+    for idx, value in enumerate(["TBD ID", "问题", "负责人", "计划关闭时间"]):
         tbd_table.rows[0].cells[idx].text = value
     for row in TBD_ITEMS:
         cells = tbd_table.add_row().cells
         cells[0].text = row[0]
         cells[1].text = row[1]
-        cells[2].text = row[3]
+        cells[2].text = row[2]
+        cells[3].text = row[3]
 
     doc.save(SOURCE_DIR / artifact_filename("D1-3", "docx"))
 

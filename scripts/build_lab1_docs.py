@@ -17,6 +17,7 @@ from lab1_common import (
     DEFECTS,
     DIAGRAM_DIR,
     EXPORT_DIR,
+    FUNCTIONAL_REQUIREMENTS,
     FOUNDATION_DIR,
     GLOSSARY,
     INTERVIEW_QUESTIONS,
@@ -425,6 +426,29 @@ def build_d1_6() -> None:
     doc.add_heading("2.3 AI 反向质询", level=2)
     doc.add_paragraph(f"使用 Prompt：{AI_PROMPTS[3]['prompt']}")
     doc.add_paragraph("AI 返回的主要问题集中在桌位偏好枚举、取消与爽约规则边界、推荐可解释性和活动合规授权。经人工复核后，形成如下缺陷列表。")
+    doc.add_heading("2.4 逐条需求可测试性来源标注", level=2)
+    doc.add_paragraph("按照实验一任务书要求，本节对每条 FR/NFR 的可测试性来源进行显式标注，确保需求能够回链到验收准则、验证方法与预占测试用例。")
+    add_table_caption(doc, "表 2-1 需求可测试性来源标注")
+    trace_table = doc.add_table(rows=1, cols=5)
+    trace_table.style = "Table Grid"
+    for idx, value in enumerate(["需求ID", "类型", "可测试性来源", "对应证据", "预占测试用例"]):
+        trace_table.rows[0].cells[idx].text = value
+
+    for index, row in enumerate(FUNCTIONAL_REQUIREMENTS, start=1):
+        cells = trace_table.add_row().cells
+        cells[0].text = row[0]
+        cells[1].text = "功能需求"
+        cells[2].text = "Given-When-Then 验收准则"
+        cells[3].text = f"{row[6]}；关联 {row[10]}；类图实体 {row[11]}"
+        cells[4].text = f"TC-{index:03d}"
+
+    for index, row in enumerate(NON_FUNCTIONAL_REQUIREMENTS, start=1):
+        cells = trace_table.add_row().cells
+        cells[0].text = row[0]
+        cells[1].text = "非功能需求"
+        cells[2].text = "度量指标 + 验证方法"
+        cells[3].text = f"{row[6]}；验证方式：{row[8]}；上下文：{row[7]}"
+        cells[4].text = f"TC-NFR-{index:02d}"
 
     doc.add_heading("3 缺陷列表", level=1)
     add_table_caption(doc, "表 3-1 缺陷列表")

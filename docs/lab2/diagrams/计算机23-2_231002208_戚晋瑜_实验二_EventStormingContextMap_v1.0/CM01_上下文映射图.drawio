@@ -1,0 +1,47 @@
+<?xml version='1.0' encoding='utf-8'?>
+<mxfile host="app.diagrams.net" modified="2026-05-07T00:00:00Z" agent="Codex" version="24.7.10">
+  <diagram id="diagram-1" name="Page-1">
+    <mxGraphModel dx="1600" dy="1200" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1654" pageHeight="1169" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="2" value="BC-MEMBER\n会员域\nmember-service" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#F4E7DB;strokeColor=#5A5A5A;" vertex="1" parent="1">
+          <mxGeometry x="250" y="240" width="220" height="110" as="geometry" />
+        </mxCell>
+        <mxCell id="3" value="BC-RESERVATION\n预约域\nreservation-service" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#F4E7DB;strokeColor=#5A5A5A;" vertex="1" parent="1">
+          <mxGeometry x="610" y="240" width="240" height="110" as="geometry" />
+        </mxCell>
+        <mxCell id="4" value="BC-ORDER\n订单域\norder-service" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#F4E7DB;strokeColor=#5A5A5A;" vertex="1" parent="1">
+          <mxGeometry x="990" y="240" width="220" height="110" as="geometry" />
+        </mxCell>
+        <mxCell id="5" value="BC-STORE-OPS\n门店运营域\nstore-ops-service" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#DDE9E2;strokeColor=#5A5A5A;" vertex="1" parent="1">
+          <mxGeometry x="610" y="500" width="240" height="110" as="geometry" />
+        </mxCell>
+        <mxCell id="6" value="BC-CAT-HEALTH\n猫咪健康域\ncat-health-service" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#DDE9E2;strokeColor=#5A5A5A;" vertex="1" parent="1">
+          <mxGeometry x="990" y="500" width="220" height="110" as="geometry" />
+        </mxCell>
+        <mxCell id="7" value="BC-RECOMMENDATION\n推荐域\nrecommendation-service" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#E8EEF5;strokeColor=#5A5A5A;" vertex="1" parent="1">
+          <mxGeometry x="610" y="760" width="260" height="110" as="geometry" />
+        </mxCell>
+        <mxCell id="200" value="Customer-Supplier\n会员身份与偏好为预约域提供顾客画像" style="endArrow=block;html=1;rounded=0;strokeColor=#5A5A5A;fontSize=12;labelBackgroundColor=#FFFFFF;" edge="1" parent="1" source="2" target="3">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="201" value="Customer-Supplier\n预约创建后生成订单与取消轨迹" style="endArrow=block;html=1;rounded=0;strokeColor=#5A5A5A;fontSize=12;labelBackgroundColor=#FFFFFF;" edge="1" parent="1" source="3" target="4">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="202" value="Customer-Supplier\n预约结果驱动排台与桌位资源占用" style="endArrow=block;html=1;rounded=0;strokeColor=#5A5A5A;fontSize=12;labelBackgroundColor=#FFFFFF;" edge="1" parent="1" source="3" target="5">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="203" value="Conformist\n门店排台需遵守猫咪互动限制" style="endArrow=block;html=1;rounded=0;strokeColor=#5A5A5A;fontSize=12;labelBackgroundColor=#FFFFFF;" edge="1" parent="1" source="5" target="6">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="204" value="Partnership\n预约域与推荐域共同完成偏好匹配" style="endArrow=block;html=1;rounded=0;strokeColor=#5A5A5A;fontSize=12;labelBackgroundColor=#FFFFFF;" edge="1" parent="1" source="3" target="7">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="205" value="Shared Kernel\n会员偏好与推荐画像复用部分核心字段" style="endArrow=block;html=1;rounded=0;strokeColor=#5A5A5A;fontSize=12;labelBackgroundColor=#FFFFFF;" edge="1" parent="1" source="2" target="7">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

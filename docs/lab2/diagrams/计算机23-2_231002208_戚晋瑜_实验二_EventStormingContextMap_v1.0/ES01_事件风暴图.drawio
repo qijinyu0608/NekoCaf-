@@ -1,0 +1,143 @@
+<?xml version='1.0' encoding='utf-8'?>
+<mxfile host="app.diagrams.net" modified="2026-05-07T00:00:00Z" agent="Codex" version="24.7.10">
+  <diagram id="diagram-1" name="Page-1">
+    <mxGraphModel dx="1600" dy="1200" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1654" pageHeight="1169" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="100" value="会员" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FBFBFB;strokeColor=#CFCFCF;" vertex="1" parent="1">
+          <mxGeometry x="80" y="140" width="1480" height="120" as="geometry" />
+        </mxCell>
+        <mxCell id="100a" value="会员" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#F4E7DB;strokeColor=#CFCFCF;" vertex="1" parent="1">
+          <mxGeometry x="80" y="140" width="150" height="120" as="geometry" />
+        </mxCell>
+        <mxCell id="101" value="预约" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FBFBFB;strokeColor=#CFCFCF;" vertex="1" parent="1">
+          <mxGeometry x="80" y="300" width="1480" height="120" as="geometry" />
+        </mxCell>
+        <mxCell id="101a" value="预约" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#F4E7DB;strokeColor=#CFCFCF;" vertex="1" parent="1">
+          <mxGeometry x="80" y="300" width="150" height="120" as="geometry" />
+        </mxCell>
+        <mxCell id="102" value="订单" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FBFBFB;strokeColor=#CFCFCF;" vertex="1" parent="1">
+          <mxGeometry x="80" y="460" width="1480" height="120" as="geometry" />
+        </mxCell>
+        <mxCell id="102a" value="订单" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#F4E7DB;strokeColor=#CFCFCF;" vertex="1" parent="1">
+          <mxGeometry x="80" y="460" width="150" height="120" as="geometry" />
+        </mxCell>
+        <mxCell id="103" value="门店运营" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FBFBFB;strokeColor=#CFCFCF;" vertex="1" parent="1">
+          <mxGeometry x="80" y="620" width="1480" height="120" as="geometry" />
+        </mxCell>
+        <mxCell id="103a" value="门店运营" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#DDE9E2;strokeColor=#CFCFCF;" vertex="1" parent="1">
+          <mxGeometry x="80" y="620" width="150" height="120" as="geometry" />
+        </mxCell>
+        <mxCell id="104" value="猫咪健康" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FBFBFB;strokeColor=#CFCFCF;" vertex="1" parent="1">
+          <mxGeometry x="80" y="780" width="1480" height="120" as="geometry" />
+        </mxCell>
+        <mxCell id="104a" value="猫咪健康" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#DDE9E2;strokeColor=#CFCFCF;" vertex="1" parent="1">
+          <mxGeometry x="80" y="780" width="150" height="120" as="geometry" />
+        </mxCell>
+        <mxCell id="105" value="推荐/运营" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FBFBFB;strokeColor=#CFCFCF;" vertex="1" parent="1">
+          <mxGeometry x="80" y="940" width="1480" height="120" as="geometry" />
+        </mxCell>
+        <mxCell id="105a" value="推荐/运营" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#E8EEF5;strokeColor=#CFCFCF;" vertex="1" parent="1">
+          <mxGeometry x="80" y="940" width="150" height="120" as="geometry" />
+        </mxCell>
+        <mxCell id="2" value="顾客注册&#10;已提交" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#F4E7DB;strokeColor=#5A5A5A;" vertex="1" parent="1">
+          <mxGeometry x="240" y="165" width="110" height="70" as="geometry" />
+        </mxCell>
+        <mxCell id="3" value="会员账号&#10;已创建" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#F4E7DB;strokeColor=#5A5A5A;" vertex="1" parent="1">
+          <mxGeometry x="385" y="165" width="110" height="70" as="geometry" />
+        </mxCell>
+        <mxCell id="4" value="门店已筛选" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#F4E7DB;strokeColor=#5A5A5A;" vertex="1" parent="1">
+          <mxGeometry x="240" y="325" width="110" height="70" as="geometry" />
+        </mxCell>
+        <mxCell id="5" value="预约时段&#10;已查询" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#F4E7DB;strokeColor=#5A5A5A;" vertex="1" parent="1">
+          <mxGeometry x="385" y="325" width="110" height="70" as="geometry" />
+        </mxCell>
+        <mxCell id="6" value="预约请求&#10;已提交" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#F4E7DB;strokeColor=#5A5A5A;" vertex="1" parent="1">
+          <mxGeometry x="530" y="325" width="110" height="70" as="geometry" />
+        </mxCell>
+        <mxCell id="7" value="预约资源&#10;已预占" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#F4E7DB;strokeColor=#5A5A5A;" vertex="1" parent="1">
+          <mxGeometry x="675" y="325" width="110" height="70" as="geometry" />
+        </mxCell>
+        <mxCell id="8" value="预约创建&#10;已成功" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#F4E7DB;strokeColor=#5A5A5A;" vertex="1" parent="1">
+          <mxGeometry x="820" y="325" width="110" height="70" as="geometry" />
+        </mxCell>
+        <mxCell id="9" value="预约订单&#10;已生成" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#F4E7DB;strokeColor=#5A5A5A;" vertex="1" parent="1">
+          <mxGeometry x="965" y="485" width="110" height="70" as="geometry" />
+        </mxCell>
+        <mxCell id="10" value="到店提醒&#10;已发送" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#E8EEF5;strokeColor=#5A5A5A;" vertex="1" parent="1">
+          <mxGeometry x="1110" y="965" width="110" height="70" as="geometry" />
+        </mxCell>
+        <mxCell id="11" value="顾客已到店" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#DDE9E2;strokeColor=#5A5A5A;" vertex="1" parent="1">
+          <mxGeometry x="1110" y="645" width="110" height="70" as="geometry" />
+        </mxCell>
+        <mxCell id="12" value="顾客已入座" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#DDE9E2;strokeColor=#5A5A5A;" vertex="1" parent="1">
+          <mxGeometry x="1255" y="645" width="110" height="70" as="geometry" />
+        </mxCell>
+        <mxCell id="13" value="桌位状态&#10;已同步" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#DDE9E2;strokeColor=#5A5A5A;" vertex="1" parent="1">
+          <mxGeometry x="1400" y="645" width="110" height="70" as="geometry" />
+        </mxCell>
+        <mxCell id="14" value="猫咪健康打卡&#10;已提交" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#DDE9E2;strokeColor=#5A5A5A;" vertex="1" parent="1">
+          <mxGeometry x="1110" y="805" width="120" height="70" as="geometry" />
+        </mxCell>
+        <mxCell id="15" value="猫咪异常&#10;已预警" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#DDE9E2;strokeColor=#5A5A5A;" vertex="1" parent="1">
+          <mxGeometry x="1265" y="805" width="110" height="70" as="geometry" />
+        </mxCell>
+        <mxCell id="16" value="推荐请求&#10;已接收" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#E8EEF5;strokeColor=#5A5A5A;" vertex="1" parent="1">
+          <mxGeometry x="965" y="965" width="110" height="70" as="geometry" />
+        </mxCell>
+        <mxCell id="17" value="推荐结果&#10;已生成" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#E8EEF5;strokeColor=#5A5A5A;" vertex="1" parent="1">
+          <mxGeometry x="1260" y="965" width="110" height="70" as="geometry" />
+        </mxCell>
+        <mxCell id="18" value="跨店报表&#10;已生成" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#E8EEF5;strokeColor=#5A5A5A;" vertex="1" parent="1">
+          <mxGeometry x="1405" y="965" width="110" height="70" as="geometry" />
+        </mxCell>
+        <mxCell id="201" value="" style="endArrow=block;html=1;rounded=0;strokeColor=#5A5A5A;" edge="1" parent="1" source="2" target="3">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="202" value="" style="endArrow=block;html=1;rounded=0;strokeColor=#5A5A5A;" edge="1" parent="1" source="4" target="5">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="203" value="" style="endArrow=block;html=1;rounded=0;strokeColor=#5A5A5A;" edge="1" parent="1" source="5" target="6">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="204" value="" style="endArrow=block;html=1;rounded=0;strokeColor=#5A5A5A;" edge="1" parent="1" source="6" target="7">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="205" value="" style="endArrow=block;html=1;rounded=0;strokeColor=#5A5A5A;" edge="1" parent="1" source="7" target="8">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="206" value="" style="endArrow=block;html=1;rounded=0;strokeColor=#5A5A5A;" edge="1" parent="1" source="8" target="9">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="207" value="" style="endArrow=block;html=1;rounded=0;strokeColor=#5A5A5A;" edge="1" parent="1" source="8" target="16">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="208" value="" style="endArrow=block;html=1;rounded=0;strokeColor=#5A5A5A;" edge="1" parent="1" source="8" target="10">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="209" value="" style="endArrow=block;html=1;rounded=0;strokeColor=#5A5A5A;" edge="1" parent="1" source="9" target="11">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="210" value="" style="endArrow=block;html=1;rounded=0;strokeColor=#5A5A5A;" edge="1" parent="1" source="11" target="12">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="211" value="" style="endArrow=block;html=1;rounded=0;strokeColor=#5A5A5A;" edge="1" parent="1" source="12" target="13">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="212" value="" style="endArrow=block;html=1;rounded=0;strokeColor=#5A5A5A;" edge="1" parent="1" source="12" target="14">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="213" value="" style="endArrow=block;html=1;rounded=0;strokeColor=#5A5A5A;" edge="1" parent="1" source="14" target="15">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="214" value="" style="endArrow=block;html=1;rounded=0;strokeColor=#5A5A5A;" edge="1" parent="1" source="16" target="17">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="215" value="" style="endArrow=block;html=1;rounded=0;strokeColor=#5A5A5A;" edge="1" parent="1" source="17" target="18">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

@@ -31,6 +31,21 @@
    - `make run-member`
    - `make run-reservation`
 
+## Phase B 最小演示链路
+
+当前推荐用下面这条链路验证实验三的最小功能闭环：
+
+1. 访问 `member-service`：
+   - `GET /member/v1/members/member-1001`
+   - `GET /member/v1/members/member-1001/points`
+2. 访问 `reservation-service`：
+   - `GET /reservation/v1/stores/store-shanghai-001/slots?date=2026-05-20&partySize=2`
+   - `POST /reservation/v1/reservations`
+   - `GET /reservation/v1/reservations/{reservationId}`
+   - `GET /reservation/v1/members/member-1001/reservations`
+
+所有业务接口目前都要求请求头 `X-Tenant-Id: tenant-nekocafe`。
+
 ## 后续接管建议
 
 1. 先根据实验一需求基线补齐接口说明。

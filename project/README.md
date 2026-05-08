@@ -47,6 +47,43 @@ python3 -m venv .venv
 .venv/bin/pytest
 ```
 
+## 当前最小业务链路
+
+本轮已经先落一条可演示的最小链路：
+
+1. 在 `member-service` 查询会员详情与积分账户
+2. 在 `reservation-service` 查询门店可预约时段
+3. 在 `reservation-service` 创建预约
+4. 在 `reservation-service` 查询预约详情与会员预约列表
+
+推荐本地启动方式：
+
+```bash
+make run-member
+make run-reservation
+```
+
+最小演示请求示例：
+
+```bash
+curl -H 'X-Tenant-Id: tenant-nekocafe' \
+  http://127.0.0.1:8002/member/v1/members/member-1001
+
+curl -H 'X-Tenant-Id: tenant-nekocafe' \
+  'http://127.0.0.1:8001/reservation/v1/stores/store-shanghai-001/slots?date=2026-05-20&partySize=2'
+
+curl -X POST \
+  -H 'Content-Type: application/json' \
+  -H 'X-Tenant-Id: tenant-nekocafe' \
+  http://127.0.0.1:8001/reservation/v1/reservations \
+  -d '{
+    "memberId": "member-1001",
+    "storeId": "store-shanghai-001",
+    "slotId": "slot-20260520-1800",
+    "partySize": 2
+  }'
+```
+
 ## 实验三推荐开发顺序
 
 1. 先阅读 `docs/lab3/README.md` 与 `docs/development-path.md` 中的实验三阶段拆分。

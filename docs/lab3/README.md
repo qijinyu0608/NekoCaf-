@@ -18,3 +18,17 @@
 - `diagrams/`: 流水线图、拓扑图、Dashboard 设计稿
 - `exports/`: 截图、扫描报告、导出 PDF
 - `submission/`: 最终打包前的整理副本
+
+## 当前已落地内容
+
+- `D3-1`：已有 DevOps 设计骨架
+- `D3-2`：`project/` 已形成双服务最小可运行 PoC
+- `D3-3`：已补双服务 Dockerfile，并已验证 `docker compose up`
+- `D3-4`：已补最小 `ci.yml`
+- `D3-5`：已补最小 Helm Chart 骨架
+
+当前最主要未完成项仍然是：
+
+- `D3-3` 的扫描报告类证据
+- `D3-6` 可观测性
+- `D3-7` 到 `D3-9` 的最终交付材料

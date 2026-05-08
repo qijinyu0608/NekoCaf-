@@ -1,0 +1,9 @@
+services:
+  member:
+    replicaCount: 3
+    image:
+      tag: "prod"
+  reservation:
+    replicaCount: 3
+    image:
+      tag: "prod"

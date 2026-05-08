@@ -1,0 +1,37 @@
+# Lab 3 Submission Status
+
+本目录用于跟踪实验三 `D3-1` 到 `D3-9` 的当前完成状态，避免提交前才临时盘点。
+
+## 当前状态
+
+- `D3-1` DevOps 设计方案：
+  - 已有骨架稿：`docs/lab3/source/D3-1_DevOps设计方案_骨架.md`
+- `D3-2` 源代码与配置仓库：
+  - 已具备 `project/` Monorepo、双服务、Docker Compose、README、Runbook、Rollback
+- `D3-3` Dockerfile 与镜像相关材料：
+  - 已具备 `member` 与 `reservation` Dockerfile
+  - 镜像扫描报告暂未补
+- `D3-4` CI/CD 配置与运行说明：
+  - 已补 `project/.github/workflows/ci.yml`
+  - 已补说明文档：`docs/lab3/source/D3-4_CICD配置与运行说明.md`
+- `D3-5` K8s 部署清单与 Helm Chart：
+  - 已补最小 Helm 骨架
+  - 已补说明文档：`docs/lab3/source/D3-5_Helm部署骨架说明.md`
+- `D3-6` 可观测性配置与 Dashboard：
+  - 暂未开始，仍为占位
+- `D3-7` DORA 指标报告：
+  - 暂未开始
+- `D3-8` 演示视频脚本：
+  - 暂未开始
+- `D3-9` 答辩 PPT：
+  - 暂未开始
+
+## 当前判断
+
+当前实验三已经完成到“可运行 PoC + 最小 CI + 最小 Helm 骨架”的阶段，但还不属于最终提交态。
+
+后续优先级建议：
+
+1. 先补 `D3-6` 可观测性最小基线
+2. 再整理 `D3-3` 扫描材料与 `D3-4` 运行截图
+3. 最后补 `D3-7` 到 `D3-9`

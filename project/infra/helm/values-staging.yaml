@@ -1,0 +1,9 @@
+services:
+  member:
+    replicaCount: 2
+    image:
+      tag: "staging"
+  reservation:
+    replicaCount: 2
+    image:
+      tag: "staging"

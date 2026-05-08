@@ -3,8 +3,9 @@ from pathlib import Path
 from docx import Document
 from docx.enum.section import WD_SECTION
 from docx.enum.text import WD_ALIGN_PARAGRAPH
-from docx.oxml.ns import qn
 from docx.shared import Cm, Pt
+
+from docx_style_policy import apply_black_text_policy
 
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -18,17 +19,14 @@ def apply_page_style(doc: Document) -> None:
     section.left_margin = Cm(3.17)
     section.right_margin = Cm(3.17)
 
-    normal = doc.styles["Normal"]
-    normal.font.name = "宋体"
-    normal.font.size = Pt(12)
-    normal._element.rPr.rFonts.set(qn("w:eastAsia"), "宋体")
-    normal._element.rPr.rFonts.set(qn("w:ascii"), "Times New Roman")
-    normal._element.rPr.rFonts.set(qn("w:hAnsi"), "Times New Roman")
-
-    for style_name in ["Title", "Heading 1", "Heading 2"]:
-        style = doc.styles[style_name]
-        style.font.name = "黑体"
-        style._element.rPr.rFonts.set(qn("w:eastAsia"), "黑体")
+    apply_black_text_policy(
+        doc,
+        heading_sizes={
+            "Title": 18,
+            "Heading 1": 16,
+            "Heading 2": 14,
+        },
+    )
 
     header = section.header.paragraphs[0]
     header.alignment = WD_ALIGN_PARAGRAPH.CENTER

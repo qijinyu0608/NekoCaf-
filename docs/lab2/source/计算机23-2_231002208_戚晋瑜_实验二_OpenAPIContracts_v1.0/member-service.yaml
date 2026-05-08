@@ -157,6 +157,142 @@
           }
         ]
       }
+    },
+    "/member/v1/members/{memberId}/points": {
+      "get": {
+        "tags": [
+          "Loyalty"
+        ],
+        "summary": "查询会员积分账户",
+        "x-ratelimit-limit": 300,
+        "x-ratelimit-window": "1m",
+        "parameters": [
+          {
+            "name": "memberId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "X-Tenant-Id",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/components/responses/PointAccountOk"
+          },
+          "404": {
+            "$ref": "#/components/responses/MemberNotFound"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/member/v1/members/{memberId}/points/transactions": {
+      "get": {
+        "tags": [
+          "Loyalty"
+        ],
+        "summary": "查询会员积分变更记录",
+        "x-ratelimit-limit": 180,
+        "x-ratelimit-window": "1m",
+        "parameters": [
+          {
+            "name": "memberId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "X-Tenant-Id",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/components/responses/PointTransactionListOk"
+          },
+          "404": {
+            "$ref": "#/components/responses/MemberNotFound"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/member/v1/members/{memberId}/coupons/claim": {
+      "post": {
+        "tags": [
+          "Loyalty"
+        ],
+        "summary": "领取会员优惠券",
+        "x-ratelimit-limit": 60,
+        "x-ratelimit-window": "1m",
+        "parameters": [
+          {
+            "name": "memberId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "X-Tenant-Id",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ClaimCouponRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "$ref": "#/components/responses/CouponClaimed"
+          },
+          "404": {
+            "$ref": "#/components/responses/MemberNotFound"
+          },
+          "409": {
+            "$ref": "#/components/responses/CouponClaimConflict"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
     }
   },
   "components": {
@@ -233,6 +369,79 @@
           }
         }
       },
+      "PointAccount": {
+        "type": "object",
+        "properties": {
+          "memberId": {
+            "type": "string"
+          },
+          "currentPoints": {
+            "type": "integer"
+          },
+          "pendingPoints": {
+            "type": "integer"
+          },
+          "levelCode": {
+            "type": "string"
+          },
+          "benefitSummary": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        }
+      },
+      "PointTransaction": {
+        "type": "object",
+        "properties": {
+          "transactionId": {
+            "type": "string"
+          },
+          "changeType": {
+            "type": "string"
+          },
+          "pointsChanged": {
+            "type": "integer"
+          },
+          "occurredAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "source": {
+            "type": "string"
+          }
+        }
+      },
+      "ClaimCouponRequest": {
+        "type": "object",
+        "required": [
+          "couponTemplateId"
+        ],
+        "properties": {
+          "couponTemplateId": {
+            "type": "string"
+          },
+          "campaignCode": {
+            "type": "string"
+          }
+        }
+      },
+      "CouponClaimResult": {
+        "type": "object",
+        "properties": {
+          "couponId": {
+            "type": "string"
+          },
+          "status": {
+            "type": "string"
+          },
+          "expireAt": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
       "ErrorBody": {
         "type": "object",
         "properties": {
@@ -272,6 +481,39 @@
           }
         }
       },
+      "PointAccountOk": {
+        "description": "积分账户详情",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/PointAccount"
+            }
+          }
+        }
+      },
+      "PointTransactionListOk": {
+        "description": "积分变更记录",
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/components/schemas/PointTransaction"
+              }
+            }
+          }
+        }
+      },
+      "CouponClaimed": {
+        "description": "优惠券领取成功",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/CouponClaimResult"
+            }
+          }
+        }
+      },
       "MemberNotFound": {
         "description": "会员不存在",
         "content": {
@@ -294,6 +536,16 @@
       },
       "Forbidden": {
         "description": "无权限访问",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/ErrorBody"
+            }
+          }
+        }
+      },
+      "CouponClaimConflict": {
+        "description": "优惠券已领取或当前不满足领取条件",
         "content": {
           "application/json": {
             "schema": {

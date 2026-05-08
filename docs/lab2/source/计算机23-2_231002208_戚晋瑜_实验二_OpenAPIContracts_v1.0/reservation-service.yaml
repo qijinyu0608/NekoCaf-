@@ -88,6 +88,16 @@
         "summary": "创建预约",
         "x-ratelimit-limit": 300,
         "x-ratelimit-window": "1m",
+        "parameters": [
+          {
+            "name": "X-Tenant-Id",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
         "requestBody": {
           "required": true,
           "content": {
@@ -99,6 +109,9 @@
           }
         },
         "responses": {
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
           "201": {
             "$ref": "#/components/responses/ReservationCreated"
           },
@@ -197,6 +210,192 @@
           }
         ]
       }
+    },
+    "/reservation/v1/members/{memberId}/reservations": {
+      "get": {
+        "tags": [
+          "Reservation"
+        ],
+        "summary": "查询会员预约列表",
+        "x-ratelimit-limit": 300,
+        "x-ratelimit-window": "1m",
+        "parameters": [
+          {
+            "name": "memberId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "status",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "businessDate",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "format": "date"
+            }
+          },
+          {
+            "name": "X-Tenant-Id",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/components/responses/ReservationListOk"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/reservation/v1/waitlist": {
+      "post": {
+        "tags": [
+          "Reservation"
+        ],
+        "summary": "创建等位请求",
+        "x-ratelimit-limit": 120,
+        "x-ratelimit-window": "1m",
+        "parameters": [
+          {
+            "name": "X-Tenant-Id",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateWaitlistRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "201": {
+            "$ref": "#/components/responses/WaitlistCreated"
+          },
+          "409": {
+            "$ref": "#/components/responses/SlotConflict"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/reservation/v1/waitlist/{waitlistId}": {
+      "get": {
+        "tags": [
+          "Reservation"
+        ],
+        "summary": "查询等位详情",
+        "x-ratelimit-limit": 240,
+        "x-ratelimit-window": "1m",
+        "parameters": [
+          {
+            "name": "waitlistId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "X-Tenant-Id",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/components/responses/WaitlistDetailOk"
+          },
+          "404": {
+            "$ref": "#/components/responses/WaitlistNotFound"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/reservation/v1/reservations/{reservationId}/check-in": {
+      "post": {
+        "tags": [
+          "Reservation"
+        ],
+        "summary": "确认顾客到店",
+        "x-ratelimit-limit": 180,
+        "x-ratelimit-window": "1m",
+        "parameters": [
+          {
+            "name": "reservationId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "X-Tenant-Id",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/components/responses/ReservationDetailOk"
+          },
+          "404": {
+            "$ref": "#/components/responses/ReservationNotFound"
+          },
+          "409": {
+            "$ref": "#/components/responses/InvalidReservationState"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
     }
   },
   "components": {
@@ -275,6 +474,82 @@
           },
           "partySize": {
             "type": "integer"
+          },
+          "checkedInAt": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "ReservationListItem": {
+        "type": "object",
+        "properties": {
+          "reservationId": {
+            "type": "string"
+          },
+          "status": {
+            "type": "string"
+          },
+          "storeId": {
+            "type": "string"
+          },
+          "slotStartAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "partySize": {
+            "type": "integer"
+          }
+        }
+      },
+      "CreateWaitlistRequest": {
+        "type": "object",
+        "required": [
+          "memberId",
+          "storeId",
+          "requestedSlot",
+          "partySize"
+        ],
+        "properties": {
+          "memberId": {
+            "type": "string"
+          },
+          "storeId": {
+            "type": "string"
+          },
+          "requestedSlot": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "partySize": {
+            "type": "integer"
+          },
+          "preferredTheme": {
+            "type": "string"
+          }
+        }
+      },
+      "WaitlistDetail": {
+        "type": "object",
+        "properties": {
+          "waitlistId": {
+            "type": "string"
+          },
+          "status": {
+            "type": "string"
+          },
+          "queuePosition": {
+            "type": "integer"
+          },
+          "storeId": {
+            "type": "string"
+          },
+          "requestedSlot": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "partySize": {
+            "type": "integer"
           }
         }
       },
@@ -327,8 +602,51 @@
           }
         }
       },
+      "ReservationListOk": {
+        "description": "会员预约列表",
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/components/schemas/ReservationListItem"
+              }
+            }
+          }
+        }
+      },
+      "WaitlistCreated": {
+        "description": "等位创建成功",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/WaitlistDetail"
+            }
+          }
+        }
+      },
+      "WaitlistDetailOk": {
+        "description": "等位详情",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/WaitlistDetail"
+            }
+          }
+        }
+      },
       "ReservationNotFound": {
         "description": "预约不存在",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/ErrorBody"
+            }
+          }
+        }
+      },
+      "WaitlistNotFound": {
+        "description": "等位记录不存在",
         "content": {
           "application/json": {
             "schema": {
@@ -369,6 +687,16 @@
       },
       "BadRequest": {
         "description": "请求参数错误",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/ErrorBody"
+            }
+          }
+        }
+      },
+      "InvalidReservationState": {
+        "description": "当前预约状态不允许执行该操作",
         "content": {
           "application/json": {
             "schema": {

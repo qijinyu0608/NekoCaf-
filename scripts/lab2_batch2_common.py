@@ -184,6 +184,62 @@ OPENAPI_SPECS = {
                     "security": [{"bearerAuth": []}],
                 }
             },
+            "/member/v1/members/{memberId}/points": {
+                "get": {
+                    "tags": ["Loyalty"],
+                    "summary": "查询会员积分账户",
+                    "x-ratelimit-limit": 300,
+                    "x-ratelimit-window": "1m",
+                    "parameters": [
+                        {"name": "memberId", "in": "path", "required": True, "schema": {"type": "string"}},
+                        {"name": "X-Tenant-Id", "in": "header", "required": True, "schema": {"type": "string"}},
+                    ],
+                    "responses": {
+                        "200": {"$ref": "#/components/responses/PointAccountOk"},
+                        "404": {"$ref": "#/components/responses/MemberNotFound"},
+                    },
+                    "security": [{"bearerAuth": []}],
+                }
+            },
+            "/member/v1/members/{memberId}/points/transactions": {
+                "get": {
+                    "tags": ["Loyalty"],
+                    "summary": "查询会员积分变更记录",
+                    "x-ratelimit-limit": 180,
+                    "x-ratelimit-window": "1m",
+                    "parameters": [
+                        {"name": "memberId", "in": "path", "required": True, "schema": {"type": "string"}},
+                        {"name": "X-Tenant-Id", "in": "header", "required": True, "schema": {"type": "string"}},
+                    ],
+                    "responses": {
+                        "200": {"$ref": "#/components/responses/PointTransactionListOk"},
+                        "404": {"$ref": "#/components/responses/MemberNotFound"},
+                    },
+                    "security": [{"bearerAuth": []}],
+                }
+            },
+            "/member/v1/members/{memberId}/coupons/claim": {
+                "post": {
+                    "tags": ["Loyalty"],
+                    "summary": "领取会员优惠券",
+                    "x-ratelimit-limit": 60,
+                    "x-ratelimit-window": "1m",
+                    "parameters": [
+                        {"name": "memberId", "in": "path", "required": True, "schema": {"type": "string"}},
+                        {"name": "X-Tenant-Id", "in": "header", "required": True, "schema": {"type": "string"}},
+                    ],
+                    "requestBody": {
+                        "required": True,
+                        "content": {"application/json": {"schema": {"$ref": "#/components/schemas/ClaimCouponRequest"}}},
+                    },
+                    "responses": {
+                        "201": {"$ref": "#/components/responses/CouponClaimed"},
+                        "404": {"$ref": "#/components/responses/MemberNotFound"},
+                        "409": {"$ref": "#/components/responses/CouponClaimConflict"},
+                    },
+                    "security": [{"bearerAuth": []}],
+                }
+            },
         },
         "components": {
             "securitySchemes": {
@@ -219,6 +275,42 @@ OPENAPI_SPECS = {
                         "expireAt": {"type": "string", "format": "date-time"},
                     },
                 },
+                "PointAccount": {
+                    "type": "object",
+                    "properties": {
+                        "memberId": {"type": "string"},
+                        "currentPoints": {"type": "integer"},
+                        "pendingPoints": {"type": "integer"},
+                        "levelCode": {"type": "string"},
+                        "benefitSummary": {"type": "array", "items": {"type": "string"}},
+                    },
+                },
+                "PointTransaction": {
+                    "type": "object",
+                    "properties": {
+                        "transactionId": {"type": "string"},
+                        "changeType": {"type": "string"},
+                        "pointsChanged": {"type": "integer"},
+                        "occurredAt": {"type": "string", "format": "date-time"},
+                        "source": {"type": "string"},
+                    },
+                },
+                "ClaimCouponRequest": {
+                    "type": "object",
+                    "required": ["couponTemplateId"],
+                    "properties": {
+                        "couponTemplateId": {"type": "string"},
+                        "campaignCode": {"type": "string"},
+                    },
+                },
+                "CouponClaimResult": {
+                    "type": "object",
+                    "properties": {
+                        "couponId": {"type": "string"},
+                        "status": {"type": "string"},
+                        "expireAt": {"type": "string", "format": "date-time"},
+                    },
+                },
                 "ErrorBody": {
                     "type": "object",
                     "properties": {
@@ -241,6 +333,22 @@ OPENAPI_SPECS = {
                         }
                     },
                 },
+                "PointAccountOk": {
+                    "description": "积分账户详情",
+                    "content": {"application/json": {"schema": {"$ref": "#/components/schemas/PointAccount"}}},
+                },
+                "PointTransactionListOk": {
+                    "description": "积分变更记录",
+                    "content": {
+                        "application/json": {
+                            "schema": {"type": "array", "items": {"$ref": "#/components/schemas/PointTransaction"}}
+                        }
+                    },
+                },
+                "CouponClaimed": {
+                    "description": "优惠券领取成功",
+                    "content": {"application/json": {"schema": {"$ref": "#/components/schemas/CouponClaimResult"}}},
+                },
                 "MemberNotFound": {
                     "description": "会员不存在",
                     "content": {"application/json": {"schema": {"$ref": "#/components/schemas/ErrorBody"}}},
@@ -251,6 +359,10 @@ OPENAPI_SPECS = {
                 },
                 "Forbidden": {
                     "description": "无权限访问",
+                    "content": {"application/json": {"schema": {"$ref": "#/components/schemas/ErrorBody"}}},
+                },
+                "CouponClaimConflict": {
+                    "description": "优惠券已领取或当前不满足领取条件",
                     "content": {"application/json": {"schema": {"$ref": "#/components/schemas/ErrorBody"}}},
                 },
             },
@@ -294,11 +406,15 @@ OPENAPI_SPECS = {
                     "summary": "创建预约",
                     "x-ratelimit-limit": 300,
                     "x-ratelimit-window": "1m",
+                    "parameters": [
+                        {"name": "X-Tenant-Id", "in": "header", "required": True, "schema": {"type": "string"}},
+                    ],
                     "requestBody": {
                         "required": True,
                         "content": {"application/json": {"schema": {"$ref": "#/components/schemas/CreateReservationRequest"}}},
                     },
                     "responses": {
+                        "400": {"$ref": "#/components/responses/BadRequest"},
                         "201": {"$ref": "#/components/responses/ReservationCreated"},
                         "409": {"$ref": "#/components/responses/SlotConflict"},
                         "422": {"$ref": "#/components/responses/CatRestriction"},
@@ -340,6 +456,80 @@ OPENAPI_SPECS = {
                     "security": [{"bearerAuth": []}],
                 }
             },
+            "/reservation/v1/members/{memberId}/reservations": {
+                "get": {
+                    "tags": ["Reservation"],
+                    "summary": "查询会员预约列表",
+                    "x-ratelimit-limit": 300,
+                    "x-ratelimit-window": "1m",
+                    "parameters": [
+                        {"name": "memberId", "in": "path", "required": True, "schema": {"type": "string"}},
+                        {"name": "status", "in": "query", "required": False, "schema": {"type": "string"}},
+                        {"name": "businessDate", "in": "query", "required": False, "schema": {"type": "string", "format": "date"}},
+                        {"name": "X-Tenant-Id", "in": "header", "required": True, "schema": {"type": "string"}},
+                    ],
+                    "responses": {
+                        "200": {"$ref": "#/components/responses/ReservationListOk"},
+                    },
+                    "security": [{"bearerAuth": []}],
+                }
+            },
+            "/reservation/v1/waitlist": {
+                "post": {
+                    "tags": ["Reservation"],
+                    "summary": "创建等位请求",
+                    "x-ratelimit-limit": 120,
+                    "x-ratelimit-window": "1m",
+                    "parameters": [
+                        {"name": "X-Tenant-Id", "in": "header", "required": True, "schema": {"type": "string"}},
+                    ],
+                    "requestBody": {
+                        "required": True,
+                        "content": {"application/json": {"schema": {"$ref": "#/components/schemas/CreateWaitlistRequest"}}},
+                    },
+                    "responses": {
+                        "400": {"$ref": "#/components/responses/BadRequest"},
+                        "201": {"$ref": "#/components/responses/WaitlistCreated"},
+                        "409": {"$ref": "#/components/responses/SlotConflict"},
+                    },
+                    "security": [{"bearerAuth": []}],
+                }
+            },
+            "/reservation/v1/waitlist/{waitlistId}": {
+                "get": {
+                    "tags": ["Reservation"],
+                    "summary": "查询等位详情",
+                    "x-ratelimit-limit": 240,
+                    "x-ratelimit-window": "1m",
+                    "parameters": [
+                        {"name": "waitlistId", "in": "path", "required": True, "schema": {"type": "string"}},
+                        {"name": "X-Tenant-Id", "in": "header", "required": True, "schema": {"type": "string"}},
+                    ],
+                    "responses": {
+                        "200": {"$ref": "#/components/responses/WaitlistDetailOk"},
+                        "404": {"$ref": "#/components/responses/WaitlistNotFound"},
+                    },
+                    "security": [{"bearerAuth": []}],
+                }
+            },
+            "/reservation/v1/reservations/{reservationId}/check-in": {
+                "post": {
+                    "tags": ["Reservation"],
+                    "summary": "确认顾客到店",
+                    "x-ratelimit-limit": 180,
+                    "x-ratelimit-window": "1m",
+                    "parameters": [
+                        {"name": "reservationId", "in": "path", "required": True, "schema": {"type": "string"}},
+                        {"name": "X-Tenant-Id", "in": "header", "required": True, "schema": {"type": "string"}},
+                    ],
+                    "responses": {
+                        "200": {"$ref": "#/components/responses/ReservationDetailOk"},
+                        "404": {"$ref": "#/components/responses/ReservationNotFound"},
+                        "409": {"$ref": "#/components/responses/InvalidReservationState"},
+                    },
+                    "security": [{"bearerAuth": []}],
+                }
+            },
         },
         "components": {
             "securitySchemes": {
@@ -376,6 +566,39 @@ OPENAPI_SPECS = {
                         "storeId": {"type": "string"},
                         "slotId": {"type": "string"},
                         "partySize": {"type": "integer"},
+                        "checkedInAt": {"type": "string", "format": "date-time"},
+                    },
+                },
+                "ReservationListItem": {
+                    "type": "object",
+                    "properties": {
+                        "reservationId": {"type": "string"},
+                        "status": {"type": "string"},
+                        "storeId": {"type": "string"},
+                        "slotStartAt": {"type": "string", "format": "date-time"},
+                        "partySize": {"type": "integer"},
+                    },
+                },
+                "CreateWaitlistRequest": {
+                    "type": "object",
+                    "required": ["memberId", "storeId", "requestedSlot", "partySize"],
+                    "properties": {
+                        "memberId": {"type": "string"},
+                        "storeId": {"type": "string"},
+                        "requestedSlot": {"type": "string", "format": "date-time"},
+                        "partySize": {"type": "integer"},
+                        "preferredTheme": {"type": "string"},
+                    },
+                },
+                "WaitlistDetail": {
+                    "type": "object",
+                    "properties": {
+                        "waitlistId": {"type": "string"},
+                        "status": {"type": "string"},
+                        "queuePosition": {"type": "integer"},
+                        "storeId": {"type": "string"},
+                        "requestedSlot": {"type": "string", "format": "date-time"},
+                        "partySize": {"type": "integer"},
                     },
                 },
                 "ErrorBody": {
@@ -402,8 +625,28 @@ OPENAPI_SPECS = {
                     "description": "预约详情",
                     "content": {"application/json": {"schema": {"$ref": "#/components/schemas/ReservationDetail"}}},
                 },
+                "ReservationListOk": {
+                    "description": "会员预约列表",
+                    "content": {
+                        "application/json": {
+                            "schema": {"type": "array", "items": {"$ref": "#/components/schemas/ReservationListItem"}}
+                        }
+                    },
+                },
+                "WaitlistCreated": {
+                    "description": "等位创建成功",
+                    "content": {"application/json": {"schema": {"$ref": "#/components/schemas/WaitlistDetail"}}},
+                },
+                "WaitlistDetailOk": {
+                    "description": "等位详情",
+                    "content": {"application/json": {"schema": {"$ref": "#/components/schemas/WaitlistDetail"}}},
+                },
                 "ReservationNotFound": {
                     "description": "预约不存在",
+                    "content": {"application/json": {"schema": {"$ref": "#/components/schemas/ErrorBody"}}},
+                },
+                "WaitlistNotFound": {
+                    "description": "等位记录不存在",
                     "content": {"application/json": {"schema": {"$ref": "#/components/schemas/ErrorBody"}}},
                 },
                 "SlotConflict": {
@@ -420,6 +663,10 @@ OPENAPI_SPECS = {
                 },
                 "BadRequest": {
                     "description": "请求参数错误",
+                    "content": {"application/json": {"schema": {"$ref": "#/components/schemas/ErrorBody"}}},
+                },
+                "InvalidReservationState": {
+                    "description": "当前预约状态不允许执行该操作",
                     "content": {"application/json": {"schema": {"$ref": "#/components/schemas/ErrorBody"}}},
                 },
             },

@@ -8,8 +8,9 @@ from docx.enum.table import WD_CELL_VERTICAL_ALIGNMENT
 from docx.enum.text import WD_ALIGN_PARAGRAPH, WD_BREAK
 from docx.oxml import OxmlElement
 from docx.oxml.ns import qn
-from docx.shared import Cm, Pt, RGBColor
+from docx.shared import Cm, Pt
 from PIL import Image, ImageDraw, ImageFont
+from docx_style_policy import apply_black_text_policy
 
 from lab1_common import (
     AI_PROMPTS,
@@ -55,20 +56,12 @@ def apply_page_style(doc: Document) -> None:
     configure_section(section)
 
     normal = doc.styles["Normal"]
-    normal.font.name = "宋体"
-    normal.font.size = Pt(12)
-    normal._element.rPr.rFonts.set(qn("w:eastAsia"), "宋体")
-    normal._element.rPr.rFonts.set(qn("w:ascii"), "Times New Roman")
-    normal._element.rPr.rFonts.set(qn("w:hAnsi"), "Times New Roman")
+    apply_black_text_policy(doc)
     normal.paragraph_format.line_spacing = 1.5
     normal.paragraph_format.space_after = Pt(6)
 
     for style_name, size in [("Title", 18), ("Heading 1", 16), ("Heading 2", 14), ("Heading 3", 12)]:
         style = doc.styles[style_name]
-        style.font.name = "黑体"
-        style.font.size = Pt(size)
-        style.font.color.rgb = RGBColor(0, 0, 0)
-        style._element.rPr.rFonts.set(qn("w:eastAsia"), "黑体")
         style.paragraph_format.space_before = Pt(8)
         style.paragraph_format.space_after = Pt(4)
 

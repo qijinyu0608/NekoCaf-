@@ -43,6 +43,33 @@ class Lab2Batch2DataTest(unittest.TestCase):
                         found_rate_limit = True
             self.assertTrue(found_rate_limit)
 
+    def test_openapi_specs_meet_minimum_endpoint_counts(self) -> None:
+        expected_minimums = {
+            "member-service": 6,
+            "reservation-service": 8,
+        }
+        for service_name, minimum in expected_minimums.items():
+            spec = OPENAPI_SPECS[service_name]
+            operation_count = 0
+            for path_item in spec["paths"].values():
+                for method, operation in path_item.items():
+                    if method.lower() in {"get", "post", "put", "patch", "delete"} and isinstance(operation, dict):
+                        operation_count += 1
+            self.assertGreaterEqual(operation_count, minimum, service_name)
+
+    def test_all_operations_declare_tenant_header(self) -> None:
+        for service_name, spec in OPENAPI_SPECS.items():
+            for path, path_item in spec["paths"].items():
+                for method, operation in path_item.items():
+                    if method.lower() not in {"get", "post", "put", "patch", "delete"} or not isinstance(operation, dict):
+                        continue
+                    params = operation.get("parameters", [])
+                    has_tenant_header = any(
+                        param.get("name") == "X-Tenant-Id" and param.get("in") == "header"
+                        for param in params
+                    )
+                    self.assertTrue(has_tenant_header, f"{service_name} {method.upper()} {path}")
+
     def test_er_model_contains_at_least_15_entities(self) -> None:
         self.assertGreaterEqual(count_entities(), 15)
 

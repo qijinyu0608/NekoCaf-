@@ -112,8 +112,10 @@ def build_d2_5_package() -> None:
     common_errors = {
         "MEMBER_NOT_FOUND": "会员不存在或不属于当前租户",
         "RESERVATION_NOT_FOUND": "预约不存在或已被归档",
+        "WAITLIST_NOT_FOUND": "等位记录不存在或已失效",
         "SLOT_CONFLICT": "桌位资源已被其他请求抢占",
         "CAT_RESTRICTION": "猫咪互动限制阻断当前预约",
+        "COUPON_CLAIM_CONFLICT": "优惠券已领取或当前不满足领取条件",
         "FORBIDDEN": "鉴权通过但无资源访问权限",
     }
     write_json_yaml(OPENAPI_DIR / "common" / "error-codes.json", common_errors)
@@ -137,14 +139,28 @@ def build_d2_5_package() -> None:
     write_contract_preview(
         OPENAPI_DIR / "screenshots" / "member-service-preview.png",
         "member-service",
-        "会员服务契约概览，覆盖资料、偏好、积分与优惠券接口。",
-        ["GET /member/v1/members/{memberId}", "PATCH /member/v1/members/{memberId}/profile", "GET /member/v1/members/{memberId}/coupons"],
+        "会员服务契约概览，覆盖资料、偏好、积分、积分流水与优惠券接口。",
+        [
+            "GET /member/v1/members/{memberId}",
+            "PATCH /member/v1/members/{memberId}/profile",
+            "GET /member/v1/members/{memberId}/coupons",
+            "GET /member/v1/members/{memberId}/points",
+            "GET /member/v1/members/{memberId}/points/transactions",
+            "POST /member/v1/members/{memberId}/coupons/claim",
+        ],
     )
     write_contract_preview(
         OPENAPI_DIR / "screenshots" / "reservation-service-preview.png",
         "reservation-service",
-        "预约服务契约概览，覆盖时段查询、创建预约、查询详情与取消。",
-        ["GET /reservation/v1/stores/{storeId}/slots", "POST /reservation/v1/reservations", "GET /reservation/v1/reservations/{reservationId}", "POST /reservation/v1/reservations/{reservationId}/cancel"],
+        "预约服务契约概览，覆盖时段查询、预约生命周期与等位能力。",
+        [
+            "GET /reservation/v1/stores/{storeId}/slots",
+            "POST /reservation/v1/reservations",
+            "GET /reservation/v1/reservations/{reservationId}",
+            "POST /reservation/v1/reservations/{reservationId}/cancel",
+            "GET /reservation/v1/members/{memberId}/reservations",
+            "POST /reservation/v1/waitlist",
+        ],
     )
 
     doc = Document()

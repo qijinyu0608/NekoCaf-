@@ -10,7 +10,7 @@
   - 已具备 `project/` Monorepo、双服务、Docker Compose、README、Runbook、Rollback
 - `D3-3` Dockerfile 与镜像相关材料：
   - 已具备 `member` 与 `reservation` Dockerfile
-  - 镜像扫描报告暂未补
+  - 已补基线报告：`docs/lab3/source/D3-3_Dockerfile与镜像扫描报告.md`
 - `D3-4` CI/CD 配置与运行说明：
   - 已补 `project/.github/workflows/ci.yml`
   - 已补说明文档：`docs/lab3/source/D3-4_CICD配置与运行说明.md`
@@ -18,20 +18,21 @@
   - 已补最小 Helm 骨架
   - 已补说明文档：`docs/lab3/source/D3-5_Helm部署骨架说明.md`
 - `D3-6` 可观测性配置与 Dashboard：
-  - 暂未开始，仍为占位
+  - 已补最小可观测性基线
+  - 已补说明文档：`docs/lab3/source/D3-6_可观测性配置与Dashboard说明.md`
 - `D3-7` DORA 指标报告：
-  - 暂未开始
+  - 已补基线报告：`docs/lab3/source/D3-7_DORA指标报告.md`
 - `D3-8` 演示视频脚本：
-  - 暂未开始
+  - 已补脚本稿：`docs/lab3/source/D3-8_演示视频脚本.md`
 - `D3-9` 答辩 PPT：
   - 暂未开始
 
 ## 当前判断
 
-当前实验三已经完成到“可运行 PoC + 最小 CI + 最小 Helm 骨架”的阶段，但还不属于最终提交态。
+当前实验三已经完成到“可运行 PoC + 最小 CI + 最小 Helm 骨架 + 最小可观测性基线 + 基线交付文档”的阶段，但还不属于最终提交态。
 
 后续优先级建议：
 
-1. 先补 `D3-6` 可观测性最小基线
-2. 再整理 `D3-3` 扫描材料与 `D3-4` 运行截图
-3. 最后补 `D3-7` 到 `D3-9`
+1. 先补 `D3-3/D3-4/D3-6` 的截图或终端留档
+2. 再把 `D3-7` 转成最终提交表格
+3. 最后补 `D3-9` 答辩 PPT

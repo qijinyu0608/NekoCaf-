@@ -69,6 +69,12 @@ make run-reservation
 make compose-up
 ```
 
+如果要一次性演示当前最小业务链路，可以直接运行：
+
+```bash
+make demo-flow
+```
+
 最小演示请求示例：
 
 ```bash

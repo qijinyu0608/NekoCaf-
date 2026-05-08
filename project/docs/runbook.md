@@ -33,6 +33,10 @@
 6. 本地容器化验证：
    - `make compose-up`
    - `make compose-down`
+7. 最小业务链路演示：
+   - `make demo-flow`
+8. 可观测性验证：
+   - `make smoke-observability`
 
 ## Phase B 最小演示链路
 
@@ -48,6 +52,20 @@
    - `GET /reservation/v1/members/member-1001/reservations`
 
 所有业务接口目前都要求请求头 `X-Tenant-Id: tenant-nekocafe`。
+
+## Phase D 当前验证点
+
+当前已经可以在本地完成下面三类验证：
+
+1. 功能验证：
+   - `make demo-flow`
+2. 可观测性验证：
+   - `curl http://127.0.0.1:8001/metrics`
+   - `curl http://127.0.0.1:8002/metrics`
+   - `curl http://127.0.0.1:9090/-/healthy`
+3. 配置验证：
+   - `.venv/bin/pytest`
+   - `docker compose config`
 
 ## 后续接管建议
 

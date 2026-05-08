@@ -31,6 +31,22 @@ def test_member_health_endpoint_exposes_service_metadata():
     }
 
 
+def test_member_service_exposes_trace_id_header_and_metrics_endpoint():
+    client = TestClient(member_app)
+
+    health_response = client.get(
+        "/healthz",
+        headers={"X-Trace-Id": "trace-member-001"},
+    )
+    metrics_response = client.get("/metrics")
+
+    assert health_response.status_code == 200
+    assert health_response.headers["X-Trace-Id"] == "trace-member-001"
+    assert metrics_response.status_code == 200
+    assert 'nekocafe_http_requests_total{method="GET",path="/healthz",service="member-service",status_code="200"}' in metrics_response.text
+    assert "nekocafe_http_request_duration_seconds" in metrics_response.text
+
+
 def test_member_service_exposes_seed_member_profile_and_points():
     client = TestClient(member_app)
     headers = {"X-Tenant-Id": "tenant-nekocafe"}
@@ -136,6 +152,20 @@ def test_reservation_service_supports_a_minimal_booking_flow():
             "partySize": 2,
         }
     ]
+
+
+def test_reservation_service_exposes_generated_trace_id_and_metrics_endpoint():
+    reset_demo_state()
+    client = TestClient(reservation_app)
+
+    health_response = client.get("/healthz")
+    metrics_response = client.get("/metrics")
+
+    assert health_response.status_code == 200
+    assert health_response.headers["X-Trace-Id"]
+    assert metrics_response.status_code == 200
+    assert 'nekocafe_http_requests_total{method="GET",path="/healthz",service="reservation-service",status_code="200"}' in metrics_response.text
+    assert "nekocafe_http_request_duration_seconds" in metrics_response.text
 
 
 def test_reservation_service_rejects_party_size_that_exceeds_slot_capacity():

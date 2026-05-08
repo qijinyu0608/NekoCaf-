@@ -4,6 +4,7 @@ from fastapi import FastAPI, Header, HTTPException, Query, Response, status
 from pydantic import BaseModel
 
 from libs.common.demo_data import MEMBERS, STORE_SLOTS
+from libs.common.observability import install_observability
 
 
 class CreateReservationRequest(BaseModel):
@@ -23,6 +24,7 @@ _INITIAL_STATE = {
 _STATE = deepcopy(_INITIAL_STATE)
 
 app = FastAPI(title="reservation-service")
+install_observability(app, service_name="reservation-service")
 
 
 def reset_demo_state() -> None:

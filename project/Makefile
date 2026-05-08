@@ -1,4 +1,4 @@
-.PHONY: test run-reservation run-member compose-up compose-down
+.PHONY: test run-reservation run-member compose-up compose-down smoke-observability demo-flow
 
 test:
 	.venv/bin/pytest
@@ -14,3 +14,9 @@ compose-up:
 
 compose-down:
 	docker compose down
+
+smoke-observability:
+	curl -s http://127.0.0.1:8001/metrics | head -n 20
+
+demo-flow:
+	bash ./scripts/demo_flow.sh

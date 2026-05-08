@@ -1,0 +1,11 @@
+groups:
+  - name: nekocafe-service-availability
+    rules:
+      - alert: NekoCafeServiceDown
+        expr: up{job=~"member-service|reservation-service"} == 0
+        for: 1m
+        labels:
+          severity: warning
+        annotations:
+          summary: "NekoCafe service target is down"
+          description: "Prometheus cannot scrape {{ $labels.job }} for more than 1 minute."

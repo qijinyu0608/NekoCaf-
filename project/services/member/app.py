@@ -1,9 +1,11 @@
 from fastapi import FastAPI, Header, HTTPException
 
 from libs.common.demo_data import MEMBERS, POINT_ACCOUNTS
+from libs.common.observability import install_observability
 
 
 app = FastAPI(title="member-service")
+install_observability(app, service_name="member-service")
 
 
 @app.get("/healthz")

@@ -1,0 +1,2 @@
+project-member:latest
+project-reservation:latest

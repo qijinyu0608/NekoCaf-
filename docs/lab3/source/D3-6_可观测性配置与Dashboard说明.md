@@ -52,6 +52,14 @@
 - `reservation-service` target 状态为 `up`
 - 两个服务的 `/metrics` 都已输出 `nekocafe_http_requests_total`
 
+对应留档文件：
+
+- `docs/lab3/exports/D3-6_prometheus_health.txt`
+- `docs/lab3/exports/D3-6_prometheus_targets.json`
+- `docs/lab3/exports/D3-6_member_metrics_head.txt`
+- `docs/lab3/exports/D3-6_reservation_metrics_head.txt`
+- `docs/lab3/exports/D3-6_demo_flow.txt`
+
 ## 5. 当前能说明什么
 
 当前这套最小基线已经可以说明：

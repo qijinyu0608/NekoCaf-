@@ -62,8 +62,11 @@ docker run --rm \
 
 1. 扫描工具镜像已拉取成功。
 2. 已定位并修正“扫描容器无法读取本地 Docker 镜像”的问题，修正方式是挂载 `/var/run/docker.sock`。
-3. 当前网络环境下，Trivy 漏洞数据库首次下载速度较慢，完整漏洞结果仍以本机实际完成扫描时的终端输出为准。
-4. 因此，本轮先将扫描方法、目标镜像和复核口径固定下来，作为实验三 `D3-3` 的基线版本。
+3. `project-member:latest` 与 `project-reservation:latest` 的 Trivy 扫描都已完成，当前 `HIGH/CRITICAL` 级别结果均为 `0`。
+4. 扫描留档已导出到：
+   - `docs/lab3/exports/D3-3_trivy_member.txt`
+   - `docs/lab3/exports/D3-3_trivy_reservation.txt`
+   - `docs/lab3/exports/D3-3_image_targets.txt`
 
 ## 6. 当前风险与后续优化
 

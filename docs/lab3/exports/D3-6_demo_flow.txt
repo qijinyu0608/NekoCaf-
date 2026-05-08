@@ -1,0 +1,19 @@
+bash ./scripts/demo_flow.sh
+
+[1/6] 查询会员详情
+{"memberId":"member-1001","tenantId":"tenant-nekocafe","nickname":"Momo","mobileMasked":"138****1024","loyaltyLevel":"GOLD","preferences":["window-seat","calm-cats"]}
+
+[2/6] 查询会员积分账户
+{"memberId":"member-1001","currentPoints":1280,"pendingPoints":80,"levelCode":"GOLD","benefitSummary":["priority-booking","birthday-coupon"]}
+
+[3/6] 查询门店可预约时段
+[{"slotId":"slot-20260520-1800","startAt":"2026-05-20T18:00:00+08:00","capacity":4,"theme":"sunset-window"},{"slotId":"slot-20260520-1930","startAt":"2026-05-20T19:30:00+08:00","capacity":2,"theme":"quiet-corner"}]
+
+[4/6] 创建预约
+{"reservationId":"res-0002","status":"BOOKED","tableCode":"T1","storeId":"store-shanghai-001","slotId":"slot-20260520-1800","partySize":2,"checkedInAt":null}
+
+[5/6] 查询预约详情
+{"reservationId":"res-0002","status":"BOOKED","tableCode":"T1","storeId":"store-shanghai-001","slotId":"slot-20260520-1800","partySize":2,"checkedInAt":null}
+
+[6/6] 查询会员预约列表
+[{"reservationId":"res-0001","status":"BOOKED","storeId":"store-shanghai-001","slotStartAt":"2026-05-20T18:00:00+08:00","partySize":2},{"reservationId":"res-0002","status":"BOOKED","storeId":"store-shanghai-001","slotStartAt":"2026-05-20T18:00:00+08:00","partySize":2}]

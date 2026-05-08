@@ -1,0 +1,20 @@
+# HELP nekocafe_http_requests_total Total number of HTTP requests handled by the service.
+# TYPE nekocafe_http_requests_total counter
+nekocafe_http_requests_total{method="GET",path="/healthz",service="reservation-service",status_code="200"} 186.0
+nekocafe_http_requests_total{method="GET",path="/metrics",service="reservation-service",status_code="200"} 129.0
+nekocafe_http_requests_total{method="GET",path="/reservation/v1/stores/store-shanghai-001/slots",service="reservation-service",status_code="200"} 1.0
+nekocafe_http_requests_total{method="POST",path="/reservation/v1/reservations",service="reservation-service",status_code="201"} 1.0
+nekocafe_http_requests_total{method="GET",path="/reservation/v1/reservations/res-0001",service="reservation-service",status_code="200"} 1.0
+nekocafe_http_requests_total{method="GET",path="/reservation/v1/members/member-1001/reservations",service="reservation-service",status_code="200"} 1.0
+# HELP nekocafe_http_requests_created Total number of HTTP requests handled by the service.
+# TYPE nekocafe_http_requests_created gauge
+nekocafe_http_requests_created{method="GET",path="/healthz",service="reservation-service",status_code="200"} 1.7782232688561897e+09
+nekocafe_http_requests_created{method="GET",path="/metrics",service="reservation-service",status_code="200"} 1.7782232697383752e+09
+nekocafe_http_requests_created{method="GET",path="/reservation/v1/stores/store-shanghai-001/slots",service="reservation-service",status_code="200"} 1.7782241192136862e+09
+nekocafe_http_requests_created{method="POST",path="/reservation/v1/reservations",service="reservation-service",status_code="201"} 1.7782241192447479e+09
+nekocafe_http_requests_created{method="GET",path="/reservation/v1/reservations/res-0001",service="reservation-service",status_code="200"} 1.7782241193509226e+09
+nekocafe_http_requests_created{method="GET",path="/reservation/v1/members/member-1001/reservations",service="reservation-service",status_code="200"} 1.7782241193709028e+09
+# HELP nekocafe_http_request_duration_seconds HTTP request duration in seconds.
+# TYPE nekocafe_http_request_duration_seconds histogram
+nekocafe_http_request_duration_seconds_bucket{le="0.005",method="GET",path="/healthz",service="reservation-service"} 166.0
+nekocafe_http_request_duration_seconds_bucket{le="0.01",method="GET",path="/healthz",service="reservation-service"} 181.0

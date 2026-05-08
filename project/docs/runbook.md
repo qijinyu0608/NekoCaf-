@@ -30,6 +30,9 @@
 5. 单服务启动：
    - `make run-member`
    - `make run-reservation`
+6. 本地容器化验证：
+   - `make compose-up`
+   - `make compose-down`
 
 ## Phase B 最小演示链路
 

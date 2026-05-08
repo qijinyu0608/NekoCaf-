@@ -63,6 +63,12 @@ make run-member
 make run-reservation
 ```
 
+如果要验证最小容器化基线，可以直接运行：
+
+```bash
+make compose-up
+```
+
 最小演示请求示例：
 
 ```bash

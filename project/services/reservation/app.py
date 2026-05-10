@@ -1,9 +1,15 @@
-from copy import deepcopy
-
 from fastapi import FastAPI, Header, HTTPException, Query, Response, status
+from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 
-from libs.common.demo_data import MEMBERS, STORE_SLOTS
+from libs.common.database import cancel_reservation_record
+from libs.common.database import create_reservation_record
+from libs.common.database import find_slot
+from libs.common.database import get_member
+from libs.common.database import get_reservation
+from libs.common.database import list_available_slots
+from libs.common.database import list_member_reservation_records
+from libs.common.database import reset_database
 from libs.common.observability import install_observability
 
 
@@ -16,26 +22,25 @@ class CreateReservationRequest(BaseModel):
     catInteractionMode: str | None = None
 
 
-_INITIAL_STATE = {
-    "reservations": {},
-    "next_reservation_id": 1,
-}
-
-_STATE = deepcopy(_INITIAL_STATE)
-
 app = FastAPI(title="reservation-service")
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["http://localhost:5173", "http://127.0.0.1:5173"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 install_observability(app, service_name="reservation-service")
 
 
 def reset_demo_state() -> None:
-    _STATE["reservations"] = {}
-    _STATE["next_reservation_id"] = 1
+    reset_database()
 
 
 def _find_slot(store_id: str, slot_id: str, tenant_id: str) -> dict[str, object]:
-    for slot in STORE_SLOTS.get(store_id, []):
-        if slot["slotId"] == slot_id and slot["tenantId"] == tenant_id:
-            return slot
+    slot = find_slot(tenant_id=tenant_id, store_id=store_id, slot_id=slot_id)
+    if slot:
+        return slot
     raise HTTPException(
         status_code=404,
         detail={
@@ -46,8 +51,8 @@ def _find_slot(store_id: str, slot_id: str, tenant_id: str) -> dict[str, object]
 
 
 def _ensure_member_exists(member_id: str, tenant_id: str) -> None:
-    member = MEMBERS.get(member_id)
-    if not member or member["tenantId"] != tenant_id:
+    member = get_member(member_id, tenant_id)
+    if not member:
         raise HTTPException(
             status_code=404,
             detail={
@@ -85,18 +90,12 @@ def get_store_slots(
     party_size: int = Query(alias="partySize"),
     x_tenant_id: str = Header(alias="X-Tenant-Id"),
 ) -> list[dict[str, object]]:
-    return [
-        {
-            "slotId": slot["slotId"],
-            "startAt": slot["startAt"],
-            "capacity": slot["capacity"],
-            "theme": slot["theme"],
-        }
-        for slot in STORE_SLOTS.get(store_id, [])
-        if slot["tenantId"] == x_tenant_id
-        and slot["startAt"].startswith(date)
-        and slot["capacity"] >= party_size
-    ]
+    return list_available_slots(
+        tenant_id=x_tenant_id,
+        store_id=store_id,
+        business_date=date,
+        party_size=party_size,
+    )
 
 
 @app.post("/reservation/v1/reservations")
@@ -117,21 +116,15 @@ def create_reservation(
             },
         )
 
-    reservation_id = f"res-{_STATE['next_reservation_id']:04d}"
-    _STATE["next_reservation_id"] += 1
-    reservation = {
-        "reservationId": reservation_id,
-        "tenantId": x_tenant_id,
-        "memberId": payload.memberId,
-        "status": "BOOKED",
-        "tableCode": "T1",
-        "storeId": payload.storeId,
-        "slotId": payload.slotId,
-        "slotStartAt": slot["startAt"],
-        "partySize": payload.partySize,
-        "checkedInAt": None,
-    }
-    _STATE["reservations"][reservation_id] = reservation
+    reservation = create_reservation_record(
+        tenant_id=x_tenant_id,
+        member_id=payload.memberId,
+        store_id=payload.storeId,
+        slot=slot,
+        party_size=payload.partySize,
+        preferred_theme=payload.preferredTheme,
+        cat_interaction_mode=payload.catInteractionMode,
+    )
     response.status_code = status.HTTP_201_CREATED
     return _build_reservation_detail(reservation)
 
@@ -141,8 +134,25 @@ def get_reservation_detail(
     reservation_id: str,
     x_tenant_id: str = Header(alias="X-Tenant-Id"),
 ) -> dict[str, object]:
-    reservation = _STATE["reservations"].get(reservation_id)
-    if not reservation or reservation["tenantId"] != x_tenant_id:
+    reservation = get_reservation(reservation_id, x_tenant_id)
+    if not reservation:
+        raise HTTPException(
+            status_code=404,
+            detail={
+                "code": "RESERVATION_NOT_FOUND",
+                "message": "Reservation does not exist in the current tenant.",
+            },
+        )
+    return _build_reservation_detail(reservation)
+
+
+@app.post("/reservation/v1/reservations/{reservation_id}/cancel")
+def cancel_reservation(
+    reservation_id: str,
+    x_tenant_id: str = Header(alias="X-Tenant-Id"),
+) -> dict[str, object]:
+    reservation = cancel_reservation_record(reservation_id, x_tenant_id)
+    if not reservation:
         raise HTTPException(
             status_code=404,
             detail={
@@ -162,21 +172,9 @@ def list_member_reservations(
 ) -> list[dict[str, object]]:
     _ensure_member_exists(member_id, x_tenant_id)
 
-    items = []
-    for reservation in _STATE["reservations"].values():
-        if reservation["tenantId"] != x_tenant_id or reservation["memberId"] != member_id:
-            continue
-        if status_filter and reservation["status"] != status_filter:
-            continue
-        if business_date and not str(reservation["slotStartAt"]).startswith(business_date):
-            continue
-        items.append(
-            {
-                "reservationId": reservation["reservationId"],
-                "status": reservation["status"],
-                "storeId": reservation["storeId"],
-                "slotStartAt": reservation["slotStartAt"],
-                "partySize": reservation["partySize"],
-            }
-        )
-    return items
+    return list_member_reservation_records(
+        tenant_id=x_tenant_id,
+        member_id=member_id,
+        status_filter=status_filter,
+        business_date=business_date,
+    )

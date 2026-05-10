@@ -10,9 +10,14 @@ __pycache__/
 *.pyc
 *.pyo
 *.log
+*.tsbuildinfo
 docs/lab1/.build/
 docs/**/exports/rendered/
 assets/**/.DS_Store
 project/.coverage
 project/htmlcov/
 project/.ruff_cache/
+project/data/
+project/frontend/dist/
+project/frontend/vite.config.d.ts
+project/frontend/vite.config.js

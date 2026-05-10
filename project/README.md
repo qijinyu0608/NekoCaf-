@@ -4,11 +4,17 @@
 
 ## 当前阶段
 
-当前工作区已经进入实验三开发阶段，但本轮开发遵循“文档和功能优先、外围能力后置”的节奏。
+当前工作区已经进入实验三开发阶段，本轮在双核心服务基础上补了顾客预约网站首轮可运行版本。整体设计保持平台视角：当前激活顾客预约台，同时为店员后台、猫咪健康、运营看板、推荐权益等后续模块保留清晰入口。
+
+产品口径统一维护在：
+
+- `../docs/product/nekocafe-platform-prd.md`
 
 本轮优先目标：
 
 - 先把 `reservation-service` 与 `member-service` 做成最小可运行闭环。
+- 先把 `frontend/` 顾客预约台做成可演示网页。
+- 使用 SQLite 作为本地 PoC 持久化数据库，长期数据库选型仍以实验二 ADR 为准。
 - 先保证本地开发、单测和最小运行说明清晰可复现。
 - 在功能稳定后，再继续补 Docker、Compose、CI/CD、Helm 与观测配置。
 
@@ -35,6 +41,8 @@
 
 - `services/`: 服务入口与各自实现
 - `libs/common/`: 跨服务共享常量与约定
+- `frontend/`: React/Vite 顾客预约网站，包含后续后台模块入口
+- `data/`: 本地 SQLite 数据库运行时目录，首次请求或测试时自动创建
 - `tests/`: 单元、集成、契约、E2E、性能测试占位
 - `infra/`: Docker、Helm、可观测性配置占位
 - `docs/`: ADR、运行手册、回滚手册
@@ -42,9 +50,14 @@
 ## 本地开发
 
 ```bash
-python3 -m venv .venv
+.venv/bin/python --version  # 推荐 Python 3.11+
+python3.12 -m venv .venv
 .venv/bin/pip install -e '.[dev]'
 .venv/bin/pytest
+
+cd frontend
+npm install
+npm run build
 ```
 
 ## 当前最小业务链路
@@ -61,6 +74,21 @@ python3 -m venv .venv
 ```bash
 make run-member
 make run-reservation
+make run-web
+```
+
+默认访问地址：
+
+- 顾客预约网站：`http://127.0.0.1:5173`
+- 会员服务：`http://127.0.0.1:8002`
+- 预约服务：`http://127.0.0.1:8001`
+
+前端默认请求 `127.0.0.1:8001/8002`，如需改地址可设置：
+
+```bash
+VITE_MEMBER_API_BASE=http://127.0.0.1:8002 \
+VITE_RESERVATION_API_BASE=http://127.0.0.1:8001 \
+npm run dev
 ```
 
 如果要验证最小容器化基线，可以直接运行：
@@ -107,6 +135,8 @@ curl -X POST \
 
 - 两个核心服务可以本地启动。
 - 至少有一条最小业务链路可请求、可测试、可演示。
+- 顾客端网页可完成“会员状态 -> 查时段 -> 创建预约 -> 查看/取消预约”。
+- 页面信息架构预留店员后台、猫咪健康、运营看板和推荐权益模块。
 - README 能指导同学完成环境安装、测试和最小启动。
 - `docker compose up` 和 CI 骨架在后续阶段逐步补齐，而不是一开始全部压上。
 

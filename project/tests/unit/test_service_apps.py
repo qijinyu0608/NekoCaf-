@@ -150,6 +150,7 @@ def test_reservation_service_supports_a_minimal_booking_flow():
             "storeId": "store-shanghai-001",
             "slotStartAt": "2026-05-20T18:00:00+08:00",
             "partySize": 2,
+            "tableCode": "T1",
         }
     ]
 

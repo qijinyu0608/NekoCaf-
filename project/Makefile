@@ -1,7 +1,13 @@
-.PHONY: test run-reservation run-member compose-up compose-down smoke-observability demo-flow
+.PHONY: test run-reservation run-member run-web build-web compose-up compose-down smoke-observability demo-flow
 
 test:
 	.venv/bin/pytest
+
+build-web:
+	cd frontend && npm run build
+
+run-web:
+	cd frontend && npm run dev
 
 run-reservation:
 	.venv/bin/uvicorn services.reservation.app:app --reload --port 8001

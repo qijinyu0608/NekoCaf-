@@ -47,6 +47,35 @@
         </article>
       </section>
 
+      <section class="summary-strip">
+        <article class="feature-card summary-card summary-card-wide">
+          <div class="section-label">下一次到店</div>
+          {% if reservationSummary.nextVisit %}
+            <strong>{{ reservationSummary.nextVisit.slotStartAt[5:16] }}</strong>
+            <p>{{ reservationSummary.nextVisit.zoneName }} · {{ reservationSummary.nextVisit.interactionLabel }}</p>
+            <div class="tag-row">
+              <span>{{ reservationSummary.nextVisit.partySize }}人</span>
+              <span>{{ reservationSummary.nextVisit.statusLabel }}</span>
+            </div>
+          {% else %}
+            <strong>还没有待到店预约</strong>
+            <p>回到首页选一个时段，就能把下一次见面的节奏安排好。</p>
+          {% endif %}
+        </article>
+
+        <article class="feature-card summary-card">
+          <div class="section-label">待到店预约</div>
+          <strong class="summary-number">{{ reservationSummary.bookedCount }}</strong>
+          <p>本轮还未核销的预约数量</p>
+        </article>
+
+        <article class="feature-card summary-card">
+          <div class="section-label">已到店记录</div>
+          <strong class="summary-number">{{ reservationSummary.checkedInCount }}</strong>
+          <p>已完成签到的历史到店</p>
+        </article>
+      </section>
+
       <section class="feature-card reservation-board">
         <div class="section-label">我的预约</div>
         {% if reservations %}
@@ -59,7 +88,12 @@
                 </div>
                 <div class="status-group">
                   <span class="tag">{{ reservation.partySize }}人</span>
-                  <span class="tag">{{ reservation.status }}</span>
+                  <span class="tag">{{ reservation.statusLabel }}</span>
+                  {% if reservation.status == "BOOKED" %}
+                    <form action="/member/reservations/{{ reservation.reservationId }}/cancel" method="post">
+                      <button class="text-action inline-text-action" type="submit">取消预约</button>
+                    </form>
+                  {% endif %}
                 </div>
               </article>
             {% endfor %}

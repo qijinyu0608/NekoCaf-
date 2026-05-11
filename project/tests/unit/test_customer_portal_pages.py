@@ -43,4 +43,29 @@ def test_customer_detail_pages_render_real_data_after_customer_login():
 
     assert recommendations_response.status_code == 200
     assert "静安店" in recommendations_response.text
+    assert "浦东店" in recommendations_response.text
     assert "采光充足" in recommendations_response.text
+    assert "/?storeId=store-shanghai-jingan" in recommendations_response.text
+
+
+def test_homepage_accepts_store_query_to_focus_recommended_store():
+    reset_demo_state()
+    client = TestClient(app)
+
+    response = client.get("/?storeId=store-shanghai-jingan")
+
+    assert response.status_code == 200
+    assert 'option value="store-shanghai-jingan" selected' in response.text
+    assert "静安店 · 静安" in response.text
+
+
+def test_homepage_store_query_switches_matched_recommendation_context():
+    reset_demo_state()
+    client = TestClient(app)
+
+    response = client.get("/?storeId=store-shanghai-pudong")
+
+    assert response.status_code == 200
+    assert 'option value="store-shanghai-pudong" selected' in response.text
+    assert "浦东店 · 浦东" in response.text
+    assert "更适合偏松弛、带一点互动感的晚间到店节奏" in response.text

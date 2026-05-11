@@ -19,7 +19,11 @@
               <div class="visual-room"></div>
               <div class="visual-cat"></div>
             </div>
-            <div>
+            <div class="recommendation-copy">
+              <div class="recommendation-meta">
+                <span class="section-label">推荐门店</span>
+                <strong>{{ recommendation.storeName }} · {{ recommendation.district }}</strong>
+              </div>
               <p>{{ recommendation.headline }}</p>
               <strong>{{ recommendation.summary }}</strong>
               <p>{{ recommendation.detail }}</p>
@@ -27,6 +31,10 @@
                 {% for item in recommendation.reasonTags %}
                   <span>{{ item }}</span>
                 {% endfor %}
+              </div>
+              <div class="recommendation-actions">
+                <a class="primary-cta inline-button" href="/?storeId={{ recommendation.storeId }}">按推荐门店预约</a>
+                <a class="inline-link" href="/member">回到会员中心</a>
               </div>
             </div>
           </article>

@@ -77,6 +77,20 @@
             {% endfor %}
           </div>
         </article>
+        {% if selectedRecommendation %}
+          <article class="booking-context-card recommendation-context-card">
+            <div class="section-label">匹配推荐</div>
+            <p id="booking-recommendation-headline">{{ selectedRecommendation.headline }}</p>
+            <strong id="booking-recommendation-summary">{{ selectedRecommendation.summary }}</strong>
+            <p id="booking-recommendation-detail">{{ selectedRecommendation.detail }}</p>
+            <div class="tag-row" id="booking-recommendation-tags">
+              {% for tag in selectedRecommendation.reasonTags %}
+                <span>{{ tag }}</span>
+              {% endfor %}
+            </div>
+            <a class="inline-link" id="booking-recommendation-link" href="/?storeId={{ selectedRecommendation.storeId }}">按这家门店预约</a>
+          </article>
+        {% endif %}
         <form class="booking-form" id="booking-form">
           <label>
             选择城市
@@ -175,10 +189,10 @@
           <div class="visual-cat"></div>
         </div>
         <div class="recommendation-copy">
-          <p>{{ recommendations[0].headline }}</p>
-          <strong>{{ recommendations[0].summary }}</strong>
+          <p>{{ selectedRecommendation.headline }}</p>
+          <strong>{{ selectedRecommendation.summary }}</strong>
           <div class="tag-row">
-            {% for tag in recommendations[0].reasonTags %}
+            {% for tag in selectedRecommendation.reasonTags %}
               <span>{{ tag }}</span>
             {% endfor %}
           </div>

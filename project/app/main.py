@@ -1,7 +1,7 @@
 from pathlib import Path
 
 from fastapi import Depends, FastAPI, HTTPException, Query, Request, Response, status
-from fastapi.responses import HTMLResponse
+from fastapi.responses import HTMLResponse, RedirectResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 from pydantic import BaseModel
@@ -53,9 +53,15 @@ def healthz() -> dict[str, str]:
     }
 
 
-def _preview_context() -> dict[str, object]:
+def _preview_context(store_id: str | None = None) -> dict[str, object]:
     stores = list_stores()
-    default_store_id = stores[0]["storeId"]
+    store_ids = {store["storeId"] for store in stores}
+    default_store_id = store_id if store_id in store_ids else stores[0]["storeId"]
+    recommendations = list_member_recommendations(DEFAULT_MEMBER_ID)
+    selected_recommendation = next(
+        (recommendation for recommendation in recommendations if recommendation["storeId"] == default_store_id),
+        recommendations[0] if recommendations else None,
+    )
     return {
         "stores": stores,
         "defaultStoreId": default_store_id,
@@ -64,7 +70,8 @@ def _preview_context() -> dict[str, object]:
         "member": get_member(DEFAULT_MEMBER_ID),
         "points": get_point_account(DEFAULT_MEMBER_ID),
         "cats": list_member_cats(DEFAULT_MEMBER_ID),
-        "recommendations": list_member_recommendations(DEFAULT_MEMBER_ID),
+        "recommendations": recommendations,
+        "selectedRecommendation": selected_recommendation,
         "slots": list_available_slots(default_store_id, DEFAULT_DATE, 2),
     }
 
@@ -78,9 +85,34 @@ def _base_template_context(request: Request, actor=Depends(get_optional_session_
     }
 
 
+def _status_label(status_value: str) -> str:
+    return {
+        "BOOKED": "已预约",
+        "CHECKED_IN": "已到店",
+        "CANCELLED": "已取消",
+    }.get(status_value, status_value)
+
+
+def _member_reservation_summary(reservations: list[dict[str, object]]) -> dict[str, object]:
+    booked = [reservation for reservation in reservations if reservation["status"] == "BOOKED"]
+    checked_in = [reservation for reservation in reservations if reservation["status"] == "CHECKED_IN"]
+    cancelled = [reservation for reservation in reservations if reservation["status"] == "CANCELLED"]
+    next_visit = booked[0] if booked else None
+    return {
+        "nextVisit": next_visit,
+        "bookedCount": len(booked),
+        "checkedInCount": len(checked_in),
+        "cancelledCount": len(cancelled),
+    }
+
+
 @app.get("/", response_class=HTMLResponse)
-def home(request: Request, actor=Depends(get_optional_session_actor)) -> HTMLResponse:
-    preview = _preview_context()
+def home(
+    request: Request,
+    store_id: str | None = Query(default=None, alias="storeId"),
+    actor=Depends(get_optional_session_actor),
+) -> HTMLResponse:
+    preview = _preview_context(store_id)
     latest_reservation = None
     if actor and actor.role == "customer":
         reservations = list_member_reservations(actor.member_id or DEFAULT_MEMBER_ID)
@@ -91,6 +123,7 @@ def home(request: Request, actor=Depends(get_optional_session_actor)) -> HTMLRes
         "defaultDate": preview["defaultDate"],
         "defaultPartySize": preview["defaultPartySize"],
         "stores": preview["stores"],
+        "recommendations": preview["recommendations"],
     }
     return templates.TemplateResponse(
         request,
@@ -118,8 +151,16 @@ def member_center(request: Request, actor=Depends(get_optional_session_actor)) -
                 "member": None,
                 "points": None,
                 "reservations": [],
+                "reservationSummary": None,
             },
         )
+    reservations = [
+        {
+            **reservation,
+            "statusLabel": _status_label(str(reservation["status"])),
+        }
+        for reservation in list_member_reservations(actor.member_id or DEFAULT_MEMBER_ID)
+    ]
     return templates.TemplateResponse(
         request,
         "member.html",
@@ -128,7 +169,8 @@ def member_center(request: Request, actor=Depends(get_optional_session_actor)) -
             "page": "member",
             "member": get_member(actor.member_id or DEFAULT_MEMBER_ID),
             "points": get_point_account(actor.member_id or DEFAULT_MEMBER_ID),
-            "reservations": list_member_reservations(actor.member_id or DEFAULT_MEMBER_ID),
+            "reservations": reservations,
+            "reservationSummary": _member_reservation_summary(reservations),
         },
     )
 
@@ -165,6 +207,33 @@ def recommendations_page(request: Request, actor=Depends(get_optional_session_ac
             "recommendations": recommendations,
         },
     )
+
+
+@app.post("/member/reservations/{reservation_id}/cancel")
+def cancel_member_reservation_page(
+    reservation_id: str,
+    actor=Depends(get_required_session_actor),
+) -> RedirectResponse:
+    ensure_role(actor, "customer")
+    try:
+        cancel_reservation(actor.member_id or DEFAULT_MEMBER_ID, reservation_id)
+    except KeyError as exc:
+        raise HTTPException(
+            status_code=404,
+            detail={
+                "code": "RESERVATION_NOT_FOUND",
+                "message": "Reservation does not exist.",
+            },
+        ) from exc
+    except PermissionError as exc:
+        raise HTTPException(
+            status_code=403,
+            detail={
+                "code": "FORBIDDEN",
+                "message": "Current session does not have access to this resource.",
+            },
+        ) from exc
+    return RedirectResponse(url="/member", status_code=status.HTTP_303_SEE_OTHER)
 
 
 @app.get("/staff", response_class=HTMLResponse)

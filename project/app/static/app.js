@@ -80,10 +80,16 @@ function bindBookingForm() {
   const bookingStoreName = document.querySelector("#booking-store-name");
   const bookingStoreSummary = document.querySelector("#booking-store-summary");
   const bookingStoreTags = document.querySelector("#booking-store-tags");
+  const recommendationHeadline = document.querySelector("#booking-recommendation-headline");
+  const recommendationSummary = document.querySelector("#booking-recommendation-summary");
+  const recommendationDetail = document.querySelector("#booking-recommendation-detail");
+  const recommendationTags = document.querySelector("#booking-recommendation-tags");
+  const recommendationLink = document.querySelector("#booking-recommendation-link");
 
   let selectedSlotId = slotList?.querySelector(".slot-pill.selected")?.getAttribute("data-slot-id") || "";
   const bootstrap = window.NEKOCAFE_BOOTSTRAP || {};
   const storeMap = new Map((bootstrap.stores || []).map((store) => [store.storeId, store]));
+  const recommendationMap = new Map((bootstrap.recommendations || []).map((recommendation) => [recommendation.storeId, recommendation]));
 
   function renderStoreHighlight(storeId) {
     const store = storeMap.get(storeId);
@@ -105,6 +111,27 @@ function bindBookingForm() {
         tagsNode.appendChild(node);
       });
     });
+
+    const recommendation = recommendationMap.get(storeId);
+    if (
+      recommendation &&
+      recommendationHeadline &&
+      recommendationSummary &&
+      recommendationDetail &&
+      recommendationTags &&
+      recommendationLink
+    ) {
+      recommendationHeadline.textContent = recommendation.headline;
+      recommendationSummary.textContent = recommendation.summary;
+      recommendationDetail.textContent = recommendation.detail;
+      recommendationTags.innerHTML = "";
+      recommendation.reasonTags.forEach((tag) => {
+        const node = document.createElement("span");
+        node.textContent = tag;
+        recommendationTags.appendChild(node);
+      });
+      recommendationLink.setAttribute("href", `/?storeId=${recommendation.storeId}`);
+    }
   }
 
   function renderSlots(slots) {

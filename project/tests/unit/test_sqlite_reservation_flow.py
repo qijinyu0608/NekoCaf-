@@ -80,3 +80,48 @@ def test_customer_can_cancel_and_filter_my_reservations():
     assert booked_response.json() == []
     assert cancelled_response.status_code == 200
     assert cancelled_response.json()[0]["status"] == "CANCELLED"
+
+
+def test_member_center_cancel_action_redirects_and_updates_status():
+    reset_demo_state()
+    client = TestClient(app)
+    client.post("/api/session/login", json={"persona": "customer"})
+    create_response = client.post(
+        "/api/reservations",
+        json={
+            "storeId": "store-shanghai-jingan",
+            "slotId": "slot-jingan-20260520-1800",
+            "partySize": 2,
+        },
+    )
+    reservation_id = create_response.json()["reservationId"]
+
+    response = client.post(
+        f"/member/reservations/{reservation_id}/cancel",
+        follow_redirects=True,
+    )
+
+    assert response.status_code == 200
+    assert "已取消" in response.text
+    assert "取消预约" not in response.text
+
+
+def test_member_center_shows_next_visit_and_reservation_summary():
+    reset_demo_state()
+    client = TestClient(app)
+    client.post("/api/session/login", json={"persona": "customer"})
+    client.post(
+        "/api/reservations",
+        json={
+            "storeId": "store-shanghai-jingan",
+            "slotId": "slot-jingan-20260520-1800",
+            "partySize": 2,
+        },
+    )
+
+    response = client.get("/member")
+
+    assert response.status_code == 200
+    assert "下一次到店" in response.text
+    assert "待到店预约" in response.text
+    assert "已到店记录" in response.text

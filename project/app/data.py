@@ -268,21 +268,32 @@ def _seed_database(connection: sqlite3.Connection) -> None:
             "擅长陪伴与治愈",
         ),
     )
-    connection.execute(
+    connection.executemany(
         """
         INSERT OR IGNORE INTO recommendations (
             recommendation_id, member_id, store_id, headline, summary, detail, reason_tags_json
         ) VALUES (?, ?, ?, ?, ?, ?, ?)
         """,
-        (
-            "rec-001",
-            DEFAULT_MEMBER_ID,
-            "store-shanghai-jingan",
-            "你可能会喜欢",
-            "NekoCafé 静安店",
-            "与布丁偏好的安静阳光区更匹配，晚间到店动线也更从容。",
-            json.dumps(["采光充足", "安静畅适", "人气推荐"]),
-        ),
+        [
+            (
+                "rec-001",
+                DEFAULT_MEMBER_ID,
+                "store-shanghai-jingan",
+                "你可能会喜欢",
+                "NekoCafé 静安店",
+                "与布丁偏好的安静阳光区更匹配，晚间到店动线也更从容。",
+                json.dumps(["采光充足", "安静畅适", "人气推荐"]),
+            ),
+            (
+                "rec-002",
+                DEFAULT_MEMBER_ID,
+                "store-shanghai-pudong",
+                "如果你想把到店变得更松弛",
+                "NekoCafé 浦东店",
+                "更适合偏松弛、带一点互动感的晚间到店节奏，适合把用餐和轻社交放在同一场体验里。",
+                json.dumps(["江景氛围", "轻社交", "互动更自然"]),
+            ),
+        ],
     )
 
 

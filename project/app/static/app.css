@@ -458,7 +458,28 @@ select {
 }
 
 @media (max-width: 1080px) {
-  .site-header,
+  .site-header {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    grid-template-areas:
+      "brand user"
+      "nav nav";
+    align-items: center;
+  }
+
+  .brand-text {
+    grid-area: brand;
+  }
+
+  .top-nav {
+    grid-area: nav;
+  }
+
+  .user-area {
+    grid-area: user;
+    justify-self: end;
+  }
+
   .detail-header {
     flex-direction: column;
     align-items: stretch;
@@ -468,6 +489,19 @@ select {
   .card-grid,
   .detail-grid {
     grid-template-columns: 1fr;
+  }
+
+  .booking-card {
+    order: 1;
+  }
+
+  .hero-copy {
+    order: 2;
+    max-width: none;
+  }
+
+  .hero-copy p {
+    max-width: 32ch;
   }
 
   .hero-note-grid {
@@ -480,6 +514,10 @@ select {
     padding: 18px 20px;
   }
 
+  .brand-title {
+    font-size: 28px;
+  }
+
   .page {
     width: min(100% - 24px, 1280px);
     padding-top: 20px;
@@ -487,6 +525,25 @@ select {
 
   .hero {
     padding: 24px;
+  }
+
+  .hero-copy h1 {
+    font-size: clamp(42px, 12vw, 56px);
+  }
+
+  .top-nav {
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    gap: 18px;
+    padding-bottom: 4px;
+  }
+
+  .top-nav::-webkit-scrollbar {
+    display: none;
+  }
+
+  .user-area {
+    justify-content: flex-end;
   }
 
   .split-grid,

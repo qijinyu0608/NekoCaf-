@@ -315,6 +315,28 @@ def get_reservation(reservation_id: str, tenant_id: str) -> dict[str, Any] | Non
     return _reservation_detail_from_row(row)
 
 
+def get_reservation_scope(reservation_id: str, tenant_id: str) -> dict[str, Any] | None:
+    initialize_database()
+    with connect() as connection:
+        row = connection.execute(
+            """
+            SELECT reservation_id, tenant_id, member_id, store_id, status
+            FROM reservations
+            WHERE reservation_id = ? AND tenant_id = ?
+            """,
+            (reservation_id, tenant_id),
+        ).fetchone()
+    if row is None:
+        return None
+    return {
+        "reservationId": row["reservation_id"],
+        "tenantId": row["tenant_id"],
+        "memberId": row["member_id"],
+        "storeId": row["store_id"],
+        "status": row["status"],
+    }
+
+
 def list_member_reservation_records(
     *,
     tenant_id: str,
@@ -347,6 +369,44 @@ def list_member_reservation_records(
             "slotStartAt": row["slot_start_at"],
             "partySize": row["party_size"],
             "tableCode": row["table_code"],
+        }
+        for row in rows
+    ]
+
+
+def list_current_member_reservation_records(
+    *,
+    tenant_id: str,
+    member_id: str,
+    status_filter: str | None = None,
+    business_date: str | None = None,
+) -> list[dict[str, Any]]:
+    initialize_database()
+    query = """
+        SELECT r.reservation_id, r.status, r.store_id, r.slot_start_at, r.party_size, s.theme
+        FROM reservations r
+        JOIN store_slots s ON s.slot_id = r.slot_id
+        WHERE r.tenant_id = ? AND r.member_id = ?
+    """
+    params: list[Any] = [tenant_id, member_id]
+    if status_filter:
+        query += " AND r.status = ?"
+        params.append(status_filter)
+    if business_date:
+        query += " AND r.slot_start_at LIKE ?"
+        params.append(f"{business_date}%")
+    query += " ORDER BY r.slot_start_at"
+
+    with connect() as connection:
+        rows = connection.execute(query, params).fetchall()
+    return [
+        {
+            "reservationId": row["reservation_id"],
+            "status": row["status"],
+            "storeId": row["store_id"],
+            "slotStartAt": row["slot_start_at"],
+            "partySize": row["party_size"],
+            "theme": row["theme"],
         }
         for row in rows
     ]

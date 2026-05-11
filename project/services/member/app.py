@@ -1,8 +1,16 @@
-from fastapi import FastAPI, Header, HTTPException
+from fastapi import Depends, FastAPI, Header, HTTPException, Response, status
 from fastapi.middleware.cors import CORSMiddleware
+from pydantic import BaseModel
 
+from libs.common.auth import create_session
+from libs.common.auth import ensure_role
+from libs.common.auth import get_required_session_actor
 from libs.common.database import get_member, get_point_account
 from libs.common.observability import install_observability
+
+
+class SessionLoginRequest(BaseModel):
+    persona: str
 
 
 app = FastAPI(title="member-service")
@@ -52,6 +60,45 @@ def get_member_points(
     x_tenant_id: str = Header(alias="X-Tenant-Id"),
 ) -> dict[str, object]:
     _get_member_or_404(member_id, x_tenant_id)
+    point_account = get_point_account(member_id)
+    if not point_account:
+        raise HTTPException(
+            status_code=404,
+            detail={
+                "code": "POINT_ACCOUNT_NOT_FOUND",
+                "message": "Point account does not exist for this member.",
+            },
+        )
+    return point_account
+
+
+@app.post("/member/v1/session/login")
+def login_session(payload: SessionLoginRequest) -> dict[str, object]:
+    return create_session(payload.persona)
+
+
+@app.get("/member/v1/session/me")
+def get_session_me(actor=Depends(get_required_session_actor)) -> dict[str, object]:
+    return actor.to_session_payload()
+
+
+@app.post("/member/v1/session/logout", status_code=status.HTTP_204_NO_CONTENT)
+def logout_session(response: Response) -> Response:
+    response.status_code = status.HTTP_204_NO_CONTENT
+    return response
+
+
+@app.get("/member/v1/me")
+def get_current_member_detail(actor=Depends(get_required_session_actor)) -> dict[str, object]:
+    ensure_role(actor, "customer")
+    return _get_member_or_404(actor.member_id or actor.actor_id, actor.tenant_id)
+
+
+@app.get("/member/v1/me/points")
+def get_current_member_points(actor=Depends(get_required_session_actor)) -> dict[str, object]:
+    ensure_role(actor, "customer")
+    member_id = actor.member_id or actor.actor_id
+    _get_member_or_404(member_id, actor.tenant_id)
     point_account = get_point_account(member_id)
     if not point_account:
         raise HTTPException(

@@ -1,1 +1,1 @@
-"""Common constants and helpers shared by multiple services."""
+"""Common constants and helpers shared by project modules."""

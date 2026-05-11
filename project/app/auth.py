@@ -1,8 +1,10 @@
 from dataclasses import dataclass
 
-from fastapi import Header, HTTPException
+from fastapi import Cookie, HTTPException
 
-from libs.common.database import DEFAULT_TENANT_ID
+
+COOKIE_NAME = "nekocafe_session"
+DEFAULT_TENANT_ID = "tenant-nekocafe"
 
 
 @dataclass(frozen=True)
@@ -39,7 +41,7 @@ PERSONAS = {
         tenant_id=DEFAULT_TENANT_ID,
         display_name="Aki",
         role="staff",
-        store_id="store-shanghai-001",
+        store_id="store-shanghai-jingan",
     ),
 }
 
@@ -65,53 +67,34 @@ def create_session(persona: str) -> dict[str, object]:
                 "message": "Requested persona does not exist in the mock session catalog.",
             },
         )
-    return {
-        "sessionToken": token,
-        **actor.to_session_payload(),
-    }
+    return {"sessionToken": token, **actor.to_session_payload()}
 
 
-def parse_session_token(authorization: str | None) -> SessionActor | None:
-    if not authorization:
-        return None
-    scheme, _, token = authorization.partition(" ")
-    if scheme.lower() != "bearer" or not token:
+def parse_session_token(token: str | None) -> SessionActor | None:
+    if not token:
         return None
     return SESSION_TOKENS.get(token)
 
 
+def get_optional_session_actor(
+    session_token: str | None = Cookie(default=None, alias=COOKIE_NAME),
+) -> SessionActor | None:
+    return parse_session_token(session_token)
+
+
 def get_required_session_actor(
-    authorization: str | None = Header(default=None, alias="Authorization"),
+    session_token: str | None = Cookie(default=None, alias=COOKIE_NAME),
 ) -> SessionActor:
-    actor = parse_session_token(authorization)
+    actor = parse_session_token(session_token)
     if actor is None:
         raise HTTPException(
             status_code=401,
             detail={
                 "code": "SESSION_REQUIRED",
-                "message": "A valid session token is required for this resource.",
+                "message": "A valid session is required for this resource.",
             },
         )
     return actor
-
-
-def resolve_tenant_id(
-    *,
-    authorization: str | None,
-    x_tenant_id: str | None,
-) -> str:
-    actor = parse_session_token(authorization)
-    if actor is not None:
-        return actor.tenant_id
-    if x_tenant_id:
-        return x_tenant_id
-    raise HTTPException(
-        status_code=401,
-        detail={
-            "code": "TENANT_CONTEXT_REQUIRED",
-            "message": "Provide a session token or tenant header for this resource.",
-        },
-    )
 
 
 def ensure_role(actor: SessionActor, *roles: str) -> None:

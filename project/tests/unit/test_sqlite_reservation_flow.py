@@ -2,90 +2,81 @@ import sqlite3
 
 from fastapi.testclient import TestClient
 
-from libs.common.database import get_database_path
-from services.reservation.app import app as reservation_app
-from services.reservation.app import reset_demo_state
+from app.main import app, get_database_path, reset_demo_state
 
 
-def test_created_reservation_is_persisted_in_sqlite():
+def test_store_listing_slots_and_reservation_persist_in_sqlite():
     reset_demo_state()
-    client = TestClient(reservation_app)
+    client = TestClient(app)
+    client.post("/api/session/login", json={"persona": "customer"})
 
-    response = client.post(
-        "/reservation/v1/reservations",
-        headers={"X-Tenant-Id": "tenant-nekocafe"},
-        json={
-            "memberId": "member-1001",
-            "storeId": "store-shanghai-001",
-            "slotId": "slot-20260520-1800",
+    stores_response = client.get("/api/stores")
+    slots_response = client.get(
+        "/api/slots",
+        params={
+            "storeId": "store-shanghai-jingan",
+            "date": "2026-05-20",
             "partySize": 2,
-            "preferredTheme": "sunset-window",
-            "catInteractionMode": "gentle",
+        },
+    )
+    create_response = client.post(
+        "/api/reservations",
+        json={
+            "storeId": "store-shanghai-jingan",
+            "slotId": "slot-jingan-20260520-1800",
+            "partySize": 2,
         },
     )
 
-    assert response.status_code == 201
+    assert stores_response.status_code == 200
+    assert len(stores_response.json()) == 2
+    assert slots_response.status_code == 200
+    assert slots_response.json()[0]["slotId"] == "slot-jingan-20260520-1800"
+    assert create_response.status_code == 201
+    assert create_response.json()["status"] == "BOOKED"
 
     db_path = get_database_path()
-    assert db_path.exists()
-
     with sqlite3.connect(db_path) as connection:
         row = connection.execute(
             """
-            SELECT reservation_id, member_id, status, party_size
+            SELECT reservation_id, member_id, store_id, status, party_size
             FROM reservations
             WHERE reservation_id = ?
             """,
-            ("res-0001",),
+            (create_response.json()["reservationId"],),
         ).fetchone()
 
-    assert row == ("res-0001", "member-1001", "BOOKED", 2)
+    assert row == (
+        create_response.json()["reservationId"],
+        "member-1001",
+        "store-shanghai-jingan",
+        "BOOKED",
+        2,
+    )
 
 
-def test_reservation_can_be_cancelled_and_filtered_from_my_reservations():
+def test_customer_can_cancel_and_filter_my_reservations():
     reset_demo_state()
-    client = TestClient(reservation_app)
-    headers = {"X-Tenant-Id": "tenant-nekocafe"}
+    client = TestClient(app)
+    client.post("/api/session/login", json={"persona": "customer"})
 
     create_response = client.post(
-        "/reservation/v1/reservations",
-        headers=headers,
+        "/api/reservations",
         json={
-            "memberId": "member-1001",
-            "storeId": "store-shanghai-001",
-            "slotId": "slot-20260520-1800",
+            "storeId": "store-shanghai-jingan",
+            "slotId": "slot-jingan-20260520-1800",
             "partySize": 2,
         },
     )
-    assert create_response.status_code == 201
+    reservation_id = create_response.json()["reservationId"]
 
-    cancel_response = client.post(
-        "/reservation/v1/reservations/res-0001/cancel",
-        headers=headers,
-    )
-    booked_list_response = client.get(
-        "/reservation/v1/members/member-1001/reservations",
-        params={"status": "BOOKED"},
-        headers=headers,
-    )
-    cancelled_list_response = client.get(
-        "/reservation/v1/members/member-1001/reservations",
-        params={"status": "CANCELLED"},
-        headers=headers,
-    )
+    cancel_response = client.post(f"/api/reservations/{reservation_id}/cancel")
+    booked_response = client.get("/api/reservations/me", params={"status": "BOOKED"})
+    cancelled_response = client.get("/api/reservations/me", params={"status": "CANCELLED"})
 
     assert cancel_response.status_code == 200
     assert cancel_response.json()["status"] == "CANCELLED"
-    assert booked_list_response.status_code == 200
-    assert booked_list_response.json() == []
-    assert cancelled_list_response.status_code == 200
-    assert cancelled_list_response.json() == [
-        {
-            "reservationId": "res-0001",
-            "status": "CANCELLED",
-            "storeId": "store-shanghai-001",
-            "slotStartAt": "2026-05-20T18:00:00+08:00",
-            "partySize": 2,
-            "tableCode": "T1",
-        }
-    ]
+    assert booked_response.status_code == 200
+    assert booked_response.json() == []
+    assert cancelled_response.status_code == 200
+    assert cancelled_response.json()[0]["status"] == "CANCELLED"

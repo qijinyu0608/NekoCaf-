@@ -1,0 +1,79 @@
+{% extends "base.html" %}
+
+{% block title %}NekoCafé | 会员中心{% endblock %}
+
+{% block content %}
+  <main class="page detail-page">
+    <section class="detail-header">
+      <div>
+        <span class="eyebrow">会员中心</span>
+        <h1>会员权益与预约记录</h1>
+      </div>
+      {% if member %}
+        <div class="profile-pill">
+          <span class="user-avatar">{{ member.nickname[:1] }}</span>
+          <div>
+            <strong>{{ member.nickname }}</strong>
+            <p>{{ member.mobileMasked }}</p>
+          </div>
+        </div>
+      {% endif %}
+    </section>
+
+    {% if member %}
+      <section class="detail-grid">
+        <article class="feature-card">
+          <div class="section-label">会员信息</div>
+          <strong>{{ member.nickname }}</strong>
+          <p>{{ member.mobileMasked }}</p>
+          <p>{{ member.loyaltyLevel }} 会员</p>
+          <div class="tag-row">
+            {% for item in member.preferences %}
+              <span>{{ item }}</span>
+            {% endfor %}
+          </div>
+        </article>
+
+        <article class="feature-card">
+          <div class="section-label">积分与权益</div>
+          <strong class="metric-number">{{ points.currentPoints }}</strong>
+          <p>待入账 {{ points.pendingPoints }}</p>
+          <p>可用优惠券 {{ points.couponCount }} 张</p>
+          <div class="tag-row">
+            {% for item in points.benefitSummary %}
+              <span>{{ item }}</span>
+            {% endfor %}
+          </div>
+        </article>
+      </section>
+
+      <section class="feature-card reservation-board">
+        <div class="section-label">我的预约</div>
+        {% if reservations %}
+          <div class="list-stack">
+            {% for reservation in reservations %}
+              <article class="reservation-row">
+                <div>
+                  <strong>{{ reservation.slotStartAt[5:16] }}</strong>
+                  <p>{{ reservation.zoneName }} · {{ reservation.interactionLabel }}</p>
+                </div>
+                <div class="status-group">
+                  <span class="tag">{{ reservation.partySize }}人</span>
+                  <span class="tag">{{ reservation.status }}</span>
+                </div>
+              </article>
+            {% endfor %}
+          </div>
+        {% else %}
+          <p>还没有预约记录。</p>
+        {% endif %}
+      </section>
+    {% else %}
+      <section class="feature-card empty-card">
+        <div class="section-label">进入会员中心</div>
+        <p>请先以会员身份进入，再查看积分、权益与预约记录。</p>
+        <button class="primary-cta inline-button" data-login-persona="customer" type="button">体验会员</button>
+      </section>
+    {% endif %}
+  </main>
+{% endblock %}

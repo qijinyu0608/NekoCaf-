@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>{% block title %}NekoCafé{% endblock %}</title>
+    <link rel="stylesheet" href="{{ url_for('static', path='app.css') }}" />
+  </head>
+  <body>
+    <header class="site-header">
+      <div class="brand-text">
+        <a href="/" class="brand-title">NekoCafé</a>
+        <p>智慧餐饮预约平台</p>
+      </div>
+      <nav class="top-nav">
+        <span class="city-chip">上海</span>
+        <a href="/" class="{% if page == 'home' %}active{% endif %}">立即预约</a>
+        <a href="/member" class="{% if page == 'member' %}active{% endif %}">会员中心</a>
+        <a href="/cats" class="{% if page == 'cats' %}active{% endif %}">猫咪档案</a>
+        <a href="/recommendations" class="{% if page == 'recommendations' %}active{% endif %}">智能推荐</a>
+      </nav>
+      <div class="user-area">
+        {% if actor %}
+          <button class="user-chip" type="button">
+            <span class="user-avatar">{{ actor.display_name[:1] }}</span>
+            <span>{{ actor.display_name }}</span>
+          </button>
+          <button class="text-action" data-logout type="button">退出</button>
+        {% else %}
+          <button class="text-action" data-login-persona="customer" type="button">体验会员</button>
+        {% endif %}
+      </div>
+    </header>
+
+    {% block content %}{% endblock %}
+
+    {% block scripts %}{% endblock %}
+    <script src="{{ url_for('static', path='app.js') }}" defer></script>
+  </body>
+  </html>

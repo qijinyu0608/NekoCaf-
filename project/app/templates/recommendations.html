@@ -1,0 +1,43 @@
+{% extends "base.html" %}
+
+{% block title %}NekoCafé | 智能推荐{% endblock %}
+
+{% block content %}
+  <main class="page detail-page">
+    <section class="detail-header">
+      <div>
+        <span class="eyebrow">智能推荐</span>
+        <h1>根据会员偏好生成的到店建议</h1>
+      </div>
+    </section>
+
+    {% if recommendations %}
+      <section class="detail-grid single-column">
+        {% for recommendation in recommendations %}
+          <article class="feature-card recommendation-detail-card">
+            <div class="store-visual large">
+              <div class="visual-room"></div>
+              <div class="visual-cat"></div>
+            </div>
+            <div>
+              <p>{{ recommendation.headline }}</p>
+              <strong>{{ recommendation.summary }}</strong>
+              <p>{{ recommendation.detail }}</p>
+              <div class="tag-row">
+                {% for item in recommendation.reasonTags %}
+                  <span>{{ item }}</span>
+                {% endfor %}
+              </div>
+            </div>
+          </article>
+        {% endfor %}
+      </section>
+    {% else %}
+      <section class="feature-card empty-card">
+        <div class="section-label">进入推荐视图</div>
+        <p>请先以会员身份进入，再查看与你当前偏好匹配的门店建议。</p>
+        <button class="primary-cta inline-button" data-login-persona="customer" type="button">体验会员</button>
+      </section>
+    {% endif %}
+  </main>
+{% endblock %}

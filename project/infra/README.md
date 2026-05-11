@@ -1,7 +1,7 @@
 # Infrastructure Baseline
 
-本目录为实验三和实验四维护基础交付件：
+本目录现在对应 NekoCafé 的单体实现：
 
-- `docker/`: 服务 Dockerfile
-- `helm/`: 已补最小 Helm Chart 与多环境 values
-- `observability/`: 指标、日志、链路追踪与告警配置
+- `docker/`: 单体应用 Dockerfile
+- `helm/`: 后续实验三/四继续沿用的部署模板
+- `observability/`: Prometheus 与告警配置

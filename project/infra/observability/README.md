@@ -4,7 +4,7 @@
 
 当前包含：
 
-- `prometheus.yml`：抓取 `member-service` 与 `reservation-service` 的 `/metrics`
+- `prometheus.yml`：抓取 `nekocafe-web` 的 `/metrics`
 - `alert-rules.yml`：最小服务存活告警规则
 - `grafana-dashboard.json`：基础请求速率与 P95 延迟面板定义
 

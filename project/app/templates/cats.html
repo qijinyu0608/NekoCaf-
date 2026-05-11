@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+
+{% block title %}NekoCafé | 猫咪档案{% endblock %}
+
+{% block content %}
+  <main class="page detail-page">
+    <section class="detail-header">
+      <div>
+        <span class="eyebrow">猫咪档案</span>
+        <h1>与你匹配的陪伴档案</h1>
+      </div>
+    </section>
+
+    {% if cats %}
+      <section class="detail-grid single-column">
+        {% for cat in cats %}
+          <article class="feature-card cat-detail-card">
+            <div class="cat-avatar large">{{ cat.name[0] }}</div>
+            <div>
+              <strong>{{ cat.name }} ({{ cat.englishName }}) {{ cat.gender }}</strong>
+              <p>{{ cat.ageLabel }} · {{ cat.breed }}</p>
+              <div class="tag-row">
+                {% for item in cat.personalityTags %}
+                  <span>{{ item }}</span>
+                {% endfor %}
+              </div>
+              <p>{{ cat.companionSummary }}</p>
+            </div>
+          </article>
+        {% endfor %}
+      </section>
+    {% else %}
+      <section class="feature-card empty-card">
+        <div class="section-label">进入猫咪档案</div>
+        <p>请先以会员身份进入，再查看与你关联的猫咪档案。</p>
+        <button class="primary-cta inline-button" data-login-persona="customer" type="button">体验会员</button>
+      </section>
+    {% endif %}
+  </main>
+{% endblock %}

@@ -1,151 +1,74 @@
-# NekoCafé Monorepo Skeleton
+# NekoCafé v1
 
-实验二到实验四的统一代码仓库骨架。
+NekoCafé 当前实现已经从“React 前端 + 双 FastAPI 服务”收束为一个更容易继续演进的全栈单体：
 
-## 当前阶段
+- `FastAPI`
+- `Jinja`
+- 少量原生 JavaScript
+- `SQLite`
 
-当前工作区已经进入实验三开发阶段，本轮在双核心服务基础上补了更接近真实餐饮系统的前端分层版本：顾客首页与店员后台分入口，前端会话态、身份态、业务态拆开，同时为猫咪健康、运营看板、推荐权益等后续模块保留清晰入口。
+本轮重点是把顾客首页先做成更像真实产品的预约站，同时保留最小店员后台，支撑实验三 `D3-2` 的可运行仓库和实验四后续测试闭环。
 
-产品口径统一维护在：
+## 当前能力
 
-- `../docs/product/nekocafe-platform-prd.md`
-
-本轮优先目标：
-
-- 先把 `reservation-service` 与 `member-service` 做成最小可运行闭环。
-- 先把 `frontend/` 顾客预约台做成可演示网页。
-- 使用 SQLite 作为本地 PoC 持久化数据库，长期数据库选型仍以实验二 ADR 为准。
-- 先保证本地开发、单测和最小运行说明清晰可复现。
-- 在功能稳定后，再继续补 Docker、Compose、CI/CD、Helm 与观测配置。
-
-本轮暂不展开：
-
-- `BC-ORDER`
-- `BC-STORE-OPS`
-- `BC-CAT-HEALTH`
-- `BC-RECOMMENDATION`
-- 完整灰度发布、自动回滚、全量 Dashboard 和 DORA 报表细节
-
-## 当前范围
-
-- 可运行服务：
-  - `services/reservation`
-  - `services/member`
-- 设计层保留上下文：
-  - `BC-ORDER`
-  - `BC-STORE-OPS`
-  - `BC-CAT-HEALTH`
-  - `BC-RECOMMENDATION`
+- 顾客首页：立即预约、会员积分、我的猫咪档案、智能推荐
+- 会员中心：积分、权益、预约记录
+- 猫咪档案：当前会员关联猫咪资料
+- 智能推荐：基于偏好的门店建议
+- 店员后台：今日预约、状态筛选、到店确认
+- 单体会话：顾客 persona / 店员 persona
+- 本地持久化：SQLite
 
 ## 目录
 
-- `services/`: 服务入口与各自实现
-- `libs/common/`: 跨服务共享常量与约定
-- `frontend/`: React/Vite 前端，包含顾客首页、店员后台入口与会话层
-- `data/`: 本地 SQLite 数据库运行时目录，首次请求或测试时自动创建
-- `tests/`: 单元、集成、契约、E2E、性能测试占位
-- `infra/`: Docker、Helm、可观测性配置占位
-- `docs/`: ADR、运行手册、回滚手册
+- `app/`: 单体应用代码、模板、静态资源
+- `data/`: SQLite 数据文件
+- `tests/`: 单元与页面级测试
+- `infra/`: Docker 与观测配置
+- `docs/`: runbook / rollback 等工程文档
 
 ## 本地开发
 
 ```bash
-.venv/bin/python --version  # 推荐 Python 3.11+
 python3.12 -m venv .venv
 .venv/bin/pip install -e '.[dev]'
-.venv/bin/pytest
-
-cd frontend
-npm install
-npm run build
+.venv/bin/pytest -q
 ```
 
-## 当前最小业务链路
-
-本轮已经先落一条可演示的最小链路：
-
-1. 在 `member-service` 查询会员详情与积分账户
-2. 在 `reservation-service` 查询门店可预约时段
-3. 在 `reservation-service` 创建预约
-4. 在 `reservation-service` 查询预约详情与会员预约列表
-5. 在 `member-service` 建立 mock session 并恢复当前会话
-
-推荐本地启动方式：
+启动应用：
 
 ```bash
-make run-member
-make run-reservation
-make run-web
+make run-app
 ```
 
-默认访问地址：
+默认地址：
 
-- 顾客预约首页：`http://127.0.0.1:5173`
-- 店员后台入口：`http://127.0.0.1:5173/staff`
-- 会员服务：`http://127.0.0.1:8002`
-- 预约服务：`http://127.0.0.1:8001`
+- 首页：[http://127.0.0.1:8000/](http://127.0.0.1:8000/)
+- 店员后台：[http://127.0.0.1:8000/staff](http://127.0.0.1:8000/staff)
+- 健康检查：[http://127.0.0.1:8000/healthz](http://127.0.0.1:8000/healthz)
+- 指标：[http://127.0.0.1:8000/metrics](http://127.0.0.1:8000/metrics)
 
-前端默认请求 `127.0.0.1:8001/8002`，并通过 `member-service` 提供的 mock session 建立顾客/店员身份。如需改地址可设置：
-
-```bash
-VITE_MEMBER_API_BASE=http://127.0.0.1:8002 \
-VITE_RESERVATION_API_BASE=http://127.0.0.1:8001 \
-npm run dev
-```
-
-如果要验证最小容器化基线，可以直接运行：
-
-```bash
-make compose-up
-```
-
-如果要一次性演示当前最小业务链路，可以直接运行：
+## 最小演示链路
 
 ```bash
 make demo-flow
 ```
 
-最小演示请求示例：
+该脚本会完成：
+
+1. 建立顾客会话
+2. 查询门店
+3. 查询时段
+4. 创建预约
+5. 查询我的预约
+6. 切换店员会话并查看今日预约
+
+## 容器化
 
 ```bash
-curl -H 'X-Tenant-Id: tenant-nekocafe' \
-  http://127.0.0.1:8002/member/v1/members/member-1001
-
-curl -H 'X-Tenant-Id: tenant-nekocafe' \
-  'http://127.0.0.1:8001/reservation/v1/stores/store-shanghai-001/slots?date=2026-05-20&partySize=2'
-
-curl -X POST \
-  -H 'Content-Type: application/json' \
-  -H 'X-Tenant-Id: tenant-nekocafe' \
-  http://127.0.0.1:8001/reservation/v1/reservations \
-  -d '{
-    "memberId": "member-1001",
-    "storeId": "store-shanghai-001",
-    "slotId": "slot-20260520-1800",
-    "partySize": 2
-  }'
+make compose-up
+docker compose ps
+make compose-down
 ```
 
-## 实验三推荐开发顺序
-
-1. 先阅读 `docs/lab3/README.md` 与 `docs/development-path.md` 中的实验三阶段拆分。
-2. 先完成 `project/README.md`、`project/docs/runbook.md`、`project/docs/rollback.md` 的边界收口。
-3. 先补双核心服务的最小业务接口，再补容器化与本地起栈。
-4. 最后再补 CI/CD、Helm、多环境与观测证据。
-
-## 实验三最小完成标准
-
-- 两个核心服务可以本地启动。
-- 至少有一条最小业务链路可请求、可测试、可演示。
-- 顾客首页可完成“进入会话 -> 会员状态 -> 查时段 -> 创建预约 -> 查看/取消预约”。
-- 店员后台可完成“进入后台 -> 查看今日预约 -> 确认到店”。
-- 页面信息架构预留猫咪健康、运营看板和推荐权益模块。
-- README 能指导同学完成环境安装、测试和最小启动。
-- `docker compose up` 和 CI 骨架在后续阶段逐步补齐，而不是一开始全部压上。
-
-## 下一步
-
-1. 完成实验三 `Phase A` 文档边界收口。
-2. 进入实验三 `Phase B`，补双核心服务的最小功能闭环。
-3. 在实验三 `Phase C/D` 继续补容器化、CI/CD 和部署骨架。
-4. 在实验四把测试、质量门禁和 AI 评审挂到同一仓库。
+Prometheus 会抓取单体应用的 `/metrics`。

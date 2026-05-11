@@ -1,43 +1,42 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-TENANT_ID="${TENANT_ID:-tenant-nekocafe}"
-MEMBER_BASE_URL="${MEMBER_BASE_URL:-http://127.0.0.1:8002}"
-RESERVATION_BASE_URL="${RESERVATION_BASE_URL:-http://127.0.0.1:8001}"
+BASE_URL="${BASE_URL:-http://127.0.0.1:8000}"
+COOKIE_JAR="$(mktemp)"
+trap 'rm -f "${COOKIE_JAR}"' EXIT
 
 print_step() {
   printf '\n[%s] %s\n' "$1" "$2"
 }
 
-print_step "1/6" "查询会员详情"
+print_step "1/6" "建立顾客会话"
 curl -s \
-  -H "X-Tenant-Id: ${TENANT_ID}" \
-  "${MEMBER_BASE_URL}/member/v1/members/member-1001"
+  -c "${COOKIE_JAR}" \
+  -X POST \
+  -H "Content-Type: application/json" \
+  "${BASE_URL}/api/session/login" \
+  -d '{"persona":"customer"}'
 printf '\n'
 
-print_step "2/6" "查询会员积分账户"
-curl -s \
-  -H "X-Tenant-Id: ${TENANT_ID}" \
-  "${MEMBER_BASE_URL}/member/v1/members/member-1001/points"
+print_step "2/6" "查询门店"
+curl -s -b "${COOKIE_JAR}" "${BASE_URL}/api/stores"
 printf '\n'
 
-print_step "3/6" "查询门店可预约时段"
-curl -s \
-  -H "X-Tenant-Id: ${TENANT_ID}" \
-  "${RESERVATION_BASE_URL}/reservation/v1/stores/store-shanghai-001/slots?date=2026-05-20&partySize=2"
+print_step "3/6" "查询可预约时段"
+curl -s -b "${COOKIE_JAR}" \
+  "${BASE_URL}/api/slots?storeId=store-shanghai-jingan&date=2026-05-20&partySize=2"
 printf '\n'
 
 print_step "4/6" "创建预约"
 create_response="$(
   curl -s \
+    -b "${COOKIE_JAR}" \
     -X POST \
     -H "Content-Type: application/json" \
-    -H "X-Tenant-Id: ${TENANT_ID}" \
-    "${RESERVATION_BASE_URL}/reservation/v1/reservations" \
+    "${BASE_URL}/api/reservations" \
     -d '{
-      "memberId": "member-1001",
-      "storeId": "store-shanghai-001",
-      "slotId": "slot-20260520-1800",
+      "storeId": "store-shanghai-jingan",
+      "slotId": "slot-jingan-20260520-1800",
       "partySize": 2
     }'
 )"
@@ -47,14 +46,17 @@ reservation_id="$(
   printf '%s' "${create_response}" | python3 -c 'import json,sys; print(json.load(sys.stdin)["reservationId"])'
 )"
 
-print_step "5/6" "查询预约详情"
-curl -s \
-  -H "X-Tenant-Id: ${TENANT_ID}" \
-  "${RESERVATION_BASE_URL}/reservation/v1/reservations/${reservation_id}"
+print_step "5/6" "查询我的预约"
+curl -s -b "${COOKIE_JAR}" "${BASE_URL}/api/reservations/me"
 printf '\n'
 
-print_step "6/6" "查询会员预约列表"
+print_step "6/6" "切换店员会话并查看今日预约"
 curl -s \
-  -H "X-Tenant-Id: ${TENANT_ID}" \
-  "${RESERVATION_BASE_URL}/reservation/v1/members/member-1001/reservations"
+  -c "${COOKIE_JAR}" \
+  -X POST \
+  -H "Content-Type: application/json" \
+  "${BASE_URL}/api/session/login" \
+  -d '{"persona":"staff"}' >/dev/null
+curl -s -b "${COOKIE_JAR}" \
+  "${BASE_URL}/api/staff/reservations?storeId=store-shanghai-jingan&businessDate=2026-05-20"
 printf '\n'

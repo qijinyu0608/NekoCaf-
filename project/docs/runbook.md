@@ -1,75 +1,51 @@
 # Runbook
 
-## 当前状态
+## 当前运行形态
 
-本仓库目前已经进入实验三开发阶段，但仍处于第一轮工程化落地早期。
+NekoCafé 当前已收束为单体 Web 应用：
 
-当前默认口径：
+- 单一 FastAPI 进程
+- Jinja 页面
+- 原生 JavaScript 交互
+- SQLite 本地持久化
 
-- 只优先开发 `member-service` 和 `reservation-service`
-- 先保证本地功能闭环
-- 先以本地运行和本地测试为主
-- Docker、Compose、CI/CD、Helm、观测按阶段逐步补齐
-
-## Phase A 运行约定
-
-1. 所有实现先以 `project/` 为唯一工程事实源。
-2. 服务边界以实验二 OpenAPI 契约和 ADR 为准，不在实验三随意改业务边界。
-3. 功能开发优先顺序为：
-   - 先文档
-   - 再最小功能
-   - 再容器化
-   - 最后流水线与观测
-
-## 当前本地开发步骤
+## 本地启动
 
 1. 进入 `project/`
-2. 创建虚拟环境：`python3 -m venv .venv`
+2. 创建虚拟环境：`python3.12 -m venv .venv`
 3. 安装依赖：`.venv/bin/pip install -e '.[dev]'`
-4. 运行测试：`.venv/bin/pytest`
-5. 单服务启动：
-   - `make run-member`
-   - `make run-reservation`
-6. 本地容器化验证：
-   - `make compose-up`
-   - `make compose-down`
-7. 最小业务链路演示：
-   - `make demo-flow`
-8. 可观测性验证：
-   - `make smoke-observability`
+4. 运行测试：`.venv/bin/pytest -q`
+5. 启动应用：`make run-app`
 
-## Phase B 最小演示链路
+访问地址：
 
-当前推荐用下面这条链路验证实验三的最小功能闭环：
+- 首页：`http://127.0.0.1:8000/`
+- 店员后台：`http://127.0.0.1:8000/staff`
+- 指标：`http://127.0.0.1:8000/metrics`
 
-1. 访问 `member-service`：
-   - `GET /member/v1/members/member-1001`
-   - `GET /member/v1/members/member-1001/points`
-2. 访问 `reservation-service`：
-   - `GET /reservation/v1/stores/store-shanghai-001/slots?date=2026-05-20&partySize=2`
-   - `POST /reservation/v1/reservations`
-   - `GET /reservation/v1/reservations/{reservationId}`
-   - `GET /reservation/v1/members/member-1001/reservations`
+## 最小验收链路
 
-所有业务接口目前都要求请求头 `X-Tenant-Id: tenant-nekocafe`。
+1. 打开首页，确认看到：
+   - 立即预约
+   - 会员积分
+   - 我的猫咪档案
+   - 智能推荐
+2. 点击体验会员或直接提交预约
+3. 在会员中心查看积分和预约记录
+4. 进入 `/staff`，点击进入后台
+5. 查看今日预约并完成到店确认
 
-## Phase D 当前验证点
+## 容器化验证
 
-当前已经可以在本地完成下面三类验证：
+```bash
+make compose-up
+docker compose ps
+curl http://127.0.0.1:8000/healthz
+curl http://127.0.0.1:9090/-/healthy
+make compose-down
+```
 
-1. 功能验证：
-   - `make demo-flow`
-2. 可观测性验证：
-   - `curl http://127.0.0.1:8001/metrics`
-   - `curl http://127.0.0.1:8002/metrics`
-   - `curl http://127.0.0.1:9090/-/healthy`
-3. 配置验证：
-   - `.venv/bin/pytest`
-   - `docker compose config`
+## 可观测性检查
 
-## 后续接管建议
-
-1. 先根据实验一需求基线补齐接口说明。
-2. 在实验二确认上下文边界后，再决定服务内部模块划分。
-3. 在实验三 Phase B 跑通功能后，再继续补 Dockerfile、Compose 与 Helm。
-4. 在实验三 Phase D 之后再整理 CI/CD、扫描截图和部署证据。
+- 应用指标：`curl http://127.0.0.1:8000/metrics`
+- Prometheus：`curl http://127.0.0.1:9090/api/v1/targets`

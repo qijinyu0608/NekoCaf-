@@ -8,6 +8,7 @@ import {
   HeartPulse,
   Leaf,
   LoaderCircle,
+  LogIn,
   MonitorCog,
   Sparkles,
   Store,
@@ -18,48 +19,59 @@ import {
 import logoUrl from "./assets/nekocafe-logo.png";
 import {
   cancelReservation,
+  checkInReservation,
   createReservation,
   getMember,
   getMemberReservations,
   getPoints,
   getSlots,
+  getStoreReservations,
   type Member,
   type PointAccount,
   type Reservation,
   type Slot,
+  type StaffReservation,
 } from "./api";
 import "./styles.css";
 
 const memberId = "member-1001";
 const storeId = "store-shanghai-001";
+type ModuleKey = "customer" | "staff" | "cat" | "ops";
 const platformModules = [
   {
+    key: "customer",
     label: "顾客预约台",
     status: "已接入",
     description: "会员资料、时段查询、预约创建、取消预约",
   },
   {
+    key: "staff",
     label: "店员后台",
-    status: "预留",
+    status: "已接入",
     description: "当日预约、到店核销、排台与异常处理",
   },
   {
+    key: "cat",
     label: "猫咪健康",
     status: "预留",
     description: "健康打卡、互动限制、异常分流",
   },
   {
+    key: "ops",
     label: "运营看板",
     status: "预留",
     description: "门店配置、活动效果、审计日志",
   },
-];
+] satisfies Array<{ key: ModuleKey; label: string; status: string; description: string }>;
 
 function App() {
   const [member, setMember] = useState<Member | null>(null);
   const [points, setPoints] = useState<PointAccount | null>(null);
   const [slots, setSlots] = useState<Slot[]>([]);
   const [reservations, setReservations] = useState<Reservation[]>([]);
+  const [staffReservations, setStaffReservations] = useState<StaffReservation[]>([]);
+  const [activeModule, setActiveModule] = useState<ModuleKey>("customer");
+  const [staffStatusFilter, setStaffStatusFilter] = useState("");
   const [selectedSlotId, setSelectedSlotId] = useState("");
   const [date, setDate] = useState("2026-05-20");
   const [partySize, setPartySize] = useState(2);
@@ -73,21 +85,29 @@ function App() {
     setReservations(nextReservations);
   }
 
+  async function loadStaffReservations(nextStatus = staffStatusFilter) {
+    const nextReservations = await getStoreReservations(storeId, date, nextStatus || undefined);
+    setStaffReservations(nextReservations);
+  }
+
   useEffect(() => {
     async function loadInitialData() {
       try {
         setIsLoading(true);
         setError("");
-        const [nextMember, nextPoints, nextSlots, nextReservations] = await Promise.all([
+        const [nextMember, nextPoints, nextSlots, nextReservations, nextStaffReservations] =
+          await Promise.all([
           getMember(memberId),
           getPoints(memberId),
           getSlots(storeId, date, partySize),
           getMemberReservations(memberId),
+          getStoreReservations(storeId, date),
         ]);
         setMember(nextMember);
         setPoints(nextPoints);
         setSlots(nextSlots);
         setReservations(nextReservations);
+        setStaffReservations(nextStaffReservations);
         setSelectedSlotId(nextSlots[0]?.slotId ?? "");
         setStatusMessage("服务已就绪，可以选择时段预约。");
       } catch (requestError) {
@@ -102,18 +122,22 @@ function App() {
   }, []);
 
   useEffect(() => {
-    async function refreshSlots() {
+    async function refreshWorkspaceData() {
       try {
         setError("");
-        const nextSlots = await getSlots(storeId, date, partySize);
+        const [nextSlots, nextStaffReservations] = await Promise.all([
+          getSlots(storeId, date, partySize),
+          getStoreReservations(storeId, date, staffStatusFilter || undefined),
+        ]);
         setSlots(nextSlots);
+        setStaffReservations(nextStaffReservations);
         setSelectedSlotId(nextSlots[0]?.slotId ?? "");
       } catch (requestError) {
-        setError(requestError instanceof Error ? requestError.message : "时段刷新失败");
+        setError(requestError instanceof Error ? requestError.message : "工作台刷新失败");
       }
     }
 
-    void refreshSlots();
+    void refreshWorkspaceData();
   }, [date, partySize]);
 
   const selectedSlot = useMemo(
@@ -139,6 +163,7 @@ function App() {
         catInteractionMode: "gentle",
       });
       await loadReservations();
+      await loadStaffReservations();
       setStatusMessage("预约已创建，已同步到我的预约。");
     } catch (requestError) {
       setError(requestError instanceof Error ? requestError.message : "预约创建失败");
@@ -152,9 +177,32 @@ function App() {
       setError("");
       await cancelReservation(reservationId);
       await loadReservations();
+      await loadStaffReservations();
       setStatusMessage("预约已取消，桌位已释放。");
     } catch (requestError) {
       setError(requestError instanceof Error ? requestError.message : "预约取消失败");
+    }
+  }
+
+  async function handleCheckIn(reservationId: string) {
+    try {
+      setError("");
+      await checkInReservation(reservationId);
+      await loadReservations();
+      await loadStaffReservations();
+      setStatusMessage("店员后台已确认顾客到店。");
+    } catch (requestError) {
+      setError(requestError instanceof Error ? requestError.message : "到店确认失败");
+    }
+  }
+
+  async function handleStaffStatusChange(status: string) {
+    try {
+      setStaffStatusFilter(status);
+      setError("");
+      await loadStaffReservations(status);
+    } catch (requestError) {
+      setError(requestError instanceof Error ? requestError.message : "店员后台刷新失败");
     }
   }
 
@@ -192,8 +240,9 @@ function App() {
           {platformModules.map((module) => (
             <button
               className="module-item"
-              data-active={module.status === "已接入"}
+              data-active={module.key === activeModule}
               key={module.label}
+              onClick={() => setActiveModule(module.key)}
               type="button"
             >
               <span>
@@ -210,7 +259,7 @@ function App() {
         <header className="topbar">
           <div>
             <p className="eyebrow">Store Shanghai 001</p>
-            <h2>顾客预约台</h2>
+            <h2>{platformModules.find((module) => module.key === activeModule)?.label}</h2>
           </div>
           <div className="service-state" data-state={error ? "error" : "ok"}>
             {error ? <CircleAlert size={18} /> : <Leaf size={18} />}
@@ -218,7 +267,76 @@ function App() {
           </div>
         </header>
 
-        <section className="booking-grid">
+        {activeModule === "customer" && (
+          <CustomerWorkspace
+            date={date}
+            isLoading={isLoading}
+            isSubmitting={isSubmitting}
+            onCancelReservation={handleCancelReservation}
+            onCreateReservation={handleCreateReservation}
+            onDateChange={setDate}
+            onPartySizeChange={setPartySize}
+            onSelectSlot={setSelectedSlotId}
+            partySize={partySize}
+            reservations={reservations}
+            selectedSlot={selectedSlot}
+            selectedSlotId={selectedSlotId}
+            slots={slots}
+          />
+        )}
+
+        {activeModule === "staff" && (
+          <StaffWorkspace
+            date={date}
+            onCheckIn={handleCheckIn}
+            onDateChange={setDate}
+            onStatusChange={handleStaffStatusChange}
+            reservations={staffReservations}
+            statusFilter={staffStatusFilter}
+          />
+        )}
+
+        {(activeModule === "cat" || activeModule === "ops") && (
+          <ReservedModule moduleKey={activeModule} />
+        )}
+      </section>
+    </main>
+  );
+}
+
+type CustomerWorkspaceProps = {
+  date: string;
+  isLoading: boolean;
+  isSubmitting: boolean;
+  onCancelReservation: (reservationId: string) => void;
+  onCreateReservation: () => void;
+  onDateChange: (date: string) => void;
+  onPartySizeChange: (partySize: number) => void;
+  onSelectSlot: (slotId: string) => void;
+  partySize: number;
+  reservations: Reservation[];
+  selectedSlot: Slot | undefined;
+  selectedSlotId: string;
+  slots: Slot[];
+};
+
+function CustomerWorkspace({
+  date,
+  isLoading,
+  isSubmitting,
+  onCancelReservation,
+  onCreateReservation,
+  onDateChange,
+  onPartySizeChange,
+  onSelectSlot,
+  partySize,
+  reservations,
+  selectedSlot,
+  selectedSlotId,
+  slots,
+}: CustomerWorkspaceProps) {
+  return (
+    <section className="booking-grid">
           <div className="booking-panel">
             <div className="section-heading">
               <CalendarCheck size={20} />
@@ -231,7 +349,7 @@ function App() {
                   type="date"
                   value={date}
                   min="2026-05-20"
-                  onChange={(event) => setDate(event.target.value)}
+                  onChange={(event) => onDateChange(event.target.value)}
                 />
               </label>
               <label>
@@ -241,7 +359,7 @@ function App() {
                   value={partySize}
                   min={1}
                   max={6}
-                  onChange={(event) => setPartySize(Number(event.target.value))}
+                  onChange={(event) => onPartySizeChange(Number(event.target.value))}
                 />
               </label>
             </div>
@@ -263,7 +381,7 @@ function App() {
                     key={slot.slotId}
                     className="slot-card"
                     data-selected={slot.slotId === selectedSlotId}
-                    onClick={() => setSelectedSlotId(slot.slotId)}
+                    onClick={() => onSelectSlot(slot.slotId)}
                     type="button"
                   >
                     <span className="slot-time">{formatTime(slot.startAt)}</span>
@@ -277,7 +395,7 @@ function App() {
             <button
               className="primary-action"
               disabled={!selectedSlot || isSubmitting}
-              onClick={handleCreateReservation}
+              onClick={onCreateReservation}
               type="button"
             >
               {isSubmitting ? <LoaderCircle className="spin" size={18} /> : <CalendarCheck size={18} />}
@@ -314,7 +432,7 @@ function App() {
                         <button
                           className="icon-action"
                           aria-label={`取消预约 ${reservation.reservationId}`}
-                          onClick={() => handleCancelReservation(reservation.reservationId)}
+                          onClick={() => onCancelReservation(reservation.reservationId)}
                           type="button"
                         >
                           <X size={16} />
@@ -351,8 +469,128 @@ function App() {
             </div>
           </div>
         </section>
-      </section>
-    </main>
+  );
+}
+
+type StaffWorkspaceProps = {
+  date: string;
+  onCheckIn: (reservationId: string) => void;
+  onDateChange: (date: string) => void;
+  onStatusChange: (status: string) => void;
+  reservations: StaffReservation[];
+  statusFilter: string;
+};
+
+function StaffWorkspace({
+  date,
+  onCheckIn,
+  onDateChange,
+  onStatusChange,
+  reservations,
+  statusFilter,
+}: StaffWorkspaceProps) {
+  return (
+    <section className="staff-grid">
+      <div className="booking-panel">
+        <div className="section-heading">
+          <Store size={20} />
+          <h3>今日预约</h3>
+        </div>
+        <div className="form-grid">
+          <label>
+            营业日期
+            <input
+              type="date"
+              value={date}
+              min="2026-05-20"
+              onChange={(event) => onDateChange(event.target.value)}
+            />
+          </label>
+          <label>
+            状态
+            <select value={statusFilter} onChange={(event) => onStatusChange(event.target.value)}>
+              <option value="">全部</option>
+              <option value="BOOKED">已预约</option>
+              <option value="CHECKED_IN">已到店</option>
+              <option value="CANCELLED">已取消</option>
+            </select>
+          </label>
+        </div>
+        <div className="staff-list">
+          {reservations.length === 0 ? (
+            <div className="empty-state">
+              <Clock3 size={24} />
+              <span>当前筛选下暂无预约</span>
+            </div>
+          ) : (
+            reservations.map((reservation) => (
+              <article className="staff-card" key={reservation.reservationId}>
+                <div>
+                  <strong>{formatDateTime(reservation.slotStartAt)}</strong>
+                  <span>{reservation.memberNickname}</span>
+                  <small>
+                    {reservation.partySize} 人 · {reservation.tableCode}
+                  </small>
+                </div>
+                <div className="reservation-actions">
+                  <span className="status-pill" data-status={reservation.status}>
+                    {formatStatus(reservation.status)}
+                  </span>
+                  {reservation.status === "BOOKED" && (
+                    <button
+                      className="secondary-action"
+                      onClick={() => onCheckIn(reservation.reservationId)}
+                      type="button"
+                    >
+                      <LogIn size={16} />
+                      <span>确认到店</span>
+                    </button>
+                  )}
+                </div>
+              </article>
+            ))
+          )}
+        </div>
+      </div>
+      <div className="system-panel">
+        <div className="section-heading">
+          <MonitorCog size={20} />
+          <h3>后台后续动作</h3>
+        </div>
+        <div className="capability-grid">
+          <article>
+            <Store size={18} />
+            <strong>排台与改台</strong>
+            <span>下一步接入桌位资源状态，支持临时换台和冲突提示。</span>
+          </article>
+          <article>
+            <CircleAlert size={18} />
+            <strong>迟到/爽约处理</strong>
+            <span>补充异常状态和颜色规则，支撑店员快速识别。</span>
+          </article>
+          <article>
+            <Clock3 size={18} />
+            <strong>离店与完单</strong>
+            <span>后续衔接订单核销、积分累计和运营统计。</span>
+          </article>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+function ReservedModule({ moduleKey }: { moduleKey: "cat" | "ops" }) {
+  const isCat = moduleKey === "cat";
+  return (
+    <section className="system-panel">
+      <div className="section-heading">
+        {isCat ? <HeartPulse size={20} /> : <MonitorCog size={20} />}
+        <h3>{isCat ? "猫咪健康" : "运营看板"}</h3>
+      </div>
+      <div className="empty-state">
+        <span>{isCat ? "健康打卡、互动限制和异常分流将在 V3 接入。" : "门店配置、活动效果和审计日志将在 V3 接入。"}</span>
+      </div>
+    </section>
   );
 }
 
@@ -382,6 +620,15 @@ function formatDateTime(value?: string) {
     minute: "2-digit",
     hour12: false,
   }).format(new Date(value));
+}
+
+function formatStatus(status: string) {
+  const labels: Record<string, string> = {
+    BOOKED: "已预约",
+    CHECKED_IN: "已到店",
+    CANCELLED: "已取消",
+  };
+  return labels[status] ?? status;
 }
 
 createRoot(document.getElementById("root")!).render(

@@ -23,7 +23,8 @@ body {
 }
 
 button,
-input {
+input,
+select {
   font: inherit;
 }
 
@@ -99,7 +100,9 @@ button {
 
 .member-card span,
 .reservation-card span,
-.reservation-card small {
+.reservation-card small,
+.staff-card span,
+.staff-card small {
   color: #62645f;
 }
 
@@ -218,6 +221,12 @@ button {
   align-items: start;
 }
 
+.staff-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 22px;
+}
+
 .booking-panel,
 .reservation-panel,
 .system-panel {
@@ -244,7 +253,8 @@ label {
   font-weight: 700;
 }
 
-input {
+input,
+select {
   width: 100%;
   min-height: 46px;
   border: 1px solid rgba(184, 162, 129, 0.5);
@@ -254,13 +264,15 @@ input {
   color: #303331;
 }
 
-input:focus {
+input:focus,
+select:focus {
   outline: 3px solid rgba(95, 105, 78, 0.18);
   border-color: #5f694e;
 }
 
 .slot-list,
-.reservation-list {
+.reservation-list,
+.staff-list {
   display: grid;
   gap: 12px;
 }
@@ -371,7 +383,8 @@ input:focus {
   line-height: 1.5;
 }
 
-.reservation-card {
+.reservation-card,
+.staff-card {
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -383,12 +396,14 @@ input:focus {
   background: #fffdf8;
 }
 
-.reservation-card > div:first-child {
+.reservation-card > div:first-child,
+.staff-card > div:first-child {
   display: grid;
   gap: 4px;
 }
 
-.reservation-card strong {
+.reservation-card strong,
+.staff-card strong {
   color: #303331;
 }
 
@@ -410,6 +425,20 @@ input:focus {
   border-radius: 8px;
   background: #f9e7dc;
   color: #8a4a28;
+}
+
+.secondary-action {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-height: 36px;
+  border: 0;
+  border-radius: 8px;
+  padding: 8px 12px;
+  background: #2f3331;
+  color: #fffaf0;
+  font-weight: 800;
 }
 
 .empty-state {
@@ -470,7 +499,8 @@ input:focus {
   }
 
   .topbar,
-  .reservation-card {
+  .reservation-card,
+  .staff-card {
     align-items: stretch;
     flex-direction: column;
   }

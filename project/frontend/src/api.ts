@@ -33,6 +33,16 @@ export type Reservation = {
   checkedInAt?: string | null;
 };
 
+export type StaffReservation = {
+  reservationId: string;
+  memberId: string;
+  memberNickname: string;
+  status: "BOOKED" | "CHECKED_IN" | "CANCELLED" | string;
+  slotStartAt: string;
+  partySize: number;
+  tableCode: string;
+};
+
 export type CreateReservationInput = {
   memberId: string;
   storeId: string;
@@ -96,6 +106,29 @@ export function getMemberReservations(memberId: string): Promise<Reservation[]> 
 export function cancelReservation(reservationId: string): Promise<Reservation> {
   return requestJson<Reservation>(
     `${reservationApiBase}/reservation/v1/reservations/${reservationId}/cancel`,
+    {
+      method: "POST",
+    },
+  );
+}
+
+export function getStoreReservations(
+  storeId: string,
+  businessDate: string,
+  status?: string,
+): Promise<StaffReservation[]> {
+  const params = new URLSearchParams({ businessDate });
+  if (status) {
+    params.set("status", status);
+  }
+  return requestJson<StaffReservation[]>(
+    `${reservationApiBase}/staff/v1/stores/${storeId}/reservations?${params.toString()}`,
+  );
+}
+
+export function checkInReservation(reservationId: string): Promise<Reservation> {
+  return requestJson<Reservation>(
+    `${reservationApiBase}/reservation/v1/reservations/${reservationId}/check-in`,
     {
       method: "POST",
     },

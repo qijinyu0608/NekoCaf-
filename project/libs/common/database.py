@@ -2,6 +2,7 @@ import json
 import os
 import sqlite3
 from pathlib import Path
+from datetime import datetime, timezone
 from typing import Any
 
 
@@ -369,6 +370,66 @@ def cancel_reservation_record(reservation_id: str, tenant_id: str) -> dict[str, 
             (reservation_id, tenant_id),
         )
     return get_reservation(reservation_id, tenant_id)
+
+
+def check_in_reservation_record(reservation_id: str, tenant_id: str) -> dict[str, Any] | None:
+    initialize_database()
+    checked_in_at = datetime.now(timezone.utc).isoformat()
+    with connect() as connection:
+        existing = connection.execute(
+            "SELECT status FROM reservations WHERE reservation_id = ? AND tenant_id = ?",
+            (reservation_id, tenant_id),
+        ).fetchone()
+        if existing is None:
+            return None
+        connection.execute(
+            """
+            UPDATE reservations
+            SET status = 'CHECKED_IN', checked_in_at = ?, updated_at = CURRENT_TIMESTAMP
+            WHERE reservation_id = ? AND tenant_id = ?
+            """,
+            (checked_in_at, reservation_id, tenant_id),
+        )
+    return get_reservation(reservation_id, tenant_id)
+
+
+def list_store_reservation_records(
+    *,
+    tenant_id: str,
+    store_id: str,
+    business_date: str,
+    status_filter: str | None = None,
+) -> list[dict[str, Any]]:
+    initialize_database()
+    query = """
+        SELECT r.reservation_id, r.member_id, m.nickname, r.status, r.slot_start_at,
+               r.party_size, r.table_code
+        FROM reservations r
+        JOIN members m ON m.member_id = r.member_id
+        WHERE r.tenant_id = ?
+          AND r.store_id = ?
+          AND r.slot_start_at LIKE ?
+    """
+    params: list[Any] = [tenant_id, store_id, f"{business_date}%"]
+    if status_filter:
+        query += " AND r.status = ?"
+        params.append(status_filter)
+    query += " ORDER BY r.slot_start_at"
+
+    with connect() as connection:
+        rows = connection.execute(query, params).fetchall()
+    return [
+        {
+            "reservationId": row["reservation_id"],
+            "memberId": row["member_id"],
+            "memberNickname": row["nickname"],
+            "status": row["status"],
+            "slotStartAt": row["slot_start_at"],
+            "partySize": row["party_size"],
+            "tableCode": row["table_code"],
+        }
+        for row in rows
+    ]
 
 
 def _reservation_detail_from_row(row: sqlite3.Row) -> dict[str, Any]:

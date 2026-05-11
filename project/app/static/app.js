@@ -74,8 +74,26 @@ function bindBookingForm() {
   const storeSelect = document.querySelector("#store-select");
   const dateInput = document.querySelector("#date-input");
   const partySizeSelect = document.querySelector("#party-size-select");
+  const highlightName = document.querySelector("#store-highlight-name");
+  const highlightSummary = document.querySelector("#store-highlight-summary");
+  const highlightTags = document.querySelector("#store-highlight-tags");
 
   let selectedSlotId = slotList?.querySelector(".slot-pill.selected")?.getAttribute("data-slot-id") || "";
+  const bootstrap = window.NEKOCAFE_BOOTSTRAP || {};
+  const storeMap = new Map((bootstrap.stores || []).map((store) => [store.storeId, store]));
+
+  function renderStoreHighlight(storeId) {
+    const store = storeMap.get(storeId);
+    if (!store || !highlightName || !highlightSummary || !highlightTags) return;
+    highlightName.textContent = `${store.storeName} · ${store.district}`;
+    highlightSummary.textContent = store.summary;
+    highlightTags.innerHTML = "";
+    store.featureTags.forEach((tag) => {
+      const node = document.createElement("span");
+      node.textContent = tag;
+      highlightTags.appendChild(node);
+    });
+  }
 
   function renderSlots(slots) {
     if (!slotList) return;
@@ -118,6 +136,9 @@ function bindBookingForm() {
 
   [storeSelect, dateInput, partySizeSelect].forEach((field) => {
     field?.addEventListener("change", () => {
+      if (field === storeSelect) {
+        renderStoreHighlight(storeSelect.value);
+      }
       void refreshSlots();
     });
   });
@@ -131,7 +152,6 @@ function bindBookingForm() {
       return;
     }
 
-    const bootstrap = window.NEKOCAFE_BOOTSTRAP || {};
     if (bootstrap.session?.role !== "customer") {
       await loginAs("customer");
     }
@@ -155,6 +175,8 @@ function bindBookingForm() {
     if (message) message.textContent = "预约成功，正在带你查看会员中心。";
     window.location.href = "/member";
   });
+
+  renderStoreHighlight(storeSelect.value);
 }
 
 bindSessionButtons();

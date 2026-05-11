@@ -15,6 +15,45 @@
           <a href="/member">进入会员中心</a>
           <a href="/cats">看看我的猫咪档案</a>
         </div>
+        {% if actor and actor.role == "customer" %}
+          <article class="hero-note-card">
+            <span class="section-label">欢迎回来，{{ actor.display_name }}</span>
+            {% if latestReservation %}
+              <div class="hero-note-grid">
+                <div>
+                  <p class="note-title">最新预约</p>
+                  <strong>{{ latestReservation.slotStartAt[5:16] }}</strong>
+                </div>
+                <div>
+                  <p class="note-title">互动分区</p>
+                  <strong>{{ latestReservation.zoneName }}</strong>
+                </div>
+                <div>
+                  <p class="note-title">当前状态</p>
+                  <strong>{{ latestReservation.status }}</strong>
+                </div>
+              </div>
+            {% else %}
+              <p>这次的预约台已经准备好了，选个时段就能继续安排你的到店节奏。</p>
+            {% endif %}
+          </article>
+        {% else %}
+          <article class="hero-note-card">
+            <span class="section-label">预约体验</span>
+            <p>先看门店与时段，再决定是否进入会员会话，这样首页才像真正的消费入口，而不是后台演示页。</p>
+          </article>
+        {% endif %}
+
+        <article class="store-highlight-card" id="store-highlight-card">
+          <div class="section-label">门店亮点</div>
+          <strong id="store-highlight-name">{{ stores[0].storeName }} · {{ stores[0].district }}</strong>
+          <p id="store-highlight-summary">{{ stores[0].summary }}</p>
+          <div class="tag-row" id="store-highlight-tags">
+            {% for tag in stores[0].featureTags %}
+              <span>{{ tag }}</span>
+            {% endfor %}
+          </div>
+        </article>
       </div>
 
       <section class="booking-card">
@@ -32,7 +71,7 @@
             <select id="store-select" name="storeId">
               {% for store in stores %}
                 <option value="{{ store.storeId }}" {% if store.storeId == defaultStoreId %}selected{% endif %}>
-                  {{ store.storeName }}
+                  {{ store.storeName }} · {{ store.district }}
                 </option>
               {% endfor %}
             </select>

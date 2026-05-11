@@ -81,11 +81,16 @@ def _base_template_context(request: Request, actor=Depends(get_optional_session_
 @app.get("/", response_class=HTMLResponse)
 def home(request: Request, actor=Depends(get_optional_session_actor)) -> HTMLResponse:
     preview = _preview_context()
+    latest_reservation = None
+    if actor and actor.role == "customer":
+        reservations = list_member_reservations(actor.member_id or DEFAULT_MEMBER_ID)
+        latest_reservation = reservations[0] if reservations else None
     bootstrap = {
         "session": actor.to_session_payload() if actor else {"sessionStatus": "anonymous"},
         "defaultStoreId": preview["defaultStoreId"],
         "defaultDate": preview["defaultDate"],
         "defaultPartySize": preview["defaultPartySize"],
+        "stores": preview["stores"],
     }
     return templates.TemplateResponse(
         request,
@@ -96,6 +101,7 @@ def home(request: Request, actor=Depends(get_optional_session_actor)) -> HTMLRes
             "page": "home",
             "bootstrap": bootstrap,
             "heroCity": "上海",
+            "latestReservation": latest_reservation,
         },
     )
 

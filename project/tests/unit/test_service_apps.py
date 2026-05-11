@@ -42,3 +42,5 @@ def test_homepage_renders_booking_member_cat_and_recommendation_sections():
     assert "智能推荐" in response.text
     assert "门店亮点" in response.text
     assert "门店速览" in response.text
+    assert "hero-surface" in response.text
+    assert "compact-card-grid" in response.text

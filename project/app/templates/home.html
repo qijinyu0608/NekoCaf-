@@ -5,6 +5,12 @@
 {% block content %}
   <main class="page home-page">
     <section class="hero">
+      <article class="mobile-hero-summary">
+        <span class="eyebrow">智慧预约，从容到店</span>
+        <h1>智慧预约，让每一次到店更从容</h1>
+        <p>把门店、时段、会员与猫咪互动偏好合在一个入口里，减少临时决策成本。</p>
+      </article>
+
       <div class="hero-copy">
         <span class="eyebrow">智慧预约，从容到店</span>
         <h1>智慧预约，<br />让每一次到店更从容</h1>
@@ -61,6 +67,16 @@
           <h2>立即预约</h2>
           <span class="subtle-label">{{ heroCity }}</span>
         </div>
+        <article class="booking-context-card">
+          <div class="section-label">门店速览</div>
+          <strong id="booking-store-name">{{ stores[0].storeName }} · {{ stores[0].district }}</strong>
+          <p id="booking-store-summary">{{ stores[0].summary }}</p>
+          <div class="tag-row" id="booking-store-tags">
+            {% for tag in stores[0].featureTags %}
+              <span>{{ tag }}</span>
+            {% endfor %}
+          </div>
+        </article>
         <form class="booking-form" id="booking-form">
           <label>
             选择城市

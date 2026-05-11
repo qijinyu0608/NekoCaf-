@@ -163,6 +163,10 @@ button {
   max-width: 620px;
 }
 
+.mobile-hero-summary {
+  display: none;
+}
+
 .eyebrow,
 .section-label {
   display: inline-flex;
@@ -194,7 +198,9 @@ button {
 }
 
 .hero-note-card,
-.store-highlight-card {
+.store-highlight-card,
+.booking-context-card,
+.mobile-hero-summary {
   max-width: 560px;
   padding: 18px 20px;
   border: 1px solid rgba(148, 123, 86, 0.14);
@@ -226,6 +232,11 @@ button {
 .booking-card {
   align-self: center;
   padding: 28px;
+}
+
+.booking-context-card {
+  margin-bottom: 18px;
+  max-width: none;
 }
 
 .card-title-row,
@@ -500,6 +511,13 @@ select {
     max-width: none;
   }
 
+  .mobile-hero-summary {
+    display: grid;
+    order: 2;
+    gap: 12px;
+    max-width: none;
+  }
+
   .hero-copy p {
     max-width: 32ch;
   }
@@ -529,6 +547,19 @@ select {
 
   .hero-copy h1 {
     font-size: clamp(42px, 12vw, 56px);
+  }
+
+  .mobile-hero-summary h1 {
+    margin: 0;
+    font-family: Georgia, "Times New Roman", serif;
+    font-size: clamp(34px, 9vw, 44px);
+    line-height: 1.12;
+  }
+
+  .mobile-hero-summary p {
+    margin: 0;
+    color: #5f594f;
+    line-height: 1.65;
   }
 
   .top-nav {

@@ -77,6 +77,9 @@ function bindBookingForm() {
   const highlightName = document.querySelector("#store-highlight-name");
   const highlightSummary = document.querySelector("#store-highlight-summary");
   const highlightTags = document.querySelector("#store-highlight-tags");
+  const bookingStoreName = document.querySelector("#booking-store-name");
+  const bookingStoreSummary = document.querySelector("#booking-store-summary");
+  const bookingStoreTags = document.querySelector("#booking-store-tags");
 
   let selectedSlotId = slotList?.querySelector(".slot-pill.selected")?.getAttribute("data-slot-id") || "";
   const bootstrap = window.NEKOCAFE_BOOTSTRAP || {};
@@ -84,14 +87,23 @@ function bindBookingForm() {
 
   function renderStoreHighlight(storeId) {
     const store = storeMap.get(storeId);
-    if (!store || !highlightName || !highlightSummary || !highlightTags) return;
-    highlightName.textContent = `${store.storeName} · ${store.district}`;
-    highlightSummary.textContent = store.summary;
-    highlightTags.innerHTML = "";
-    store.featureTags.forEach((tag) => {
-      const node = document.createElement("span");
-      node.textContent = tag;
-      highlightTags.appendChild(node);
+    if (!store) return;
+
+    const targets = [
+      [highlightName, highlightSummary, highlightTags],
+      [bookingStoreName, bookingStoreSummary, bookingStoreTags],
+    ];
+
+    targets.forEach(([nameNode, summaryNode, tagsNode]) => {
+      if (!nameNode || !summaryNode || !tagsNode) return;
+      nameNode.textContent = `${store.storeName} · ${store.district}`;
+      summaryNode.textContent = store.summary;
+      tagsNode.innerHTML = "";
+      store.featureTags.forEach((tag) => {
+        const node = document.createElement("span");
+        node.textContent = tag;
+        tagsNode.appendChild(node);
+      });
     });
   }
 

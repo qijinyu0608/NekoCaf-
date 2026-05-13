@@ -1,0 +1,14 @@
+@startuml L1_System_Context
+!include https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Context.puml
+Person(customer, "顾客", "通过 App / 小程序 / Web 访问")
+System(neko, "NekoCafé 智慧餐饮平台", "桌位预约 / 点单 / 会员 / 推荐")
+System_Ext(payment, "支付平台",   "微信 / 支付宝 / 银联")
+System_Ext(map,     "地图服务",   "高德 / 百度")
+System_Ext(sms,     "短信网关",   "阿里云通信")
+System_Ext(ai,      "AI 推荐云", "Anthropic Claude / OpenAI")
+Rel(customer, neko, "使用")
+Rel(neko, payment, "调用 HTTPS")
+Rel(neko, map, "调用 HTTPS")
+Rel(neko, sms, "回调 HTTPS")
+Rel(neko, ai, "调用 HTTPS")
+@enduml

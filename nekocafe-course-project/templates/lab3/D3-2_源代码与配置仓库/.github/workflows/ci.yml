@@ -1,0 +1,21 @@
+name: CI
+on:
+  pull_request:
+  push: { branches: [main] }
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Lint
+        run: echo "TODO"
+      - name: Unit Test
+        run: echo "TODO"
+      - name: SAST
+        run: echo "TODO"
+      - name: Build
+        run: docker compose build
+      - name: Container Scan
+        run: echo "TODO trivy"
+      - name: Integration Test
+        run: echo "TODO"

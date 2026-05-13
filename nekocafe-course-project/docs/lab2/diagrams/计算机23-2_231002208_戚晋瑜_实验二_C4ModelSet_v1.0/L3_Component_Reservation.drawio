@@ -1,0 +1,155 @@
+<?xml version='1.0' encoding='utf-8'?>
+<mxfile host="app.diagrams.net" modified="2026-05-12T00:00:00Z" agent="Codex" version="24.7.10">
+  <diagram id="diagram-1" name="L3 - Reservation Service 组件图">
+    <mxGraphModel dx="1800" dy="1140" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1800" pageHeight="1140" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="title" value="&lt;b&gt;L3 - Reservation Service 组件图&lt;/b&gt;" style="text;html=1;strokeColor=none;fillColor=none;fontSize=22;fontStyle=1;fontColor=#111827;" vertex="1" parent="1">
+          <mxGeometry x="40" y="28" width="1720" height="32" as="geometry" />
+        </mxCell>
+        <mxCell id="boundary" value="&lt;b&gt;Reservation Service [container]&lt;/b&gt;" style="rounded=0;whiteSpace=wrap;html=1;fillColor=none;strokeColor=#8D8D8D;dashed=1;fontColor=#555555;fontSize=14;" vertex="1" parent="1">
+          <mxGeometry x="55" y="95" width="1300" height="850" as="geometry" />
+        </mxCell>
+        <mxCell id="admin" value="&lt;b&gt;管理员&lt;/b&gt;&lt;br&gt;补录审批&lt;br&gt;规则调整" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#0F4C81;strokeColor=#0F4C81;fontColor=#FFFFFF;fontSize=15;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="70" y="135" width="160" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="api" value="&lt;b&gt;Reservation API&lt;/b&gt;&lt;br&gt;&lt;i&gt;[REST Controller]&lt;/i&gt;&lt;br&gt;时段查询、创建、取消、改期、到店" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#2F86D7;strokeColor=#2F86D7;fontColor=#FFFFFF;fontSize=15;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="545" y="150" width="260" height="100" as="geometry" />
+        </mxCell>
+        <mxCell id="query" value="&lt;b&gt;Slot Availability&lt;/b&gt;&lt;br&gt;&lt;i&gt;[Application Service]&lt;/i&gt;&lt;br&gt;查询营业日历、桌型余量、规则快照" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#DCEEFF;strokeColor=#4F7FA8;fontColor=#111827;fontSize=14;" vertex="1" parent="1">
+          <mxGeometry x="145" y="355" width="240" height="100" as="geometry" />
+        </mxCell>
+        <mxCell id="cmd" value="&lt;b&gt;Reservation Core&lt;/b&gt;&lt;br&gt;&lt;i&gt;[Domain Service]&lt;/i&gt;&lt;br&gt;校验预约规则、资源预占、状态机推进" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#2F86D7;strokeColor=#2F86D7;fontColor=#FFFFFF;fontSize=15;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="505" y="350" width="290" height="115" as="geometry" />
+        </mxCell>
+        <mxCell id="checkin" value="&lt;b&gt;Check-in Desk&lt;/b&gt;&lt;br&gt;&lt;i&gt;[Application Service]&lt;/i&gt;&lt;br&gt;到店核销、入座、爽约补偿" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#DCEEFF;strokeColor=#4F7FA8;fontColor=#111827;fontSize=14;" vertex="1" parent="1">
+          <mxGeometry x="910" y="355" width="240" height="100" as="geometry" />
+        </mxCell>
+        <mxCell id="policy" value="&lt;b&gt;Fulfillment Policy&lt;/b&gt;&lt;br&gt;&lt;i&gt;[Domain Policy]&lt;/i&gt;&lt;br&gt;位置分配、迟到保留、改期和离线补录规则" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#DCEEFF;strokeColor=#4F7FA8;fontColor=#111827;fontSize=14;" vertex="1" parent="1">
+          <mxGeometry x="315" y="585" width="245" height="105" as="geometry" />
+        </mxCell>
+        <mxCell id="guard" value="&lt;b&gt;Idempotency / Concurrency Guard&lt;/b&gt;&lt;br&gt;&lt;i&gt;[Redis Adapter]&lt;/i&gt;&lt;br&gt;幂等键、短锁、资源预占保护" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#DCEEFF;strokeColor=#4F7FA8;fontColor=#111827;fontSize=14;" vertex="1" parent="1">
+          <mxGeometry x="690" y="585" width="280" height="105" as="geometry" />
+        </mxCell>
+        <mxCell id="repo" value="&lt;b&gt;Reservation Repository&lt;/b&gt;&lt;br&gt;&lt;i&gt;[Repository]&lt;/i&gt;&lt;br&gt;预约单、核销记录、补录记录" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#DCEEFF;strokeColor=#4F7FA8;fontColor=#111827;fontSize=14;" vertex="1" parent="1">
+          <mxGeometry x="315" y="775" width="255" height="105" as="geometry" />
+        </mxCell>
+        <mxCell id="outbox" value="&lt;b&gt;Event Outbox Publisher&lt;/b&gt;&lt;br&gt;&lt;i&gt;[Infrastructure]&lt;/i&gt;&lt;br&gt;领域事件安全发布到消息总线" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#DCEEFF;strokeColor=#4F7FA8;fontColor=#111827;fontSize=14;" vertex="1" parent="1">
+          <mxGeometry x="760" y="775" width="260" height="105" as="geometry" />
+        </mxCell>
+        <mxCell id="member" value="&lt;b&gt;Member Service&lt;/b&gt;&lt;br&gt;会员身份、权益、黑名单、授权" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#9B9B9B;strokeColor=#9B9B9B;fontColor=#FFFFFF;fontSize=15;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="1480" y="270" width="235" height="95" as="geometry" />
+        </mxCell>
+        <mxCell id="store" value="&lt;b&gt;Store Catalog Service&lt;/b&gt;&lt;br&gt;门店、桌型、营业时间、规则" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#9B9B9B;strokeColor=#9B9B9B;fontColor=#FFFFFF;fontSize=15;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="1480" y="440" width="235" height="95" as="geometry" />
+        </mxCell>
+        <mxCell id="cat" value="&lt;b&gt;Cat Care Service&lt;/b&gt;&lt;br&gt;猫咪互动状态、休息/隔离状态" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#9B9B9B;strokeColor=#9B9B9B;fontColor=#FFFFFF;fontSize=15;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="1480" y="610" width="235" height="95" as="geometry" />
+        </mxCell>
+        <mxCell id="redis" value="&lt;b&gt;Redis&lt;/b&gt;&lt;br&gt;&lt;i&gt;[Cache]&lt;/i&gt;&lt;br&gt;热点缓存、短时锁、幂等键" style="shape=cylinder;whiteSpace=wrap;html=1;boundedLbl=1;backgroundOutline=1;size=15;fillColor=#2F86D7;strokeColor=#2F86D7;fontColor=#FFFFFF;fontSize=14;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="1120" y="775" width="190" height="95" as="geometry" />
+        </mxCell>
+        <mxCell id="db" value="&lt;b&gt;Reservation DB&lt;/b&gt;&lt;br&gt;&lt;i&gt;[MySQL]&lt;/i&gt;&lt;br&gt;预约事务库" style="shape=cylinder;whiteSpace=wrap;html=1;boundedLbl=1;backgroundOutline=1;size=15;fillColor=#2F86D7;strokeColor=#2F86D7;fontColor=#FFFFFF;fontSize=14;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="105" y="1000" width="230" height="95" as="geometry" />
+        </mxCell>
+        <mxCell id="mq" value="&lt;b&gt;RabbitMQ&lt;/b&gt;&lt;br&gt;&lt;i&gt;[AMQP]&lt;/i&gt;&lt;br&gt;reservation.* 领域事件" style="shape=cylinder;whiteSpace=wrap;html=1;boundedLbl=1;backgroundOutline=1;size=15;fillColor=#2F86D7;strokeColor=#2F86D7;fontColor=#FFFFFF;fontSize=14;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="455" y="1000" width="230" height="95" as="geometry" />
+        </mxCell>
+        <mxCell id="note" value="&lt;b&gt;关键路径&lt;/b&gt;&lt;br&gt;先校验会员身份与规则&lt;br&gt;再短锁预占桌位资源&lt;br&gt;事务提交后通过 Outbox 发布事件" style="shape=note;whiteSpace=wrap;html=1;fillColor=#FFF8CC;strokeColor=#9A8F4F;fontColor=#111827;fontSize=13;" vertex="1" parent="1">
+          <mxGeometry x="1030" y="150" width="250" height="105" as="geometry" />
+        </mxCell>
+        <mxCell id="edge_1" value="管理指令" style="endArrow=block;html=1;rounded=0;strokeWidth=1.4;strokeColor=#6B7280;" edge="1" parent="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="230" y="175" as="sourcePoint" />
+            <mxPoint x="545" y="175" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="edge_2" value="调用" style="endArrow=block;html=1;rounded=0;strokeWidth=1.4;strokeColor=#6B7280;" edge="1" parent="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="675" y="250" as="sourcePoint" />
+            <mxPoint x="675" y="350" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="edge_3" value="查询时段" style="endArrow=block;html=1;rounded=0;strokeWidth=1.4;strokeColor=#6B7280;" edge="1" parent="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="545" y="200" as="sourcePoint" />
+            <mxPoint x="385" y="405" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="edge_4" value="核销/改桌" style="endArrow=block;html=1;rounded=0;strokeWidth=1.4;strokeColor=#6B7280;" edge="1" parent="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="805" y="200" as="sourcePoint" />
+            <mxPoint x="1030" y="405" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="edge_5" value="规则选择" style="endArrow=block;html=1;rounded=0;strokeWidth=1.4;strokeColor=#6B7280;" edge="1" parent="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="650" y="465" as="sourcePoint" />
+            <mxPoint x="438" y="585" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="edge_6" value="幂等/短锁" style="endArrow=block;html=1;rounded=0;strokeWidth=1.4;strokeColor=#6B7280;" edge="1" parent="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="795" y="405" as="sourcePoint" />
+            <mxPoint x="690" y="635" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="edge_7" value="保存" style="endArrow=block;html=1;rounded=0;strokeWidth=1.4;strokeColor=#6B7280;" edge="1" parent="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="650" y="465" as="sourcePoint" />
+            <mxPoint x="442" y="775" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="edge_8" value="append event" style="endArrow=block;html=1;rounded=0;strokeWidth=1.4;strokeColor=#6B7280;" edge="1" parent="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="730" y="465" as="sourcePoint" />
+            <mxPoint x="890" y="775" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="edge_9" value="读取门店规则" style="endArrow=block;html=1;rounded=0;strokeWidth=1.4;strokeColor=#6B7280;" edge="1" parent="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="385" y="405" as="sourcePoint" />
+            <mxPoint x="1480" y="488" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="edge_10" value="校验会员身份" style="endArrow=block;html=1;rounded=0;strokeWidth=1.4;strokeColor=#6B7280;" edge="1" parent="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="795" y="390" as="sourcePoint" />
+            <mxPoint x="1480" y="318" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="edge_11" value="读取猫咪限制" style="endArrow=block;html=1;rounded=0;strokeWidth=1.4;strokeColor=#6B7280;" edge="1" parent="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="1030" y="455" as="sourcePoint" />
+            <mxPoint x="1480" y="658" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="edge_12" value="读写锁" style="endArrow=block;html=1;rounded=0;strokeWidth=1.4;strokeColor=#6B7280;" edge="1" parent="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="830" y="690" as="sourcePoint" />
+            <mxPoint x="1215" y="775" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="edge_13" value="JDBC" style="endArrow=block;html=1;rounded=0;strokeWidth=1.4;strokeColor=#6B7280;" edge="1" parent="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="442" y="880" as="sourcePoint" />
+            <mxPoint x="220" y="1000" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="edge_14" value="AMQP" style="endArrow=block;html=1;rounded=0;strokeWidth=1.4;strokeColor=#6B7280;" edge="1" parent="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="890" y="880" as="sourcePoint" />
+            <mxPoint x="570" y="1000" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="edge_15" value="" style="endArrow=block;html=1;rounded=0;strokeWidth=1.4;strokeColor=#9AA0A6;dashed=1;" edge="1" parent="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="1160" y="250" as="sourcePoint" />
+            <mxPoint x="1030" y="150" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

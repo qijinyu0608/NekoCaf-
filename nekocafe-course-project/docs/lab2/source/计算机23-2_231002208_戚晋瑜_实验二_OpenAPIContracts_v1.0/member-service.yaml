@@ -1,0 +1,559 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "Member Service API",
+    "version": "1.0.0",
+    "description": "NekoCafé 会员服务，负责会员资料、偏好、积分与优惠券治理。"
+  },
+  "servers": [
+    {
+      "url": "https://api.nekocafe.com",
+      "description": "Production"
+    }
+  ],
+  "tags": [
+    {
+      "name": "Member",
+      "description": "会员资料与偏好"
+    },
+    {
+      "name": "Loyalty",
+      "description": "积分与优惠券"
+    }
+  ],
+  "paths": {
+    "/member/v1/members/{memberId}": {
+      "get": {
+        "tags": [
+          "Member"
+        ],
+        "summary": "查询会员详情",
+        "x-ratelimit-limit": 600,
+        "x-ratelimit-window": "1m",
+        "parameters": [
+          {
+            "name": "memberId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "X-Tenant-Id",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/components/responses/MemberDetailOk"
+          },
+          "404": {
+            "$ref": "#/components/responses/MemberNotFound"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/member/v1/members/{memberId}/profile": {
+      "patch": {
+        "tags": [
+          "Member"
+        ],
+        "summary": "更新会员资料与偏好",
+        "x-ratelimit-limit": 120,
+        "x-ratelimit-window": "1m",
+        "parameters": [
+          {
+            "name": "memberId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "X-Tenant-Id",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/MemberProfileUpdate"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "$ref": "#/components/responses/MemberDetailOk"
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/member/v1/members/{memberId}/coupons": {
+      "get": {
+        "tags": [
+          "Loyalty"
+        ],
+        "summary": "查询会员可用优惠券",
+        "x-ratelimit-limit": 300,
+        "x-ratelimit-window": "1m",
+        "parameters": [
+          {
+            "name": "memberId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "X-Tenant-Id",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/components/responses/CouponListOk"
+          },
+          "404": {
+            "$ref": "#/components/responses/MemberNotFound"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/member/v1/members/{memberId}/points": {
+      "get": {
+        "tags": [
+          "Loyalty"
+        ],
+        "summary": "查询会员积分账户",
+        "x-ratelimit-limit": 300,
+        "x-ratelimit-window": "1m",
+        "parameters": [
+          {
+            "name": "memberId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "X-Tenant-Id",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/components/responses/PointAccountOk"
+          },
+          "404": {
+            "$ref": "#/components/responses/MemberNotFound"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/member/v1/members/{memberId}/points/transactions": {
+      "get": {
+        "tags": [
+          "Loyalty"
+        ],
+        "summary": "查询会员积分变更记录",
+        "x-ratelimit-limit": 180,
+        "x-ratelimit-window": "1m",
+        "parameters": [
+          {
+            "name": "memberId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "X-Tenant-Id",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/components/responses/PointTransactionListOk"
+          },
+          "404": {
+            "$ref": "#/components/responses/MemberNotFound"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/member/v1/members/{memberId}/coupons/claim": {
+      "post": {
+        "tags": [
+          "Loyalty"
+        ],
+        "summary": "领取会员优惠券",
+        "x-ratelimit-limit": 60,
+        "x-ratelimit-window": "1m",
+        "parameters": [
+          {
+            "name": "memberId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "X-Tenant-Id",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ClaimCouponRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "$ref": "#/components/responses/CouponClaimed"
+          },
+          "404": {
+            "$ref": "#/components/responses/MemberNotFound"
+          },
+          "409": {
+            "$ref": "#/components/responses/CouponClaimConflict"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "bearerAuth": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "JWT"
+      }
+    },
+    "schemas": {
+      "MemberDetail": {
+        "type": "object",
+        "properties": {
+          "memberId": {
+            "type": "string"
+          },
+          "tenantId": {
+            "type": "string"
+          },
+          "nickname": {
+            "type": "string"
+          },
+          "mobileMasked": {
+            "type": "string"
+          },
+          "loyaltyLevel": {
+            "type": "string"
+          },
+          "preferences": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        }
+      },
+      "MemberProfileUpdate": {
+        "type": "object",
+        "required": [
+          "nickname",
+          "preferences"
+        ],
+        "properties": {
+          "nickname": {
+            "type": "string"
+          },
+          "preferences": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "allergyNote": {
+            "type": "string"
+          }
+        }
+      },
+      "CouponItem": {
+        "type": "object",
+        "properties": {
+          "couponId": {
+            "type": "string"
+          },
+          "title": {
+            "type": "string"
+          },
+          "status": {
+            "type": "string"
+          },
+          "expireAt": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "PointAccount": {
+        "type": "object",
+        "properties": {
+          "memberId": {
+            "type": "string"
+          },
+          "currentPoints": {
+            "type": "integer"
+          },
+          "pendingPoints": {
+            "type": "integer"
+          },
+          "levelCode": {
+            "type": "string"
+          },
+          "benefitSummary": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        }
+      },
+      "PointTransaction": {
+        "type": "object",
+        "properties": {
+          "transactionId": {
+            "type": "string"
+          },
+          "changeType": {
+            "type": "string"
+          },
+          "pointsChanged": {
+            "type": "integer"
+          },
+          "occurredAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "source": {
+            "type": "string"
+          }
+        }
+      },
+      "ClaimCouponRequest": {
+        "type": "object",
+        "required": [
+          "couponTemplateId"
+        ],
+        "properties": {
+          "couponTemplateId": {
+            "type": "string"
+          },
+          "campaignCode": {
+            "type": "string"
+          }
+        }
+      },
+      "CouponClaimResult": {
+        "type": "object",
+        "properties": {
+          "couponId": {
+            "type": "string"
+          },
+          "status": {
+            "type": "string"
+          },
+          "expireAt": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "ErrorBody": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "string"
+          },
+          "message": {
+            "type": "string"
+          },
+          "traceId": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "responses": {
+      "MemberDetailOk": {
+        "description": "会员详情",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/MemberDetail"
+            }
+          }
+        }
+      },
+      "CouponListOk": {
+        "description": "优惠券列表",
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/components/schemas/CouponItem"
+              }
+            }
+          }
+        }
+      },
+      "PointAccountOk": {
+        "description": "积分账户详情",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/PointAccount"
+            }
+          }
+        }
+      },
+      "PointTransactionListOk": {
+        "description": "积分变更记录",
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/components/schemas/PointTransaction"
+              }
+            }
+          }
+        }
+      },
+      "CouponClaimed": {
+        "description": "优惠券领取成功",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/CouponClaimResult"
+            }
+          }
+        }
+      },
+      "MemberNotFound": {
+        "description": "会员不存在",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/ErrorBody"
+            }
+          }
+        }
+      },
+      "BadRequest": {
+        "description": "请求参数错误",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/ErrorBody"
+            }
+          }
+        }
+      },
+      "Forbidden": {
+        "description": "无权限访问",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/ErrorBody"
+            }
+          }
+        }
+      },
+      "CouponClaimConflict": {
+        "description": "优惠券已领取或当前不满足领取条件",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/ErrorBody"
+            }
+          }
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,143 @@
+<?xml version='1.0' encoding='utf-8'?>
+<mxfile host="app.diagrams.net" modified="2026-05-12T00:00:00Z" agent="Codex" version="24.7.10">
+  <diagram id="diagram-1" name="L4 - Reservation Core 关键类协作">
+    <mxGraphModel dx="1960" dy="890" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1960" pageHeight="890" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="title" value="&lt;b&gt;L4 - Reservation Core 关键类协作&lt;/b&gt;" style="text;html=1;strokeColor=none;fillColor=none;fontSize=22;fontStyle=1;fontColor=#111827;" vertex="1" parent="1">
+          <mxGeometry x="40" y="28" width="1880" height="32" as="geometry" />
+        </mxCell>
+        <mxCell id="controller" value="&lt;b&gt;ReservationController&lt;/b&gt;&lt;br&gt;+createReservation(cmd)&lt;br&gt;+rescheduleReservation(cmd)&lt;br&gt;+cancelReservation(cmd)&lt;br&gt;+checkIn(cmd)" style="swimlane;html=1;whiteSpace=wrap;rounded=0;fillColor=#DCEEFF;strokeColor=#6B7280;fontColor=#111827;fontSize=13;startSize=28;" vertex="1" parent="1">
+          <mxGeometry x="780" y="80" width="270" height="115" as="geometry" />
+        </mxCell>
+        <mxCell id="admin" value="&lt;b&gt;AdminReservationController&lt;/b&gt;&lt;br&gt;+approveOfflineRecovery(cmd)&lt;br&gt;+adjustSlotRule(cmd)&lt;br&gt;+forceReleaseSlot(cmd)" style="swimlane;html=1;whiteSpace=wrap;rounded=0;fillColor=#DCEEFF;strokeColor=#6B7280;fontColor=#111827;fontSize=13;startSize=28;" vertex="1" parent="1">
+          <mxGeometry x="420" y="80" width="270" height="115" as="geometry" />
+        </mxCell>
+        <mxCell id="app" value="&lt;b&gt;ReservationApplicationService&lt;/b&gt;&lt;br&gt;+createReservation(cmd)&lt;br&gt;+rescheduleReservation(cmd)&lt;br&gt;+cancelReservation(cmd)&lt;br&gt;+checkIn(cmd)" style="swimlane;html=1;whiteSpace=wrap;rounded=0;fillColor=#DCEEFF;strokeColor=#6B7280;fontColor=#111827;fontSize=13;startSize=28;" vertex="1" parent="1">
+          <mxGeometry x="760" y="260" width="310" height="135" as="geometry" />
+        </mxCell>
+        <mxCell id="fulfillment" value="&lt;b&gt;FulfillmentPolicy&lt;/b&gt;&lt;br&gt;+validateSlot(...)&lt;br&gt;+evaluatePreference(...)&lt;br&gt;+applyLateHold(...)&lt;br&gt;+decideOfflineRecovery(...)" style="swimlane;html=1;whiteSpace=wrap;rounded=0;fillColor=#DCEEFF;strokeColor=#6B7280;fontColor=#111827;fontSize=13;startSize=28;" vertex="1" parent="1">
+          <mxGeometry x="230" y="465" width="275" height="120" as="geometry" />
+        </mxCell>
+        <mxCell id="slot" value="&lt;b&gt;SlotAvailabilityService&lt;/b&gt;&lt;br&gt;+queryAvailableSlots(storeId, date)&lt;br&gt;+lockSlot(slotKey)&lt;br&gt;+releaseSlot(slotKey)" style="swimlane;html=1;whiteSpace=wrap;rounded=0;fillColor=#DCEEFF;strokeColor=#6B7280;fontColor=#111827;fontSize=13;startSize=28;" vertex="1" parent="1">
+          <mxGeometry x="570" y="465" width="300" height="120" as="geometry" />
+        </mxCell>
+        <mxCell id="member" value="&lt;b&gt;MemberPolicyGateway&lt;/b&gt;&lt;br&gt;+verifyMember(memberId)&lt;br&gt;+verifyBenefit(memberId)&lt;br&gt;+verifyBlacklist(memberId)" style="swimlane;html=1;whiteSpace=wrap;rounded=0;fillColor=#DCEEFF;strokeColor=#6B7280;fontColor=#111827;fontSize=13;startSize=28;" vertex="1" parent="1">
+          <mxGeometry x="940" y="465" width="285" height="120" as="geometry" />
+        </mxCell>
+        <mxCell id="repo" value="&lt;b&gt;ReservationRepository&lt;/b&gt;&lt;br&gt;+save(aggregate)&lt;br&gt;+findById(id)" style="swimlane;html=1;whiteSpace=wrap;rounded=0;fillColor=#DCEEFF;strokeColor=#6B7280;fontColor=#111827;fontSize=13;startSize=28;" vertex="1" parent="1">
+          <mxGeometry x="1310" y="465" width="270" height="110" as="geometry" />
+        </mxCell>
+        <mxCell id="outbox" value="&lt;b&gt;OutboxEventPublisher&lt;/b&gt;&lt;br&gt;+append(event)&lt;br&gt;+publishPending()" style="swimlane;html=1;whiteSpace=wrap;rounded=0;fillColor=#DCEEFF;strokeColor=#6B7280;fontColor=#111827;fontSize=13;startSize=28;" vertex="1" parent="1">
+          <mxGeometry x="1640" y="465" width="250" height="110" as="geometry" />
+        </mxCell>
+        <mxCell id="aggregate" value="&lt;b&gt;ReservationAggregate&lt;/b&gt;&lt;br&gt;+create(slot, guestInfo, preference)&lt;br&gt;+reschedule(newSlot)&lt;br&gt;+cancel(reason)&lt;br&gt;+checkIn()" style="swimlane;html=1;whiteSpace=wrap;rounded=0;fillColor=#DCEEFF;strokeColor=#6B7280;fontColor=#111827;fontSize=13;startSize=28;" vertex="1" parent="1">
+          <mxGeometry x="80" y="700" width="310" height="130" as="geometry" />
+        </mxCell>
+        <mxCell id="guard" value="&lt;b&gt;ConcurrencyGuard&lt;/b&gt;&lt;br&gt;+acquire(idempotencyKey)&lt;br&gt;+release(idempotencyKey)" style="swimlane;html=1;whiteSpace=wrap;rounded=0;fillColor=#DCEEFF;strokeColor=#6B7280;fontColor=#111827;fontSize=13;startSize=28;" vertex="1" parent="1">
+          <mxGeometry x="990" y="700" width="260" height="115" as="geometry" />
+        </mxCell>
+        <mxCell id="event1" value="&lt;b&gt;ReservationCreatedEvent&lt;/b&gt;&lt;br&gt;reservationId&lt;br&gt;slotKey&lt;br&gt;memberId" style="swimlane;html=1;whiteSpace=wrap;rounded=0;fillColor=#DCEEFF;strokeColor=#6B7280;fontColor=#111827;fontSize=13;startSize=28;" vertex="1" parent="1">
+          <mxGeometry x="1320" y="720" width="250" height="75" as="geometry" />
+        </mxCell>
+        <mxCell id="event2" value="&lt;b&gt;ReservationChangedEvent&lt;/b&gt;&lt;br&gt;reservationId&lt;br&gt;fromState&lt;br&gt;toState" style="swimlane;html=1;whiteSpace=wrap;rounded=0;fillColor=#DCEEFF;strokeColor=#6B7280;fontColor=#111827;fontSize=13;startSize=28;" vertex="1" parent="1">
+          <mxGeometry x="1640" y="720" width="250" height="75" as="geometry" />
+        </mxCell>
+        <mxCell id="note" value="&lt;b&gt;核心路径&lt;/b&gt;&lt;br&gt;1. 幂等短锁覆盖生命周期&lt;br&gt;2. 资源承诺先于支付闭环&lt;br&gt;3. 规则层负责偏好、迟到和离线补录决策" style="shape=note;whiteSpace=wrap;html=1;fillColor=#FFF8CC;strokeColor=#9A8F4F;fontColor=#111827;fontSize=13;" vertex="1" parent="1">
+          <mxGeometry x="420" y="725" width="280" height="95" as="geometry" />
+        </mxCell>
+        <mxCell id="edge_1" value="管理员操作" style="endArrow=block;html=1;rounded=0;strokeWidth=1.4;strokeColor=#6B7280;" edge="1" parent="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="690" y="138" as="sourcePoint" />
+            <mxPoint x="780" y="138" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="edge_2" value="AdminCommand" style="endArrow=block;html=1;rounded=0;strokeWidth=1.4;strokeColor=#6B7280;" edge="1" parent="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="555" y="195" as="sourcePoint" />
+            <mxPoint x="780" y="300" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="edge_3" value="DTO / Command" style="endArrow=block;html=1;rounded=0;strokeWidth=1.4;strokeColor=#6B7280;" edge="1" parent="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="915" y="195" as="sourcePoint" />
+            <mxPoint x="915" y="260" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="edge_4" value="validate rules" style="endArrow=block;html=1;rounded=0;strokeWidth=1.4;strokeColor=#6B7280;" edge="1" parent="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="760" y="330" as="sourcePoint" />
+            <mxPoint x="505" y="500" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="edge_5" value="query + lock" style="endArrow=block;html=1;rounded=0;strokeWidth=1.4;strokeColor=#6B7280;" edge="1" parent="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="850" y="395" as="sourcePoint" />
+            <mxPoint x="720" y="465" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="edge_6" value="verify member / risk" style="endArrow=block;html=1;rounded=0;strokeWidth=1.4;strokeColor=#6B7280;" edge="1" parent="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="1010" y="395" as="sourcePoint" />
+            <mxPoint x="1082" y="465" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="edge_7" value="save / load" style="endArrow=block;html=1;rounded=0;strokeWidth=1.4;strokeColor=#6B7280;" edge="1" parent="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="1070" y="342" as="sourcePoint" />
+            <mxPoint x="1310" y="510" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="edge_8" value="append domain event" style="endArrow=block;html=1;rounded=0;strokeWidth=1.4;strokeColor=#6B7280;" edge="1" parent="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="1070" y="365" as="sourcePoint" />
+            <mxPoint x="1640" y="510" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="edge_9" value="enforce invariants" style="endArrow=block;html=1;rounded=0;strokeWidth=1.4;strokeColor=#9AA0A6;dashed=1;" edge="1" parent="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="365" y="585" as="sourcePoint" />
+            <mxPoint x="235" y="700" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="edge_10" value="short lock coordination" style="endArrow=block;html=1;rounded=0;strokeWidth=1.4;strokeColor=#9AA0A6;dashed=1;" edge="1" parent="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="720" y="585" as="sourcePoint" />
+            <mxPoint x="990" y="742" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="edge_11" value="acquire / release" style="endArrow=block;html=1;rounded=0;strokeWidth=1.4;strokeColor=#6B7280;" edge="1" parent="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="915" y="395" as="sourcePoint" />
+            <mxPoint x="1120" y="700" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="edge_12" value="creates" style="endArrow=block;html=1;rounded=0;strokeWidth=1.4;strokeColor=#6B7280;" edge="1" parent="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="1445" y="575" as="sourcePoint" />
+            <mxPoint x="1445" y="720" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="edge_13" value="creates" style="endArrow=block;html=1;rounded=0;strokeWidth=1.4;strokeColor=#6B7280;" edge="1" parent="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="1765" y="575" as="sourcePoint" />
+            <mxPoint x="1765" y="720" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="edge_14" value="" style="endArrow=block;html=1;rounded=0;strokeWidth=1.4;strokeColor=#6B7280;" edge="1" parent="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="1580" y="520" as="sourcePoint" />
+            <mxPoint x="1445" y="720" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="edge_15" value="" style="endArrow=block;html=1;rounded=0;strokeWidth=1.4;strokeColor=#6B7280;" edge="1" parent="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="1765" y="575" as="sourcePoint" />
+            <mxPoint x="1765" y="720" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

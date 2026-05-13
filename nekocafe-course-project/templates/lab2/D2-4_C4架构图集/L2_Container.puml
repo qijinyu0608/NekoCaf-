@@ -1,0 +1,4 @@
+@startuml L2_Container
+!include https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Container.puml
+' TODO 在此填写容器图：Web/小程序/移动端/网关/各微服务/数据库/MQ
+@enduml

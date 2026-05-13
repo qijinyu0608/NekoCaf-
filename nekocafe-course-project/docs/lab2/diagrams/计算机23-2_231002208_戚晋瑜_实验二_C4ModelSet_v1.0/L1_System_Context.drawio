@@ -1,0 +1,117 @@
+<?xml version='1.0' encoding='utf-8'?>
+<mxfile host="app.diagrams.net" modified="2026-05-12T00:00:00Z" agent="Codex" version="24.7.10">
+  <diagram id="diagram-1" name="L1 - System Context 系统上下文">
+    <mxGraphModel dx="1500" dy="880" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1500" pageHeight="880" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="title" value="&lt;b&gt;L1 - System Context 系统上下文&lt;/b&gt;" style="text;html=1;strokeColor=none;fillColor=none;fontSize=22;fontStyle=1;fontColor=#111827;" vertex="1" parent="1">
+          <mxGeometry x="40" y="28" width="1420" height="32" as="geometry" />
+        </mxCell>
+        <mxCell id="customer" value="&lt;b&gt;顾客&lt;/b&gt;&lt;br&gt;浏览门店、查询时段&lt;br&gt;创建/变更预约、查看权益" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#0F4C81;strokeColor=#0F4C81;fontColor=#FFFFFF;fontSize=15;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="60" y="95" width="230" height="145" as="geometry" />
+        </mxCell>
+        <mxCell id="staff" value="&lt;b&gt;店员&lt;/b&gt;&lt;br&gt;核销、改桌、维护猫咪状态&lt;br&gt;处理异常与现场排队" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#0F4C81;strokeColor=#0F4C81;fontColor=#FFFFFF;fontSize=15;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="60" y="330" width="230" height="145" as="geometry" />
+        </mxCell>
+        <mxCell id="admin" value="&lt;b&gt;管理员&lt;/b&gt;&lt;br&gt;经营看板、审批预警&lt;br&gt;新店初始化与活动治理" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#0F4C81;strokeColor=#0F4C81;fontColor=#FFFFFF;fontSize=15;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="60" y="565" width="230" height="145" as="geometry" />
+        </mxCell>
+        <mxCell id="platform" value="&lt;b&gt;NekoCafé 猫咪主题餐饮预约平台&lt;/b&gt;&lt;br&gt;&lt;i&gt;[Software System]&lt;/i&gt;&lt;br&gt;以预约与会员为核心&lt;br&gt;统一 API Gateway 暴露服务能力" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#2F86D7;strokeColor=#2F86D7;fontColor=#FFFFFF;fontSize=15;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="545" y="330" width="370" height="160" as="geometry" />
+        </mxCell>
+        <mxCell id="pay" value="&lt;b&gt;支付平台&lt;/b&gt;&lt;br&gt;支付、退款、回调" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#9B9B9B;strokeColor=#9B9B9B;fontColor=#FFFFFF;fontSize=15;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="1160" y="70" width="260" height="115" as="geometry" />
+        </mxCell>
+        <mxCell id="map" value="&lt;b&gt;地图 / 定位服务&lt;/b&gt;&lt;br&gt;城市、距离、到达信息" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#9B9B9B;strokeColor=#9B9B9B;fontColor=#FFFFFF;fontSize=15;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="1160" y="245" width="260" height="115" as="geometry" />
+        </mxCell>
+        <mxCell id="msg" value="&lt;b&gt;短信 / 微信通知&lt;/b&gt;&lt;br&gt;预约提醒、变更通知、审批结果" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#9B9B9B;strokeColor=#9B9B9B;fontColor=#FFFFFF;fontSize=15;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="1160" y="420" width="260" height="115" as="geometry" />
+        </mxCell>
+        <mxCell id="ai" value="&lt;b&gt;外部 AI / 推荐能力&lt;/b&gt;&lt;br&gt;默认关闭，授权后最小接入" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#9B9B9B;strokeColor=#9B9B9B;fontColor=#FFFFFF;fontSize=15;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="1160" y="595" width="260" height="115" as="geometry" />
+        </mxCell>
+        <mxCell id="note" value="&lt;b&gt;L1 关键边界&lt;/b&gt;&lt;br&gt;顾客、门店、总部共用同一业务平台&lt;br&gt;外部支付不决定预约资源承诺&lt;br&gt;AI 能力默认关闭，跨境数据最少必要与审批链路" style="shape=note;whiteSpace=wrap;html=1;fillColor=#FFF8CC;strokeColor=#9A8F4F;fontColor=#111827;fontSize=13;" vertex="1" parent="1">
+          <mxGeometry x="975" y="740" width="390" height="90" as="geometry" />
+        </mxCell>
+        <mxCell id="edge_1" value="浏览/预约/会员权益" style="endArrow=block;html=1;rounded=0;strokeWidth=1.4;strokeColor=#6B7280;" edge="1" parent="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="290" y="168" as="sourcePoint" />
+            <Array as="points">
+              <mxPoint x="420" y="168" />
+              <mxPoint x="420" y="370" />
+            </Array>
+            <mxPoint x="545" y="370" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="edge_2" value="核销/改桌/状态维护" style="endArrow=block;html=1;rounded=0;strokeWidth=1.4;strokeColor=#6B7280;" edge="1" parent="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="290" y="402" as="sourcePoint" />
+            <Array as="points">
+              <mxPoint x="445" y="402" />
+              <mxPoint x="445" y="410" />
+            </Array>
+            <mxPoint x="545" y="410" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="edge_3" value="审批/看板/配置" style="endArrow=block;html=1;rounded=0;strokeWidth=1.4;strokeColor=#6B7280;" edge="1" parent="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="290" y="638" as="sourcePoint" />
+            <Array as="points">
+              <mxPoint x="420" y="638" />
+              <mxPoint x="420" y="450" />
+            </Array>
+            <mxPoint x="545" y="450" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="edge_4" value="支付状态与退款结果" style="endArrow=block;html=1;rounded=0;strokeWidth=1.4;strokeColor=#6B7280;" edge="1" parent="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="915" y="360" as="sourcePoint" />
+            <Array as="points">
+              <mxPoint x="1035" y="360" />
+              <mxPoint x="1035" y="128" />
+            </Array>
+            <mxPoint x="1160" y="128" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="edge_5" value="门店距离与路线" style="endArrow=block;html=1;rounded=0;strokeWidth=1.4;strokeColor=#6B7280;" edge="1" parent="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="915" y="390" as="sourcePoint" />
+            <Array as="points">
+              <mxPoint x="1048" y="390" />
+              <mxPoint x="1048" y="302" />
+            </Array>
+            <mxPoint x="1160" y="302" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="edge_6" value="提醒与通知投递" style="endArrow=block;html=1;rounded=0;strokeWidth=1.4;strokeColor=#6B7280;" edge="1" parent="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="915" y="420" as="sourcePoint" />
+            <Array as="points">
+              <mxPoint x="1062" y="420" />
+              <mxPoint x="1062" y="478" />
+            </Array>
+            <mxPoint x="1160" y="478" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="edge_7" value="推荐请求" style="endArrow=block;html=1;rounded=0;strokeWidth=1.4;strokeColor=#6B7280;" edge="1" parent="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="915" y="450" as="sourcePoint" />
+            <Array as="points">
+              <mxPoint x="1035" y="450" />
+              <mxPoint x="1035" y="652" />
+            </Array>
+            <mxPoint x="1160" y="652" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="edge_8" value="" style="endArrow=block;html=1;rounded=0;strokeWidth=1.4;strokeColor=#9AA0A6;dashed=1;" edge="1" parent="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="760" y="490" as="sourcePoint" />
+            <mxPoint x="970" y="740" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

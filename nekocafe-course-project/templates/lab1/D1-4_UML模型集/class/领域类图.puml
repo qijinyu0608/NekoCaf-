@@ -1,0 +1,11 @@
+@startuml domain_class
+' NekoCafé 领域类图占位（≥ 12 个实体）
+class 顾客 { id; name; phone }
+class 会员 { level; points }
+class 门店 { id; city; address }
+class 桌位 { id; capacity; theme }
+class 预约 { time; status }
+顾客 "1" -- "*" 预约
+门店 "1" -- "*" 桌位
+桌位 "1" -- "*" 预约
+@enduml

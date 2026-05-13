@@ -1,0 +1,9 @@
+services:
+  member:
+    replicaCount: 1
+    image:
+      tag: "dev"
+  reservation:
+    replicaCount: 1
+    image:
+      tag: "dev"

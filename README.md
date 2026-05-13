@@ -4,9 +4,9 @@
 
 ## 目录说明
 
-- `docs/development-path.md`: 四次实验串联的开发路径与阶段承接说明。
 - `docs/foundation/`: 跨实验共享基线，作为后续所有文档的统一事实源。
 - `docs/lab1` ~ `docs/lab4`: 每次实验自己的源文件、图稿、导出件和提交件。
+- `docs/product/`: 当前有效 PRD 与产品实现说明。
 - `project/`: Python monorepo，承接实验二到实验四的设计、实现、测试与 DevOps 落地。
 - `assets/`: 截图、视频脚本素材、过程证据。
 - `templates/`: 从课程原始模板复制出的工作副本，不修改老师原件。
@@ -16,9 +16,9 @@
 
 1. 先维护 `docs/foundation/` 中的共享基线。
 2. 再将共享基线映射到 `docs/lab1` 的正式交付物。
-3. 参考 `docs/development-path.md` 推进 `lab2 -> lab3 -> lab4` 的连续开发流程。
+3. 按 `docs/lab2 -> docs/lab3 -> docs/lab4` 的课程要求继续推进连续实验。
 4. 实验二到实验四继续引用同一套需求 ID、术语、追溯矩阵和服务命名。
-5. `project/` 中只优先实现 `reservation` 与 `member` 两个核心服务，其他上下文先保留在设计层。
+5. `project/` 中以当前单体实现为主线持续迭代顾客预约与店员后台核心闭环。
 
 ## 常用动作
 

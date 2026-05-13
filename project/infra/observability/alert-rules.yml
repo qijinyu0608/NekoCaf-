@@ -1,0 +1,11 @@
+groups:
+  - name: nekocafe-service-availability
+    rules:
+      - alert: NekoCafeServiceDown
+        expr: up{job="nekocafe-web"} == 0
+        for: 1m
+        labels:
+          severity: warning
+        annotations:
+          summary: "NekoCafe application target is down"
+          description: "Prometheus cannot scrape the NekoCafe monolith for more than 1 minute."

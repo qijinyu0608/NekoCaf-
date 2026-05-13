@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+
+{% block title %}NekoCafé | 编辑个人信息{% endblock %}
+
+{% block content %}
+  <main class="page detail-page profile-edit-page">
+    <section class="detail-header">
+      <div>
+        <span class="eyebrow">会员中心</span>
+        <h1>编辑个人信息</h1>
+        <p>更新会员昵称、联系方式和到店偏好，用于预约推荐与门店服务识别。</p>
+      </div>
+      <a class="inline-link" href="/member">返回会员中心</a>
+    </section>
+
+    <section class="feature-card profile-edit-card">
+      <form class="profile-edit-form" method="post" action="/member/profile">
+        <label>
+          昵称
+          <input name="nickname" value="{{ member.nickname }}" maxlength="24" required />
+        </label>
+        <label>
+          手机号
+          <input name="mobileMasked" value="{{ member.mobileMasked }}" maxlength="24" required />
+        </label>
+        <label>
+          偏好标签
+          <input
+            name="preferencesText"
+            value="{{ preferencesText }}"
+            placeholder="靠窗座，安静猫咪，晚间到店"
+          />
+        </label>
+        <div class="form-actions">
+          <button class="primary-cta inline-button" type="submit">保存资料</button>
+          <a class="inline-link" href="/member">取消</a>
+        </div>
+      </form>
+    </section>
+  </main>
+{% endblock %}

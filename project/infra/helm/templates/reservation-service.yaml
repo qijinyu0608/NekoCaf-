@@ -1,0 +1,16 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "nekocafe.fullname" . }}-reservation
+  labels:
+    {{- include "nekocafe.labels" . | nindent 4 }}
+    app.kubernetes.io/component: reservation
+spec:
+  type: {{ .Values.services.reservation.service.type }}
+  selector:
+    app.kubernetes.io/instance: {{ .Release.Name }}
+    app.kubernetes.io/component: reservation
+  ports:
+    - name: http
+      port: {{ .Values.services.reservation.service.port }}
+      targetPort: {{ .Values.services.reservation.containerPort }}

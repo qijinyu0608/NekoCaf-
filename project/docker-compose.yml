@@ -1,15 +1,24 @@
-version: "3.9"
-
 services:
-  reservation:
+  app:
     build:
       context: .
-      dockerfile: infra/docker/reservation.Dockerfile
+      dockerfile: infra/docker/app.Dockerfile
     ports:
-      - "8001:8001"
-  member:
-    build:
-      context: .
-      dockerfile: infra/docker/member.Dockerfile
+      - "8000:8000"
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8000/healthz')"]
+      interval: 10s
+      timeout: 3s
+      retries: 3
+
+  prometheus:
+    image: prom/prometheus:v3.5.0
+    command:
+      - "--config.file=/etc/prometheus/prometheus.yml"
+    volumes:
+      - ./infra/observability/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+      - ./infra/observability/alert-rules.yml:/etc/prometheus/alert-rules.yml:ro
     ports:
-      - "8002:8002"
+      - "9090:9090"
+    depends_on:
+      - app

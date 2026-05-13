@@ -4,7 +4,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>{% block title %}NekoCafé{% endblock %}</title>
-    <link rel="stylesheet" href="{{ url_for('static', path='app.css') }}" />
+    <link rel="stylesheet" href="{{ url_for('static', path='app.css') }}?v={{ assetVersion }}" />
   </head>
   <body>
     <header class="site-header">
@@ -13,11 +13,25 @@
         <p>智慧餐饮预约平台</p>
       </div>
       <nav class="top-nav">
-        <span class="city-chip">上海</span>
-        <a href="/" class="{% if page == 'home' %}active{% endif %}">立即预约</a>
-        <a href="/member" class="{% if page == 'member' %}active{% endif %}">会员中心</a>
-        <a href="/cats" class="{% if page == 'cats' %}active{% endif %}">猫咪档案</a>
-        <a href="/recommendations" class="{% if page == 'recommendations' %}active{% endif %}">智能推荐</a>
+        <span class="city-chip" id="active-city-label">{{ selectedCity }}</span>
+        {% if actor and "permissions.manage" in actor.permissions %}
+          <a href="/admin" class="{% if page == 'admin' %}active{% endif %}">管理员后台</a>
+          <a href="/permissions" class="{% if page == 'permissions' %}active{% endif %}">权限管理</a>
+        {% elif not actor or "reservation.create.self" in actor.permissions %}
+          <a href="/" class="{% if page == 'home' %}active{% endif %}">立即预约</a>
+          <a href="/stores" class="{% if page == 'stores' %}active{% endif %}">门店探索</a>
+          {% if not actor or "member.profile.read.self" in actor.permissions %}
+            <a href="/member" class="{% if page == 'member' %}active{% endif %}">会员中心</a>
+          {% endif %}
+          {% if not actor or "cat.read.self" in actor.permissions %}
+            <a href="{{ catStoreHref }}" class="{% if page == 'cats' %}active{% endif %}">猫咪档案</a>
+          {% endif %}
+          {% if not actor or "recommendation.read.self" in actor.permissions %}
+            <a href="/recommendations" class="{% if page == 'recommendations' %}active{% endif %}">智能推荐</a>
+          {% endif %}
+        {% elif actor and "staff.reservations.read" in actor.permissions %}
+          <a href="/staff" class="{% if page == 'staff' %}active{% endif %}">店员后台</a>
+        {% endif %}
       </nav>
       <div class="user-area">
         {% if actor %}
@@ -28,6 +42,8 @@
           <button class="text-action" data-logout type="button">退出</button>
         {% else %}
           <button class="text-action" data-login-persona="customer" type="button">体验会员</button>
+          <button class="text-action" data-login-persona="staff" type="button">店员入口</button>
+          <button class="text-action" data-login-persona="admin" type="button">管理员入口</button>
         {% endif %}
       </div>
     </header>
@@ -35,6 +51,6 @@
     {% block content %}{% endblock %}
 
     {% block scripts %}{% endblock %}
-    <script src="{{ url_for('static', path='app.js') }}" defer></script>
+    <script src="{{ url_for('static', path='app.js') }}?v={{ assetVersion }}" defer></script>
   </body>
   </html>

@@ -7,7 +7,8 @@
     <section class="detail-header">
       <div>
         <span class="eyebrow">会员中心</span>
-        <h1>会员权益与预约记录</h1>
+        <h1>权益与预约</h1>
+        <p>查看下一次到店、积分和历史预约。</p>
       </div>
       {% if member %}
         <div class="profile-pill">
@@ -21,12 +22,14 @@
     </section>
 
     {% if member %}
-      <section class="detail-grid">
-        <article class="feature-card">
-          <div class="section-label">会员信息</div>
-          <strong>{{ member.nickname }}</strong>
-          <p>{{ member.mobileMasked }}</p>
-          <p>{{ member.loyaltyLevel }} 会员</p>
+      <section class="member-overview-grid">
+        <article class="feature-card member-compact-card member-hero-card">
+          <div class="card-header-line">
+            <div class="section-label">会员信息</div>
+            <a class="card-link" href="/member/profile/edit">编辑资料</a>
+          </div>
+          <strong class="member-name">{{ member.nickname }}</strong>
+          <p>{{ member.mobileMasked }} · {{ member.loyaltyLevel }} 会员</p>
           <div class="tag-row">
             {% for item in member.preferences %}
               <span>{{ item }}</span>
@@ -34,7 +37,7 @@
           </div>
         </article>
 
-        <article class="feature-card">
+        <article class="feature-card member-compact-card member-points-card">
           <div class="section-label">积分与权益</div>
           <strong class="metric-number">{{ points.currentPoints }}</strong>
           <p>待入账 {{ points.pendingPoints }}</p>
@@ -51,7 +54,7 @@
         <article class="feature-card summary-card summary-card-wide">
           <div class="section-label">下一次到店</div>
           {% if reservationSummary.nextVisit %}
-            <strong>{{ reservationSummary.nextVisit.slotStartAt[5:16] }}</strong>
+            <strong>{{ reservationSummary.nextVisit.displayStartAt }}</strong>
             <p>{{ reservationSummary.nextVisit.zoneName }} · {{ reservationSummary.nextVisit.interactionLabel }}</p>
             <div class="tag-row">
               <span>{{ reservationSummary.nextVisit.partySize }}人</span>
@@ -76,19 +79,21 @@
         </article>
       </section>
 
-      <section class="feature-card reservation-board">
+      <section class="feature-card reservation-board reservation-timeline">
         <div class="section-label">我的预约</div>
         {% if reservations %}
           <div class="list-stack">
             {% for reservation in reservations %}
               <article class="reservation-row">
                 <div>
-                  <strong>{{ reservation.slotStartAt[5:16] }}</strong>
+                  <strong>{{ reservation.displayStartAt }}</strong>
+                  <p>{{ reservation.cityName }} · {{ reservation.storeName }} · {{ reservation.tableCode }}</p>
                   <p>{{ reservation.zoneName }} · {{ reservation.interactionLabel }}</p>
                 </div>
                 <div class="status-group">
                   <span class="tag">{{ reservation.partySize }}人</span>
                   <span class="tag">{{ reservation.statusLabel }}</span>
+                  <a class="text-action inline-text-action" href="/reservations/{{ reservation.reservationId }}">查看详情</a>
                   {% if reservation.status == "BOOKED" %}
                     <form action="/member/reservations/{{ reservation.reservationId }}/cancel" method="post">
                       <button class="text-action inline-text-action" type="submit">取消预约</button>
@@ -99,7 +104,7 @@
             {% endfor %}
           </div>
         {% else %}
-          <p>还没有预约记录。</p>
+          <p>还没有预约记录。回到首页选择门店和时段即可创建预约。</p>
         {% endif %}
       </section>
     {% else %}

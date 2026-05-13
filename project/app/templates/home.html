@@ -4,113 +4,91 @@
 
 {% block content %}
   <main class="page home-page">
-    <section class="hero hero-surface">
-      <article class="mobile-hero-summary">
-        <span class="eyebrow">智慧预约，从容到店</span>
-        <h1>智慧预约，让每一次到店更从容</h1>
-        <p>把门店、时段、会员与猫咪互动偏好合在一个入口里，减少临时决策成本。</p>
-      </article>
-
-      <div class="hero-copy">
-        <span class="eyebrow">智慧预约，从容到店</span>
-        <h1>智慧预约，<br />让每一次到店更从容</h1>
+    <section class="hero hero-surface reservation-shell">
+      <div class="hero-copy hero-copy-landing">
+        <span class="eyebrow hero-badge">预约到店</span>
+        <h1>选门店、定时段，<br />一步完成预约</h1>
         <p>
-          NekoCafé 结合会员体系与猫咪互动体验，为你打造温暖、安心、可期待的每一次到店时光。
+          NekoCafé 保留门店、猫咪互动区与会员权益信息，让到店前的选择更清楚。
         </p>
-        <div class="hero-links">
-          <a href="/member">进入会员中心</a>
-          <a href="/cats">看看我的猫咪档案</a>
-        </div>
         {% if actor and actor.role == "customer" %}
-          <article class="hero-note-card">
-            <span class="section-label">欢迎回来，{{ actor.display_name }}</span>
-            {% if latestReservation %}
-              <div class="hero-note-grid">
-                <div>
-                  <p class="note-title">最新预约</p>
-                  <strong>{{ latestReservation.slotStartAt[5:16] }}</strong>
-                </div>
-                <div>
-                  <p class="note-title">互动分区</p>
-                  <strong>{{ latestReservation.zoneName }}</strong>
-                </div>
-                <div>
-                  <p class="note-title">当前状态</p>
-                  <strong>{{ latestReservation.status }}</strong>
-                </div>
-              </div>
-            {% else %}
-              <p>这次的预约台已经准备好了，选个时段就能继续安排你的到店节奏。</p>
-            {% endif %}
-          </article>
-        {% else %}
-          <article class="hero-note-card">
-            <span class="section-label">预约体验</span>
-            <p>先看门店与时段，再决定是否进入会员会话，这样首页才像真正的消费入口，而不是后台演示页。</p>
-          </article>
+          <p class="hero-welcome">欢迎回来，{{ actor.display_name }}</p>
         {% endif %}
-
-        <article class="store-highlight-card" id="store-highlight-card">
-          <div class="section-label">门店亮点</div>
-          <strong id="store-highlight-name">{{ stores[0].storeName }} · {{ stores[0].district }}</strong>
-          <p id="store-highlight-summary">{{ stores[0].summary }}</p>
-          <div class="tag-row" id="store-highlight-tags">
-            {% for tag in stores[0].featureTags %}
-              <span>{{ tag }}</span>
-            {% endfor %}
-          </div>
-        </article>
+        <div class="hero-actions">
+          <a href="/member" class="primary-cta inline-button">查看会员权益</a>
+          <a href="{{ catStoreHref }}" class="hero-inline-link">浏览猫咪档案</a>
+        </div>
+        <div class="hero-quick-stats booking-summary-panel">
+          {% if actor and actor.role == "customer" and latestReservation %}
+            <article class="quick-stat">
+              <span>最新预约</span>
+              <strong>{{ latestReservation.displayStartAt }}</strong>
+            </article>
+            <article class="quick-stat">
+              <span>互动分区</span>
+              <strong>{{ latestReservation.zoneName }}</strong>
+            </article>
+            <article class="quick-stat">
+              <span>会员积分</span>
+              <strong>{{ points.currentPoints }}</strong>
+            </article>
+          {% else %}
+            <article class="quick-stat">
+              <span>预约保障</span>
+              <strong>免排队</strong>
+            </article>
+            <article class="quick-stat">
+              <span>到店体验</span>
+              <strong>优先入座</strong>
+            </article>
+            <article class="quick-stat">
+              <span>会员权益</span>
+              <strong>{{ points.couponCount }} 张券</strong>
+            </article>
+          {% endif %}
+        </div>
+        <div class="experience-strip">
+          {% for cat in cats[:3] %}
+            <img
+              class="cat-photo mini"
+              src="{{ cat.avatarUrl }}"
+              alt="{{ cat.name }}的头像"
+              loading="lazy"
+            />
+          {% endfor %}
+          <span>真实猫咪档案 · 到店前可预览互动区</span>
+        </div>
       </div>
 
-      <section class="booking-card booking-card-compact">
+      <section class="booking-card booking-card-landing">
         <div class="card-title-row">
           <h2>立即预约</h2>
-          <span class="subtle-label">{{ heroCity }}</span>
+          <span class="subtle-label" id="booking-city-label">{{ selectedCity }}</span>
         </div>
-        <article class="booking-context-card">
-          <div class="section-label">门店速览</div>
-          <strong id="booking-store-name">{{ stores[0].storeName }} · {{ stores[0].district }}</strong>
-          <p id="booking-store-summary">{{ stores[0].summary }}</p>
-          <div class="tag-row" id="booking-store-tags">
-            {% for tag in stores[0].featureTags %}
-              <span>{{ tag }}</span>
-            {% endfor %}
-          </div>
-        </article>
-        {% if selectedRecommendation %}
-          <article class="booking-context-card recommendation-context-card">
-            <div class="section-label">匹配推荐</div>
-            <p id="booking-recommendation-headline">{{ selectedRecommendation.headline }}</p>
-            <strong id="booking-recommendation-summary">{{ selectedRecommendation.summary }}</strong>
-            <p id="booking-recommendation-detail">{{ selectedRecommendation.detail }}</p>
-            <div class="tag-row" id="booking-recommendation-tags">
-              {% for tag in selectedRecommendation.reasonTags %}
-                <span>{{ tag }}</span>
-              {% endfor %}
-            </div>
-            <a class="inline-link" id="booking-recommendation-link" href="/?storeId={{ selectedRecommendation.storeId }}">按这家门店预约</a>
-          </article>
-        {% endif %}
         <form class="booking-form" id="booking-form">
-          <label>
-            选择城市
-            <input type="text" value="上海" disabled />
-          </label>
-          <label>
-            选择门店
-            <select id="store-select" name="storeId">
-              {% for store in stores %}
-                <option value="{{ store.storeId }}" {% if store.storeId == defaultStoreId %}selected{% endif %}>
-                  {{ store.storeName }} · {{ store.district }}
-                </option>
-              {% endfor %}
-            </select>
-          </label>
-          <label>
-            选择日期
-            <input id="date-input" name="date" type="date" value="{{ defaultDate }}" />
-          </label>
-          <div class="split-grid">
+          <div class="booking-fields">
+            <label>
+              城市
+              <select id="city-select" name="city">
+                {% for city in cities %}
+                  <option value="{{ city }}" {% if city == bookingCity %}selected{% endif %}>{{ city }}</option>
+                {% endfor %}
+              </select>
+            </label>
+            <label>
+              门店
+              <select id="store-select" name="storeId">
+                {% for store in cityStores %}
+                  <option value="{{ store.storeId }}" {% if store.storeId == defaultStoreId %}selected{% endif %}>
+                    {{ store.storeName }} · {{ store.district }}
+                  </option>
+                {% endfor %}
+              </select>
+            </label>
+            <label>
+              日期
+              <input id="date-input" name="date" type="date" value="{{ defaultDate }}" />
+            </label>
             <label>
               人数
               <select id="party-size-select" name="partySize">
@@ -120,7 +98,7 @@
               </select>
             </label>
             <label>
-              猫咪互动区
+              互动区
               <select id="interaction-select" name="interactionMode">
                 <option value="安静陪伴">安静陪伴</option>
                 <option value="轻陪伴">轻陪伴</option>
@@ -128,7 +106,6 @@
               </select>
             </label>
           </div>
-
           <div class="slot-list" id="slot-list">
             {% for slot in slots %}
               <button
@@ -139,23 +116,28 @@
                 type="button"
               >
                 <strong>{{ slot.startAt[11:16] }}</strong>
-                <span>{{ slot.zoneName }}</span>
+                <span>{{ slot.zoneName }} · 余{{ slot.remainingCapacity }}位</span>
               </button>
             {% endfor %}
           </div>
-          <p class="booking-note">预约保障 · 免排队 · 优先入座</p>
           <button class="primary-cta" id="booking-submit" type="submit">立即预约</button>
-          <p class="inline-message" id="booking-message"></p>
+          <p class="booking-note">预约保障 · 免排队 · 优先入座</p>
+          <p class="inline-message" id="booking-message" aria-live="polite"></p>
         </form>
       </section>
     </section>
 
-    <section class="card-grid compact-card-grid">
-      <article class="feature-card member-card">
-        <div class="section-label">会员积分</div>
-        <div class="member-summary">
+    <section class="home-insight-grid">
+      <article class="feature-card points-summary-card">
+        <div class="card-header-line">
           <div>
+            <div class="section-label">会员积分</div>
             <p class="metric-label">当前积分</p>
+          </div>
+          <a href="/member" class="card-link">会员中心</a>
+        </div>
+        <div class="points-summary">
+          <div>
             <strong class="metric-number">{{ points.currentPoints }}</strong>
             <p class="metric-note">可用优惠券 {{ points.couponCount }} 张</p>
           </div>
@@ -165,13 +147,28 @@
             <small>{{ points.growthValue }} / {{ points.growthTarget }}</small>
           </div>
         </div>
-        <a href="/member" class="card-link">进入会员中心</a>
+        <div class="tag-row compact-tags">
+          {% for item in points.benefitSummary %}
+            <span>{{ item }}</span>
+          {% endfor %}
+        </div>
       </article>
 
-      <article class="feature-card cat-card">
-        <div class="section-label">我的猫咪档案</div>
+      <article class="feature-card cat-mini-card">
+        <div class="card-header-line">
+          <div>
+            <div class="section-label">我的猫咪档案</div>
+            <p class="metric-label">偏好猫咪</p>
+          </div>
+          <a href="{{ catStoreHref }}" class="card-link">门店猫咪</a>
+        </div>
         <div class="cat-summary">
-          <div class="cat-avatar">{{ cats[0].name[0] }}</div>
+          <img
+            class="cat-photo cat-avatar"
+            src="{{ cats[0].avatarUrl }}"
+            alt="{{ cats[0].name }}的头像"
+            loading="lazy"
+          />
           <div>
             <strong>{{ cats[0].name }} ({{ cats[0].englishName }}) {{ cats[0].gender }}</strong>
             <p>{{ cats[0].ageLabel }} · {{ cats[0].breed }}</p>
@@ -179,25 +176,31 @@
             <p>{{ cats[0].companionSummary }}</p>
           </div>
         </div>
-        <a href="/cats" class="card-link">查看全部猫咪</a>
       </article>
 
-      <article class="feature-card recommendation-card">
-        <div class="section-label">智能推荐</div>
-        <div class="store-visual">
-          <div class="visual-room"></div>
-          <div class="visual-cat"></div>
+      <article class="feature-card recommendation-mini-card">
+        <div class="card-header-line">
+          <div>
+            <div class="section-label">智能推荐</div>
+            <p class="metric-label">推荐门店</p>
+          </div>
+          <a
+            href="/?storeId={{ selectedRecommendation.storeId }}&date={{ defaultDate }}&partySize={{ defaultPartySize }}"
+            class="card-link"
+            id="booking-recommendation-link"
+          >
+            按推荐预约
+          </a>
         </div>
         <div class="recommendation-copy">
-          <p>{{ selectedRecommendation.headline }}</p>
-          <strong>{{ selectedRecommendation.summary }}</strong>
-          <div class="tag-row">
+          <strong id="store-highlight-name">{{ selectedRecommendation.summary }}</strong>
+          <p id="booking-recommendation-summary">{{ selectedRecommendation.detail }}</p>
+          <div class="tag-row" id="booking-recommendation-tags">
             {% for tag in selectedRecommendation.reasonTags %}
               <span>{{ tag }}</span>
             {% endfor %}
           </div>
         </div>
-        <a href="/recommendations" class="card-link">查看推荐门店</a>
       </article>
     </section>
   </main>

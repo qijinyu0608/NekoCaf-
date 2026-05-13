@@ -13,10 +13,15 @@ class SessionActor:
     tenant_id: str
     display_name: str
     role: str
+    permissions: tuple[str, ...]
     member_id: str | None = None
     store_id: str | None = None
 
     def to_session_payload(self) -> dict[str, object]:
+        scope = {
+            "memberId": self.member_id,
+            "storeId": self.store_id,
+        }
         return {
             "sessionStatus": "authenticated",
             "tenantId": self.tenant_id,
@@ -25,6 +30,8 @@ class SessionActor:
             "role": self.role,
             "memberId": self.member_id,
             "storeId": self.store_id,
+            "permissions": list(self.permissions),
+            "scope": scope,
         }
 
 
@@ -34,6 +41,16 @@ PERSONAS = {
         tenant_id=DEFAULT_TENANT_ID,
         display_name="Momo",
         role="customer",
+        permissions=(
+            "member.profile.read.self",
+            "member.profile.update.self",
+            "member.points.read.self",
+            "reservation.create.self",
+            "reservation.read.self",
+            "reservation.cancel.self",
+            "cat.read.self",
+            "recommendation.read.self",
+        ),
         member_id="member-1001",
     ),
     "staff": SessionActor(
@@ -41,18 +58,35 @@ PERSONAS = {
         tenant_id=DEFAULT_TENANT_ID,
         display_name="Aki",
         role="staff",
+        permissions=(
+            "staff.reservations.read",
+            "staff.reservations.check_in",
+        ),
         store_id="store-shanghai-jingan",
+    ),
+    "admin": SessionActor(
+        actor_id="admin-001",
+        tenant_id=DEFAULT_TENANT_ID,
+        display_name="Rin",
+        role="admin",
+        permissions=(
+            "permissions.manage",
+            "store.operations.manage",
+            "staff.reservations.read",
+        ),
     ),
 }
 
 SESSION_TOKENS = {
     "mock-customer-token": PERSONAS["customer"],
     "mock-staff-token": PERSONAS["staff"],
+    "mock-admin-token": PERSONAS["admin"],
 }
 
 PERSONA_TOKENS = {
     "customer": "mock-customer-token",
     "staff": "mock-staff-token",
+    "admin": "mock-admin-token",
 }
 
 
@@ -106,3 +140,31 @@ def ensure_role(actor: SessionActor, *roles: str) -> None:
                 "message": "Current session does not have access to this resource.",
             },
         )
+
+
+def ensure_permission(actor: SessionActor, permission: str) -> None:
+    if permission not in actor.permissions:
+        raise HTTPException(
+            status_code=403,
+            detail={
+                "code": "FORBIDDEN",
+                "message": "Current session does not have access to this resource.",
+            },
+        )
+
+
+def list_permission_profiles() -> list[dict[str, object]]:
+    return [
+        {
+            "persona": persona,
+            "actorId": actor.actor_id,
+            "displayName": actor.display_name,
+            "role": actor.role,
+            "permissions": list(actor.permissions),
+            "scope": {
+                "memberId": actor.member_id,
+                "storeId": actor.store_id,
+            },
+        }
+        for persona, actor in PERSONAS.items()
+    ]

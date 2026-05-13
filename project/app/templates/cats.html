@@ -7,18 +7,41 @@
     <section class="detail-header">
       <div>
         <span class="eyebrow">猫咪档案</span>
-        <h1>与你匹配的陪伴档案</h1>
+        <h1>{{ selectedStore.storeName }}猫咪档案</h1>
+        <p>{{ selectedStore.cityName }} · {{ selectedStore.district }} · {{ selectedStore.address }}</p>
       </div>
     </section>
 
+    <section class="feature-card filter-card store-cat-filter">
+      <form class="staff-filter-form" method="get" action="/cats">
+        <label>
+          查看门店
+          <select name="storeId">
+            {% for store in stores %}
+              <option value="{{ store.storeId }}" {% if store.storeId == selectedStore.storeId %}selected{% endif %}>
+                {{ store.cityName }} · {{ store.storeName }} · {{ store.district }}
+              </option>
+            {% endfor %}
+          </select>
+        </label>
+        <button class="primary-cta inline-button" type="submit">切换门店</button>
+      </form>
+    </section>
+
     {% if cats %}
-      <section class="detail-grid single-column">
+      <section class="detail-grid cat-gallery">
         {% for cat in cats %}
-          <article class="feature-card cat-detail-card">
-            <div class="cat-avatar large">{{ cat.name[0] }}</div>
+          <article class="feature-card cat-detail-card cat-profile-card">
+            <img
+              class="cat-photo cat-avatar large"
+              src="{{ cat.avatarUrl }}"
+              alt="{{ cat.name }}的头像"
+              loading="lazy"
+            />
             <div>
               <strong>{{ cat.name }} ({{ cat.englishName }}) {{ cat.gender }}</strong>
               <p>{{ cat.ageLabel }} · {{ cat.breed }}</p>
+              <p>{{ cat.cityName }} · {{ cat.storeName }} · {{ cat.district }}</p>
               <div class="tag-row">
                 {% for item in cat.personalityTags %}
                   <span>{{ item }}</span>
@@ -32,7 +55,7 @@
     {% else %}
       <section class="feature-card empty-card">
         <div class="section-label">进入猫咪档案</div>
-        <p>请先以会员身份进入，再查看与你关联的猫咪档案。</p>
+        <p>请先以会员身份进入，再查看{{ selectedStoreLabel }}的猫咪档案。</p>
         <button class="primary-cta inline-button" data-login-persona="customer" type="button">体验会员</button>
       </section>
     {% endif %}

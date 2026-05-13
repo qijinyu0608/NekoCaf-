@@ -7,33 +7,41 @@
     <section class="detail-header">
       <div>
         <span class="eyebrow">智能推荐</span>
-        <h1>根据会员偏好生成的到店建议</h1>
+        <h1>推荐门店</h1>
+        <p>结合偏好、互动区与时段，给出更适合的预约入口。</p>
+        <p class="compact-copy">当前筛选：{{ recommendationDate }} · {{ recommendationPartySize }}人</p>
       </div>
     </section>
 
     {% if recommendations %}
-      <section class="detail-grid single-column">
+      <section class="detail-grid single-column recommendation-list">
         {% for recommendation in recommendations %}
           <article class="feature-card recommendation-detail-card">
-            <div class="store-visual large">
-              <div class="visual-room"></div>
-              <div class="visual-cat"></div>
+            <div class="recommendation-score-card">
+              <span>推荐分</span>
+              <strong>{{ recommendation.matchScore }}</strong>
             </div>
             <div class="recommendation-copy">
               <div class="recommendation-meta">
                 <span class="section-label">推荐门店</span>
                 <strong>{{ recommendation.storeName }} · {{ recommendation.district }}</strong>
               </div>
-              <p>{{ recommendation.headline }}</p>
+              <p class="compact-copy">{{ recommendation.headline }}</p>
               <strong>{{ recommendation.summary }}</strong>
-              <p>{{ recommendation.detail }}</p>
+              <p class="compact-copy">{{ recommendation.detail }}</p>
               <div class="tag-row">
                 {% for item in recommendation.reasonTags %}
                   <span>{{ item }}</span>
                 {% endfor %}
               </div>
+              <div class="score-reason-list">
+                <span>匹配理由</span>
+                {% for reason in recommendation.scoreReasons %}
+                  <strong>{{ reason }}</strong>
+                {% endfor %}
+              </div>
               <div class="recommendation-actions">
-                <a class="primary-cta inline-button" href="/?storeId={{ recommendation.storeId }}">按推荐门店预约</a>
+                <a class="primary-cta inline-button" href="/?storeId={{ recommendation.storeId }}&date={{ recommendationDate }}&partySize={{ recommendationPartySize }}">按推荐门店预约</a>
                 <a class="inline-link" href="/member">回到会员中心</a>
               </div>
             </div>

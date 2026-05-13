@@ -1,0 +1,161 @@
+{% extends "base.html" %}
+
+{% block title %}NekoCafé | 管理员后台{% endblock %}
+
+{% block content %}
+  <main class="page detail-page admin-page">
+    <section class="detail-header">
+      <div>
+        <span class="eyebrow">管理员后台</span>
+        <h1>三个系统</h1>
+        <p>顾客、店员、管理员分开使用，管理员负责全局范围和权限。</p>
+      </div>
+      <div class="profile-pill">
+        <span class="user-avatar">{{ actor.display_name[:1] }}</span>
+        <div>
+          <strong>{{ actor.display_name }}</strong>
+          <p>全局管理员</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="staff-stats-grid admin-stats-grid">
+      <article class="feature-card summary-card">
+        <div class="section-label">城市</div>
+        <strong class="summary-number">{{ cityCount }}</strong>
+        <p>当前覆盖城市</p>
+      </article>
+      <article class="feature-card summary-card">
+        <div class="section-label">门店</div>
+        <strong class="summary-number">{{ openStoreCount }}</strong>
+        <p>营业中 / 共 {{ storeCount }} 家</p>
+      </article>
+      <article class="feature-card summary-card">
+        <div class="section-label">角色</div>
+        <strong class="summary-number">{{ roleCount }}</strong>
+        <p>顾客、店员、管理员</p>
+      </article>
+      <article class="feature-card summary-card">
+        <div class="section-label">待到店</div>
+        <strong class="summary-number">{{ staffStats.booked }}</strong>
+        <p>默认门店今日预约</p>
+      </article>
+    </section>
+
+    <section class="feature-card admin-ops-card">
+      <div class="card-header-line">
+        <div>
+          <div class="section-label">门店运营控制</div>
+          <strong>预约开放状态</strong>
+        </div>
+        <span class="metric-note">权限 store.operations.manage</span>
+      </div>
+      <form class="admin-store-filter-form" action="/admin" method="get">
+        <label>
+          搜索
+          <input name="q" value="{{ storeSearchQuery }}" placeholder="门店名、城市、区域" />
+        </label>
+        <label>
+          城市
+          <select name="city">
+            <option value="">全部城市</option>
+            {% for group in cityGroups %}
+              <optgroup label="{{ group.name }}">
+                {% for city in group.cities %}
+                  <option value="{{ city }}" {% if city == activeCity %}selected{% endif %}>{{ city }}</option>
+                {% endfor %}
+              </optgroup>
+            {% endfor %}
+          </select>
+        </label>
+        <label>
+          状态
+          <select name="status">
+            <option value="">全部状态</option>
+            <option value="OPEN" {% if activeStoreStatus == "OPEN" %}selected{% endif %}>营业中</option>
+            <option value="PAUSED" {% if activeStoreStatus == "PAUSED" %}selected{% endif %}>暂停预约</option>
+          </select>
+        </label>
+        <button class="secondary-button" type="submit">筛选</button>
+      </form>
+      <p class="metric-note">当前筛选 {{ filteredStoreCount }} 家门店</p>
+      <div class="store-ops-list">
+        {% for store in stores %}
+          <article class="store-ops-row">
+            <div class="store-ops-main">
+              <div class="store-ops-title">
+                <strong>{{ store.cityName }} · {{ store.storeName }}</strong>
+                <span class="status-chip {% if store.isBookable %}status-open{% else %}status-paused{% endif %}">
+                  {{ store.operatingStatusLabel }}
+                </span>
+              </div>
+              <p>{{ store.district }} · {{ store.address }} · {{ store.businessHours }}</p>
+              {% if store.operatingNote %}
+                <p class="store-ops-note">{{ store.operatingNote }}</p>
+              {% endif %}
+            </div>
+            <form class="store-status-form" action="/admin/stores/{{ store.storeId }}/status" method="post">
+              <label>
+                状态
+                <select name="operatingStatus">
+                  <option value="OPEN" {% if store.operatingStatus == "OPEN" %}selected{% endif %}>营业中</option>
+                  <option value="PAUSED" {% if store.operatingStatus == "PAUSED" %}selected{% endif %}>暂停预约</option>
+                </select>
+              </label>
+              <label>
+                说明
+                <input name="operatingNote" value="{{ store.operatingNote }}" placeholder="如：设备维护、包场活动" />
+              </label>
+              <button class="secondary-button" type="submit">保存</button>
+            </form>
+          </article>
+        {% endfor %}
+      </div>
+    </section>
+
+    <section class="detail-grid admin-system-grid">
+      {% for system in systems %}
+        <article class="feature-card admin-system-card">
+          <div class="card-header-line">
+            <div>
+              <div class="section-label">{{ system.owner }}</div>
+              <strong>{{ system.name }}</strong>
+            </div>
+            <span class="tag">{{ system.entry }}</span>
+          </div>
+          <p>{{ system.description }}</p>
+          {% if system.name == "管理员系统" %}
+            <a class="primary-cta inline-button" href="/permissions">管理权限</a>
+          {% else %}
+            <span class="metric-note">入口已按角色隔离</span>
+          {% endif %}
+        </article>
+      {% endfor %}
+    </section>
+
+    <section class="feature-card admin-account-card">
+      <div class="card-header-line">
+        <div>
+          <div class="section-label">账号与权限</div>
+          <strong>三类账号边界</strong>
+        </div>
+        <a class="card-link" href="/permissions">查看权限管理</a>
+      </div>
+      <div class="admin-account-list">
+        {% for profile in permissionProfiles %}
+          <article class="admin-account-row">
+            <div>
+              <strong>{{ profile.displayName }} · {{ profile.actorId }}</strong>
+              <p>{{ profile.role }} · {{ profile.persona }}</p>
+            </div>
+            <div class="permission-scope">
+              <span>会员：{{ profile.scope.memberId or "无" }}</span>
+              <span>门店：{{ profile.scope.storeId or "全局" }}</span>
+              <span>权限 {{ profile.permissions|length }} 项</span>
+            </div>
+          </article>
+        {% endfor %}
+      </div>
+    </section>
+  </main>
+{% endblock %}

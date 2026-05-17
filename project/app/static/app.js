@@ -22,10 +22,10 @@ async function requestJson(url, options = {}) {
   return { ok: response.ok, payload, status: response.status };
 }
 
-async function loginAs(persona) {
+async function loginAs(persona, credentials = {}) {
   return requestJson("/api/session/login", {
     method: "POST",
-    body: JSON.stringify({ persona }),
+    body: JSON.stringify({ persona, ...credentials }),
   });
 }
 
@@ -33,14 +33,123 @@ async function logoutCurrentSession() {
   return requestJson("/api/session/logout", { method: "POST" });
 }
 
+function roleHomePath(role) {
+  return {
+    customer: "/",
+    staff: "/staff",
+    admin: "/admin",
+  }[role] || "/";
+}
+
 function bindSessionButtons() {
+  const dialog = document.querySelector("#auth-dialog");
+  const authForm = document.querySelector("#auth-form");
+  const personaInput = document.querySelector("#auth-persona");
+  const identifierInput = document.querySelector("#auth-identifier");
+  const secretInput = document.querySelector("#auth-secret");
+  const identifierLabel = document.querySelector("#auth-identifier-label");
+  const secretLabel = document.querySelector("#auth-secret-label");
+  const authHint = document.querySelector("#auth-hint");
+  const authMessage = document.querySelector("#auth-message");
+  const authSubmit = document.querySelector("#auth-submit");
+  const entryOptions = document.querySelectorAll("[data-auth-persona]");
+
+  const authProfiles = {
+    customer: {
+      identifierLabel: "手机号",
+      secretLabel: "会员验证码",
+      identifier: "13800001001",
+      secret: "260520",
+      hint: "演示会员：13800001001 / 260520",
+    },
+    staff: {
+      identifierLabel: "工号 / 账号",
+      secretLabel: "门店访问码",
+      identifier: "staff-sh-001",
+      secret: "SH-NEKO-2026",
+      hint: "演示店员：staff-sh-001 / SH-NEKO-2026",
+    },
+    admin: {
+      identifierLabel: "工号 / 账号",
+      secretLabel: "管理访问码",
+      identifier: "admin-001",
+      secret: "ADMIN-NEKO-2026",
+      hint: "演示管理员：admin-001 / ADMIN-NEKO-2026",
+    },
+  };
+
+  function selectPersona(persona) {
+    const profile = authProfiles[persona] || authProfiles.customer;
+    if (personaInput) personaInput.value = persona;
+    if (identifierLabel) identifierLabel.textContent = profile.identifierLabel;
+    if (secretLabel) secretLabel.textContent = profile.secretLabel;
+    if (identifierInput) identifierInput.value = profile.identifier;
+    if (secretInput) secretInput.value = profile.secret;
+    if (authHint) authHint.textContent = profile.hint;
+    if (authMessage) authMessage.textContent = "";
+    entryOptions.forEach((option) => {
+      option.classList.toggle("active", option.getAttribute("data-auth-persona") === persona);
+    });
+  }
+
+  function openAuthDialog(persona = "customer") {
+    if (!dialog) return;
+    selectPersona(persona);
+    dialog.classList.add("open");
+    dialog.setAttribute("aria-hidden", "false");
+    identifierInput?.focus();
+  }
+
+  function closeAuthDialog() {
+    if (!dialog) return;
+    dialog.classList.remove("open");
+    dialog.setAttribute("aria-hidden", "true");
+  }
+
+  entryOptions.forEach((button) => {
+    button.addEventListener("click", () => {
+      selectPersona(button.getAttribute("data-auth-persona") || "customer");
+    });
+  });
+
+  document.querySelectorAll("[data-auth-close]").forEach((button) => {
+    button.addEventListener("click", closeAuthDialog);
+  });
+
   document.querySelectorAll("[data-login-persona]").forEach((button) => {
-    button.addEventListener("click", async () => {
+    button.addEventListener("click", () => {
       const persona = button.getAttribute("data-login-persona");
       if (!persona) return;
-      await loginAs(persona);
-      window.location.reload();
+      openAuthDialog(persona);
     });
+  });
+
+  document.querySelectorAll("[data-login-workspace]").forEach((button) => {
+    button.addEventListener("click", () => {
+      openAuthDialog("staff");
+    });
+  });
+
+  authForm?.addEventListener("submit", async (event) => {
+    event.preventDefault();
+    const persona = personaInput?.value || "customer";
+    const credentials = {
+      identifier: identifierInput?.value || "",
+    };
+    if (persona === "customer") {
+      credentials.verificationCode = secretInput?.value || "";
+    } else {
+      credentials.accessCode = secretInput?.value || "";
+    }
+    if (authMessage) authMessage.textContent = "";
+    authSubmit?.setAttribute("disabled", "disabled");
+    const { ok, payload } = await loginAs(persona, credentials);
+    authSubmit?.removeAttribute("disabled");
+    if (!ok) {
+      if (authMessage) authMessage.textContent = payload?.detail?.message || "身份验证失败，请检查输入。";
+      return;
+    }
+    window.location.href = roleHomePath(payload?.role || persona);
   });
 
   document.querySelectorAll("[data-logout]").forEach((button) => {
@@ -260,6 +369,12 @@ function bindBookingForm() {
   const recommendationSummary = document.querySelector("#booking-recommendation-summary");
   const recommendationTags = document.querySelector("#booking-recommendation-tags");
   const recommendationLink = document.querySelector("#booking-recommendation-link");
+  const applyRecommendationButton = document.querySelector("[data-apply-recommendation]");
+  const summaryStore = document.querySelector("#summary-store");
+  const summaryDate = document.querySelector("#summary-date");
+  const summaryParty = document.querySelector("#summary-party");
+  const summarySlot = document.querySelector("#summary-slot");
+  const summaryZone = document.querySelector("#summary-zone");
   const catArchiveLinks = document.querySelectorAll('a[href^="/cats"]');
   const bootstrap = window.NEKOCAFE_BOOTSTRAP || {};
   const recommendationQuery = bootstrap.recommendationQuery || {};
@@ -274,6 +389,41 @@ function bindBookingForm() {
 
   function storeScopeLabel(store) {
     return store ? `${store.cityName}${store.storeName}` : "";
+  }
+
+  function activeRecommendation() {
+    const cityName = citySelect?.value || "";
+    return Array.from(recommendationMap.values()).find((recommendation) => {
+      const store = storeMap.get(recommendation.storeId);
+      return !cityName || store?.cityName === cityName;
+    });
+  }
+
+  function renderBookingSummary() {
+    const store = storeMap.get(storeSelect?.value);
+    const selectedSlot = slotList?.querySelector(".slot-pill.selected");
+    const slotTime = selectedSlot?.getAttribute("data-time") || selectedSlot?.querySelector("strong")?.textContent || "";
+    const slotZone = selectedSlot?.getAttribute("data-zone") || "";
+
+    if (summaryStore) summaryStore.textContent = store ? `${store.cityName} · ${store.storeName}` : "待选择";
+    if (summaryDate) summaryDate.textContent = dateInput?.value || "待选择";
+    if (summaryParty) summaryParty.textContent = `${partySizeSelect?.value || bootstrap.defaultPartySize || 2}人`;
+    if (summarySlot) summarySlot.textContent = slotTime ? `${slotTime} 到店` : "请选择时段";
+    if (summaryZone) summaryZone.textContent = slotZone || "待选择";
+  }
+
+  function selectSlotButton(button) {
+    if (!slotList || !button) return;
+    slotList.querySelectorAll(".slot-pill").forEach((item) => item.classList.remove("selected"));
+    button.classList.add("selected");
+    selectedSlotId = button.dataset.slotId || "";
+    renderBookingSummary();
+  }
+
+  function bindSlotButton(button) {
+    if (!button || button.dataset.slotBound === "true") return;
+    button.dataset.slotBound = "true";
+    button.addEventListener("click", () => selectSlotButton(button));
   }
 
   function renderScopeLabels(storeId) {
@@ -339,6 +489,7 @@ function bindBookingForm() {
       const activePartySize = partySizeSelect?.value || recommendationQuery.partySize || bootstrap.defaultPartySize;
       recommendationLink.setAttribute("href", `/?storeId=${store.storeId}&date=${activeDate}&partySize=${activePartySize}`);
     }
+    renderBookingSummary();
   }
 
   function renderSlots(slots) {
@@ -348,6 +499,7 @@ function bindBookingForm() {
     if (!slots.length) {
       slotList.innerHTML = '<p class="metric-note">暂时没有符合条件的时段，可以调整人数、日期或换一家门店。</p>';
       selectedSlotId = "";
+      renderBookingSummary();
       return;
     }
 
@@ -356,16 +508,15 @@ function bindBookingForm() {
       button.type = "button";
       button.className = `slot-pill ${index === 0 ? "selected" : ""}`;
       button.dataset.slotId = slot.slotId;
+      button.dataset.time = slot.startAt.slice(11, 16);
+      button.dataset.zone = slot.zoneName;
       button.innerHTML = `<strong>${slot.startAt.slice(11, 16)}</strong><span>${slot.zoneName} · 余${slot.remainingCapacity}位</span>`;
-      button.addEventListener("click", () => {
-        slotList.querySelectorAll(".slot-pill").forEach((item) => item.classList.remove("selected"));
-        button.classList.add("selected");
-        selectedSlotId = slot.slotId;
-      });
+      bindSlotButton(button);
       slotList.appendChild(button);
     });
 
     selectedSlotId = slots[0].slotId;
+    renderBookingSummary();
   }
 
   async function refreshSlots() {
@@ -396,6 +547,7 @@ function bindBookingForm() {
 
   citySelect?.addEventListener("change", () => {
     renderStoreOptions(citySelect.value);
+    renderStoreHighlight(storeSelect.value);
     void refreshSlots();
     void refreshRecommendations();
   });
@@ -403,9 +555,21 @@ function bindBookingForm() {
   [storeSelect, dateInput, partySizeSelect].forEach((field) => {
     field?.addEventListener("change", () => {
       if (field === storeSelect) renderStoreHighlight(storeSelect.value);
+      renderBookingSummary();
       void refreshSlots();
       void refreshRecommendations();
     });
+  });
+
+  applyRecommendationButton?.addEventListener("click", () => {
+    const recommendation = activeRecommendation();
+    const store = recommendation ? storeMap.get(recommendation.storeId) : null;
+    if (!store || !citySelect || !storeSelect) return;
+    citySelect.value = store.cityName;
+    renderStoreOptions(store.cityName, store.storeId);
+    renderStoreHighlight(store.storeId);
+    void refreshSlots();
+    void refreshRecommendations();
   });
 
   form.addEventListener("submit", async (event) => {
@@ -418,7 +582,9 @@ function bindBookingForm() {
     }
 
     if (bootstrap.session?.role !== "customer") {
-      await loginAs("customer");
+      if (message) message.textContent = "请先通过会员入口完成身份验证后再预约。";
+      document.querySelector('[data-login-persona="customer"]')?.click();
+      return;
     }
 
     submitButton?.setAttribute("disabled", "disabled");
@@ -444,7 +610,9 @@ function bindBookingForm() {
   if (citySelect) {
     renderStoreOptions(citySelect.value, storeSelect.value);
   }
+  slotList?.querySelectorAll(".slot-pill").forEach(bindSlotButton);
   renderStoreHighlight(storeSelect.value);
+  renderBookingSummary();
 }
 
 bindSessionButtons();

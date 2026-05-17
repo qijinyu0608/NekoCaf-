@@ -34,6 +34,7 @@ def test_monolith_exposes_trace_id_header_and_metrics_endpoint():
 def test_homepage_renders_booking_member_cat_and_recommendation_sections():
     reset_demo_state()
     client = TestClient(app)
+    client.post("/api/session/login", json={"persona": "customer", "identifier": "13800001001", "verificationCode": "260520"})
 
     response = client.get("/")
 
@@ -53,6 +54,7 @@ def test_homepage_renders_booking_member_cat_and_recommendation_sections():
 def test_homepage_uses_real_reservation_layout_and_cat_photos():
     reset_demo_state()
     client = TestClient(app)
+    client.post("/api/session/login", json={"persona": "customer", "identifier": "13800001001", "verificationCode": "260520"})
 
     response = client.get("/")
 
@@ -89,10 +91,92 @@ def test_global_navigation_exposes_customer_and_staff_workflows():
     assert 'href="/member"' in response.text
     assert 'href="/recommendations"' in response.text
     assert 'href="/staff"' not in response.text
-    assert 'data-login-persona="staff"' in response.text
-    assert 'data-login-persona="admin"' in response.text
-    assert "店员入口" in response.text
-    assert "管理员入口" in response.text
+    assert 'data-login-persona="staff"' not in response.text
+    assert 'data-login-persona="admin"' not in response.text
+    assert 'data-login-workspace="true"' in response.text
+    assert "门店工作台" in response.text
+    assert "运营控制台" in response.text
+    assert "auth-dialog" in response.text
+    assert "身份验证" in response.text
+    assert "会员验证码" in response.text
+    assert "工号 / 账号" in response.text
+
+
+def test_anonymous_homepage_is_public_brand_entry_not_customer_booking_console():
+    reset_demo_state()
+    client = TestClient(app)
+
+    response = client.get("/")
+
+    assert response.status_code == 200
+    assert "public-brand-page" in response.text
+    assert "先选好时段，再把下午留给猫和咖啡" in response.text
+    assert "不用把时间花在排队和碰运气上" in response.text
+    assert "预约制猫咖体验" in response.text
+    assert "猫咪档案预览" in response.text
+    assert "咖啡与轻食" in response.text
+    assert "店员工作台" not in response.text
+    assert "运营管理" not in response.text
+    assert "管理员入口" not in response.text
+    assert "public-hero-photo" in response.text
+    assert "public-reservation-note" in response.text
+    assert "booking-form" not in response.text
+    assert "booking-live-summary" not in response.text
+
+
+def test_public_homepage_keeps_staff_admin_controls_out_of_marketing_content():
+    reset_demo_state()
+    client = TestClient(app)
+
+    response = client.get("/")
+
+    assert response.status_code == 200
+    assert "public-feature-grid" in response.text
+    assert "public-system-grid" not in response.text
+    assert "进入店员后台" not in response.text
+    assert "进入管理员后台" not in response.text
+    assert 'data-login-persona="admin"' not in response.text
+    assert 'data-login-persona="staff"' not in response.text
+    assert 'data-login-workspace="true"' in response.text
+
+
+def test_role_homepage_routes_keep_staff_and_admin_out_of_customer_booking_console():
+    reset_demo_state()
+    client = TestClient(app)
+
+    client.post("/api/session/login", json={"persona": "staff", "identifier": "staff-sh-001", "accessCode": "SH-NEKO-2026"})
+    staff_home = client.get("/", follow_redirects=False)
+
+    client.post("/api/session/login", json={"persona": "admin", "identifier": "admin-001", "accessCode": "ADMIN-NEKO-2026"})
+    admin_home = client.get("/", follow_redirects=False)
+
+    assert staff_home.status_code == 303
+    assert staff_home.headers["location"] == "/staff"
+    assert admin_home.status_code == 303
+    assert admin_home.headers["location"] == "/admin"
+
+
+def test_login_submit_routes_each_persona_to_their_role_home():
+    static_dir = Path(__file__).resolve().parents[2] / "app" / "static"
+    js_text = (static_dir / "app.js").read_text(encoding="utf-8")
+
+    assert "roleHomePath" in js_text
+    assert 'staff: "/staff"' in js_text
+    assert 'admin: "/admin"' in js_text
+    assert "window.location.href = roleHomePath(payload?.role || persona)" in js_text
+
+
+def test_authenticated_user_chip_is_not_a_dead_button():
+    reset_demo_state()
+    client = TestClient(app)
+    client.post("/api/session/login", json={"persona": "customer", "identifier": "13800001001", "verificationCode": "260520"})
+
+    response = client.get("/")
+
+    assert response.status_code == 200
+    assert '<span class="user-chip" aria-label="当前登录用户">' in response.text
+    assert '<button class="user-chip"' not in response.text
+    assert 'data-logout type="button">退出</button>' in response.text
 
 
 def test_store_discovery_page_lists_multicity_stores_and_booking_links():
@@ -109,11 +193,29 @@ def test_store_discovery_page_lists_multicity_stores_and_booking_links():
     assert "太古里店" in response.text
     assert "杭州" in response.text
     assert 'href="/?storeId=store-shanghai-jingan"' in response.text
+    assert 'href="/stores/store-shanghai-jingan"' in response.text
     assert "最早可约" in response.text
     assert "18:00" in response.text
     assert "静安区愚园路 108 号" in response.text
     assert "10:00-22:00" in response.text
     assert "021-6000-0101" in response.text
+
+
+def test_store_detail_page_shows_trust_details_slots_and_next_actions():
+    reset_demo_state()
+    client = TestClient(app)
+
+    response = client.get("/stores/store-shanghai-jingan")
+
+    assert response.status_code == 200
+    assert "store-detail-page" in response.text
+    assert "静安店" in response.text
+    assert "静安区愚园路 108 号" in response.text
+    assert "021-6000-0101" in response.text
+    assert "今日可约时段" in response.text
+    assert "18:00 · 阳光房 · 余4位" in response.text
+    assert 'href="/?storeId=store-shanghai-jingan&date=2026-05-20&partySize=2"' in response.text
+    assert 'href="/cats?storeId=store-shanghai-jingan"' in response.text
 
 
 def test_store_discovery_filters_by_city_and_api_returns_availability():
@@ -144,7 +246,61 @@ def test_store_discovery_filters_by_city_and_api_returns_availability():
     assert stores[0]["phone"] == "028-6000-0501"
 
 
-def test_store_discovery_supports_search_grouped_city_filter_and_load_more():
+def test_store_availability_uses_batched_slot_lookup(monkeypatch):
+    reset_demo_state()
+    client = TestClient(app)
+
+    def fail_single_store_lookup(*_args, **_kwargs):
+        raise AssertionError("availability should not query slots one store at a time")
+
+    monkeypatch.setattr("app.services.catalog.list_available_slots", fail_single_store_lookup, raising=False)
+
+    response = client.get(
+        "/api/stores/availability",
+        params={"city": "成都", "date": "2026-05-20", "partySize": 2},
+    )
+
+    assert response.status_code == 200
+    assert response.json()[0]["storeId"] == "store-chengdu-taikooli"
+    assert response.json()[0]["slotPreview"][0]["displayTime"] == "17:30"
+
+
+def test_recommendations_use_batched_slot_lookup(monkeypatch):
+    reset_demo_state()
+    client = TestClient(app)
+    client.post("/api/session/login", json={"persona": "customer", "identifier": "13800001001", "verificationCode": "260520"})
+
+    def fail_single_store_lookup(*_args, **_kwargs):
+        raise AssertionError("recommendations should not query slots one store at a time")
+
+    monkeypatch.setattr("app.services.recommendations.list_available_slots", fail_single_store_lookup, raising=False)
+
+    response = client.get(
+        "/api/recommendations/me",
+        params={"city": "成都", "date": "2026-05-20", "partySize": 2},
+    )
+
+    assert response.status_code == 200
+    assert response.json()
+    assert response.json()[0]["matchScore"] >= 60
+
+
+def test_store_request_does_not_reinitialize_database(monkeypatch):
+    reset_demo_state()
+    client = TestClient(app)
+
+    def fail_request_time_initialization(*_args, **_kwargs):
+        raise AssertionError("database initialization should happen at startup or reset time")
+
+    monkeypatch.setattr("app.repositories.stores.initialize_database", fail_request_time_initialization, raising=False)
+
+    response = client.get("/api/stores", params={"city": "上海"})
+
+    assert response.status_code == 200
+    assert any(store["storeId"] == "store-shanghai-jingan" for store in response.json())
+
+
+def test_store_discovery_supports_search_grouped_city_filter_and_pagination():
     reset_demo_state()
     client = TestClient(app)
 
@@ -158,17 +314,21 @@ def test_store_discovery_supports_search_grouped_city_filter_and_load_more():
     assert "store-search-form" in default_response.text
     assert "city-select-grouped" in default_response.text
     assert "<optgroup label=\"华东\">" in default_response.text
-    assert "显示 20 / 100 家门店" in default_response.text
-    assert "加载更多" in default_response.text
+    assert "显示第 1-20 / 100 家门店" in default_response.text
+    assert "门店分页" in default_response.text
+    assert "第 1 / 5 页" in default_response.text
+    assert "加载更多" not in default_response.text
+    assert 'href="/stores?date=2026-05-20&amp;partySize=2&amp;page=2"' in default_response.text
     assert default_response.text.count("store-availability-card") == 20
 
     assert second_page_response.status_code == 200
-    assert "显示 40 / 100 家门店" in second_page_response.text
-    assert second_page_response.text.count("store-availability-card") == 40
+    assert "显示第 21-40 / 100 家门店" in second_page_response.text
+    assert 'aria-current="page">2</span>' in second_page_response.text
+    assert second_page_response.text.count("store-availability-card") == 20
 
     assert search_response.status_code == 200
     assert "金鸡湖店" in search_response.text
-    assert "显示 1 / 1 家门店" in search_response.text
+    assert "显示第 1-1 / 1 家门店" in search_response.text
     assert "平江路店" not in search_response.text
 
     assert city_search_response.status_code == 200
@@ -235,8 +395,8 @@ def test_frontend_polish_uses_accessible_messages_and_css_tokens():
 
     assert response.status_code == 200
     assert 'aria-live="polite"' in response.text
-    assert "app.css?v=20260513-booking-hardening-1" in response.text
-    assert "app.js?v=20260513-booking-hardening-1" in response.text
+    assert "app.css?v=20260516-admin-dashboard-1" in response.text
+    assert "app.js?v=20260516-admin-dashboard-1" in response.text
     assert 'window.location.href = `/reservations/${payload.reservationId}`' in js_text
     assert "暂时没有符合条件的时段" in js_text
     assert "bindCustomSelects" in js_text
@@ -250,13 +410,27 @@ def test_frontend_polish_uses_accessible_messages_and_css_tokens():
     assert ".home-insight-grid" in css_text
     assert "grid-template-columns: repeat(3, minmax(0, 1fr));" in css_text
     assert ".booking-card-landing" in css_text
+    assert ".public-brand-page" in css_text
+    assert ".public-experience-panel" in css_text
+    assert ".public-feature-grid" in css_text
+    assert ".pagination-summary" in css_text
+    assert "grid-template-columns: 1fr 1fr;" in css_text
+    assert ".admin-dashboard-grid" in css_text
+    assert ".donut-chart" in css_text
+    assert ".rank-chart-list" in css_text
+    assert ".hero-copy-landing" in css_text
+    assert "align-items: stretch;" in css_text
     assert "order: -1;" in css_text
+    assert "#2f6f8f" not in css_text
+    assert "47, 111, 143" not in css_text
+    assert "radial-gradient(circle at 88% 16%, rgba(197, 151, 95, 0.11)" in css_text
     assert "clamp(" not in css_text
 
 
 def test_homepage_has_clear_member_and_recommendation_booking_actions():
     reset_demo_state()
     client = TestClient(app)
+    client.post("/api/session/login", json={"persona": "customer", "identifier": "13800001001", "verificationCode": "260520"})
 
     response = client.get("/")
 
@@ -267,9 +441,63 @@ def test_homepage_has_clear_member_and_recommendation_booking_actions():
     assert 'href="/?storeId=store-shanghai-jingan&date=2026-05-20&partySize=2"' in response.text
 
 
+def test_homepage_renders_live_booking_summary_and_apply_recommendation_control():
+    reset_demo_state()
+    client = TestClient(app)
+    client.post("/api/session/login", json={"persona": "customer", "identifier": "13800001001", "verificationCode": "260520"})
+
+    response = client.get("/")
+    static_dir = Path(__file__).resolve().parents[2] / "app" / "static"
+    js_text = (static_dir / "app.js").read_text(encoding="utf-8")
+    css_text = (static_dir / "app.css").read_text(encoding="utf-8")
+
+    assert response.status_code == 200
+    assert "booking-live-summary" in response.text
+    assert 'id="summary-store"' in response.text
+    assert 'id="summary-date"' in response.text
+    assert 'id="summary-party"' in response.text
+    assert 'id="summary-slot"' in response.text
+    assert 'id="summary-zone"' in response.text
+    assert 'data-apply-recommendation="true"' in response.text
+    assert "按推荐填入" in response.text
+    assert "bindSlotButton" in js_text
+    assert "selectedSlotId = button.dataset.slotId" in js_text
+    assert "renderBookingSummary" in js_text
+    assert "summaryStore.textContent" in js_text
+    assert "applyRecommendationButton" in js_text
+    assert ".slot-pill:focus-visible" in css_text
+
+
+def test_reservation_confirmation_offers_contextual_next_actions():
+    reset_demo_state()
+    client = TestClient(app)
+    client.post("/api/session/login", json={"persona": "customer", "identifier": "13800001001", "verificationCode": "260520"})
+    slots_response = client.get(
+        "/api/slots",
+        params={"storeId": "store-shanghai-jingan", "date": "2026-05-20", "partySize": 2},
+    )
+    reservation_response = client.post(
+        "/api/reservations",
+        json={
+            "storeId": "store-shanghai-jingan",
+            "slotId": slots_response.json()[0]["slotId"],
+            "partySize": 2,
+        },
+    )
+
+    detail_response = client.get(f"/reservations/{reservation_response.json()['reservationId']}")
+
+    assert detail_response.status_code == 200
+    assert "查看本店猫咪" in detail_response.text
+    assert 'href="/cats?storeId=store-shanghai-jingan"' in detail_response.text
+    assert "再约这家店" in detail_response.text
+    assert 'href="/?storeId=store-shanghai-jingan&date=2026-05-20&partySize=2"' in detail_response.text
+
+
 def test_system_seeds_multiple_cities_and_homepage_city_selector():
     reset_demo_state()
     client = TestClient(app)
+    client.post("/api/session/login", json={"persona": "customer", "identifier": "13800001001", "verificationCode": "260520"})
 
     cities_response = client.get("/api/cities")
     hangzhou_stores_response = client.get("/api/stores", params={"city": "杭州"})
@@ -313,6 +541,7 @@ def test_system_seeds_commercial_scale_store_network():
 def test_homepage_keeps_navigation_city_in_sync_with_selected_city():
     reset_demo_state()
     client = TestClient(app)
+    client.post("/api/session/login", json={"persona": "customer", "identifier": "13800001001", "verificationCode": "260520"})
 
     response = client.get("/", params={"city": "成都"})
 
@@ -329,7 +558,7 @@ def test_homepage_keeps_navigation_city_in_sync_with_selected_city():
 def test_staff_navigation_is_separated_from_customer_portal_links():
     reset_demo_state()
     client = TestClient(app)
-    client.post("/api/session/login", json={"persona": "staff"})
+    client.post("/api/session/login", json={"persona": "staff", "identifier": "staff-sh-001", "accessCode": "SH-NEKO-2026"})
 
     response = client.get("/staff")
 
@@ -346,11 +575,11 @@ def test_admin_dashboard_is_third_system_and_separated_from_customer_staff_nav()
     client = TestClient(app)
 
     anonymous_response = client.get("/admin")
-    client.post("/api/session/login", json={"persona": "customer"})
+    client.post("/api/session/login", json={"persona": "customer", "identifier": "13800001001", "verificationCode": "260520"})
     customer_response = client.get("/admin")
-    client.post("/api/session/login", json={"persona": "staff"})
+    client.post("/api/session/login", json={"persona": "staff", "identifier": "staff-sh-001", "accessCode": "SH-NEKO-2026"})
     staff_response = client.get("/admin")
-    client.post("/api/session/login", json={"persona": "admin"})
+    client.post("/api/session/login", json={"persona": "admin", "identifier": "admin-001", "accessCode": "ADMIN-NEKO-2026"})
     admin_response = client.get("/admin")
 
     assert anonymous_response.status_code == 401
@@ -359,7 +588,14 @@ def test_admin_dashboard_is_third_system_and_separated_from_customer_staff_nav()
 
     assert admin_response.status_code == 200
     assert "管理员后台" in admin_response.text
-    assert "三个系统" in admin_response.text
+    assert "运营看板" in admin_response.text
+    assert "门店状态" in admin_response.text
+    assert "开放预约占比" in admin_response.text
+    assert "城市覆盖" in admin_response.text
+    assert "今日可约时段 Top 5" in admin_response.text
+    assert "到店漏斗" in admin_response.text
+    assert "权限密度" in admin_response.text
+    assert "三个系统边界" in admin_response.text
     assert "顾客系统" in admin_response.text
     assert "店员系统" in admin_response.text
     assert "管理员系统" in admin_response.text
@@ -379,7 +615,7 @@ def test_admin_dashboard_is_third_system_and_separated_from_customer_staff_nav()
 def test_admin_store_operations_support_search_city_and_status_filters():
     reset_demo_state()
     client = TestClient(app)
-    client.post("/api/session/login", json={"persona": "admin"})
+    client.post("/api/session/login", json={"persona": "admin", "identifier": "admin-001", "accessCode": "ADMIN-NEKO-2026"})
     client.post(
         "/admin/stores/store-suzhou-gongyeyuan/status",
         data={"operatingStatus": "PAUSED", "operatingNote": "包场活动"},
@@ -405,7 +641,7 @@ def test_admin_store_operations_support_search_city_and_status_filters():
 def test_customer_recommendations_are_scored_and_explainable():
     reset_demo_state()
     client = TestClient(app)
-    client.post("/api/session/login", json={"persona": "customer"})
+    client.post("/api/session/login", json={"persona": "customer", "identifier": "13800001001", "verificationCode": "260520"})
 
     api_response = client.get("/api/recommendations/me")
     page_response = client.get("/recommendations")
@@ -427,7 +663,7 @@ def test_customer_recommendations_are_scored_and_explainable():
 def test_recommendations_follow_current_date_and_party_size_context():
     reset_demo_state()
     client = TestClient(app)
-    client.post("/api/session/login", json={"persona": "customer"})
+    client.post("/api/session/login", json={"persona": "customer", "identifier": "13800001001", "verificationCode": "260520"})
 
     default_api_response = client.get("/api/recommendations/me")
     constrained_api_response = client.get(
@@ -462,7 +698,7 @@ def test_recommendations_follow_current_date_and_party_size_context():
 def test_admin_can_pause_store_and_customer_booking_surfaces_reservation_status():
     reset_demo_state()
     client = TestClient(app)
-    client.post("/api/session/login", json={"persona": "admin"})
+    client.post("/api/session/login", json={"persona": "admin", "identifier": "admin-001", "accessCode": "ADMIN-NEKO-2026"})
 
     pause_response = client.post(
         "/admin/stores/store-shanghai-jingan/status",
@@ -486,7 +722,7 @@ def test_admin_can_pause_store_and_customer_booking_surfaces_reservation_status(
             "partySize": 2,
         },
     )
-    client.post("/api/session/login", json={"persona": "customer"})
+    client.post("/api/session/login", json={"persona": "customer", "identifier": "13800001001", "verificationCode": "260520"})
     reservation_response = client.post(
         "/api/reservations",
         json={
@@ -520,12 +756,12 @@ def test_store_operating_status_management_is_admin_only():
         "/admin/stores/store-shanghai-jingan/status",
         data={"operatingStatus": "PAUSED", "operatingNote": "无权限尝试"},
     )
-    client.post("/api/session/login", json={"persona": "customer"})
+    client.post("/api/session/login", json={"persona": "customer", "identifier": "13800001001", "verificationCode": "260520"})
     customer_response = client.post(
         "/admin/stores/store-shanghai-jingan/status",
         data={"operatingStatus": "PAUSED", "operatingNote": "无权限尝试"},
     )
-    client.post("/api/session/login", json={"persona": "staff"})
+    client.post("/api/session/login", json={"persona": "staff", "identifier": "staff-sh-001", "accessCode": "SH-NEKO-2026"})
     staff_response = client.post(
         "/admin/stores/store-shanghai-jingan/status",
         data={"operatingStatus": "PAUSED", "operatingNote": "无权限尝试"},
@@ -543,9 +779,9 @@ def test_permission_management_page_is_admin_only():
     client = TestClient(app)
 
     anonymous_response = client.get("/permissions")
-    client.post("/api/session/login", json={"persona": "customer"})
+    client.post("/api/session/login", json={"persona": "customer", "identifier": "13800001001", "verificationCode": "260520"})
     customer_response = client.get("/permissions")
-    client.post("/api/session/login", json={"persona": "admin"})
+    client.post("/api/session/login", json={"persona": "admin", "identifier": "admin-001", "accessCode": "ADMIN-NEKO-2026"})
     admin_response = client.get("/permissions")
 
     assert anonymous_response.status_code == 401

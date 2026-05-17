@@ -62,7 +62,7 @@
           </div>
         {% endfor %}
       </div>
-      <p class="metric-note">显示 {{ visibleStoreCount }} / {{ totalStoreCount }} 家门店{% if storeSearchQuery %} · 搜索“{{ storeSearchQuery }}”{% endif %}</p>
+      <p class="metric-note">显示第 {{ pageStartStore }}-{{ pageEndStore }} / {{ totalStoreCount }} 家门店{% if storeSearchQuery %} · 搜索“{{ storeSearchQuery }}”{% endif %}</p>
     </section>
 
     <section class="store-card-grid">
@@ -102,14 +102,36 @@
               </div>
             {% endif %}
           </div>
-          <a class="primary-cta inline-button" href="/?storeId={{ store.storeId }}">选择门店预约</a>
+          <div class="store-card-actions">
+            <a class="primary-cta inline-button" href="/?storeId={{ store.storeId }}">选择门店预约</a>
+            <a class="secondary-button" href="/stores/{{ store.storeId }}">查看详情</a>
+          </div>
         </article>
       {% endfor %}
     </section>
-    {% if hasMoreStores %}
-      <div class="load-more-row">
-        <a class="secondary-button" href="{{ loadMoreUrl }}">加载更多</a>
-      </div>
+    {% if totalStorePages > 1 %}
+      <nav class="pagination-nav" aria-label="门店分页">
+        <span class="pagination-summary">第 {{ currentStorePage }} / {{ totalStorePages }} 页</span>
+        {% if prevStorePageUrl %}
+          <a class="pagination-link" href="{{ prevStorePageUrl }}">上一页</a>
+        {% else %}
+          <span class="pagination-link disabled" aria-disabled="true">上一页</span>
+        {% endif %}
+        <div class="pagination-pages">
+          {% for pageLink in storePageLinks %}
+            {% if pageLink.isCurrent %}
+              <span class="pagination-page active" aria-current="page">{{ pageLink.page }}</span>
+            {% else %}
+              <a class="pagination-page" href="{{ pageLink.url }}">{{ pageLink.page }}</a>
+            {% endif %}
+          {% endfor %}
+        </div>
+        {% if nextStorePageUrl %}
+          <a class="pagination-link" href="{{ nextStorePageUrl }}">下一页</a>
+        {% else %}
+          <span class="pagination-link disabled" aria-disabled="true">下一页</span>
+        {% endif %}
+      </nav>
     {% endif %}
   </main>
 {% endblock %}

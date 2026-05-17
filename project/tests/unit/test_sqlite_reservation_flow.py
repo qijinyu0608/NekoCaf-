@@ -11,7 +11,7 @@ from app.main import app, get_database_path, reset_demo_state
 def test_store_listing_slots_and_reservation_persist_in_sqlite():
     reset_demo_state()
     client = TestClient(app)
-    client.post("/api/session/login", json={"persona": "customer"})
+    client.post("/api/session/login", json={"persona": "customer", "identifier": "13800001001", "verificationCode": "260520"})
 
     stores_response = client.get("/api/stores")
     slots_response = client.get(
@@ -58,10 +58,30 @@ def test_store_listing_slots_and_reservation_persist_in_sqlite():
     )
 
 
+def test_database_schema_has_business_query_indexes():
+    reset_demo_state()
+    db_path = get_database_path()
+
+    with sqlite3.connect(db_path) as connection:
+        index_names = {
+            row[1]
+            for table in ("reservations", "store_slots", "stores")
+            for row in connection.execute(f"PRAGMA index_list({table})").fetchall()
+        }
+
+    assert {
+        "idx_reservations_slot_status",
+        "idx_reservations_member_status_time",
+        "idx_reservations_staff_day_status",
+        "idx_store_slots_store_day_time",
+        "idx_stores_city_status",
+    }.issubset(index_names)
+
+
 def test_customer_can_cancel_and_filter_my_reservations():
     reset_demo_state()
     client = TestClient(app)
-    client.post("/api/session/login", json={"persona": "customer"})
+    client.post("/api/session/login", json={"persona": "customer", "identifier": "13800001001", "verificationCode": "260520"})
 
     create_response = client.post(
         "/api/reservations",
@@ -88,7 +108,7 @@ def test_customer_can_cancel_and_filter_my_reservations():
 def test_customer_can_query_own_reservation_detail():
     reset_demo_state()
     client = TestClient(app)
-    client.post("/api/session/login", json={"persona": "customer"})
+    client.post("/api/session/login", json={"persona": "customer", "identifier": "13800001001", "verificationCode": "260520"})
 
     create_response = client.post(
         "/api/reservations",
@@ -117,7 +137,7 @@ def test_customer_can_query_own_reservation_detail():
 def test_reservation_api_rejects_non_positive_party_size_without_persisting():
     reset_demo_state()
     client = TestClient(app)
-    client.post("/api/session/login", json={"persona": "customer"})
+    client.post("/api/session/login", json={"persona": "customer", "identifier": "13800001001", "verificationCode": "260520"})
 
     negative_response = client.post(
         "/api/reservations",
@@ -149,7 +169,7 @@ def test_reservation_api_rejects_non_positive_party_size_without_persisting():
 def test_customer_reservation_detail_returns_404_for_missing_record():
     reset_demo_state()
     client = TestClient(app)
-    client.post("/api/session/login", json={"persona": "customer"})
+    client.post("/api/session/login", json={"persona": "customer", "identifier": "13800001001", "verificationCode": "260520"})
 
     response = client.get("/api/reservations/res-missing")
 
@@ -160,7 +180,7 @@ def test_customer_reservation_detail_returns_404_for_missing_record():
 def test_slot_capacity_decreases_and_cancel_releases_capacity():
     reset_demo_state()
     client = TestClient(app)
-    client.post("/api/session/login", json={"persona": "customer"})
+    client.post("/api/session/login", json={"persona": "customer", "identifier": "13800001001", "verificationCode": "260520"})
 
     create_response = client.post(
         "/api/reservations",
@@ -222,7 +242,7 @@ def test_slot_capacity_decreases_and_cancel_releases_capacity():
 def test_cancel_only_allows_booked_reservations():
     reset_demo_state()
     client = TestClient(app)
-    client.post("/api/session/login", json={"persona": "customer"})
+    client.post("/api/session/login", json={"persona": "customer", "identifier": "13800001001", "verificationCode": "260520"})
     create_response = client.post(
         "/api/reservations",
         json={
@@ -278,7 +298,7 @@ def test_concurrent_reservations_do_not_oversell_or_generate_duplicate_ids():
 def test_member_center_cancel_action_redirects_and_updates_status():
     reset_demo_state()
     client = TestClient(app)
-    client.post("/api/session/login", json={"persona": "customer"})
+    client.post("/api/session/login", json={"persona": "customer", "identifier": "13800001001", "verificationCode": "260520"})
     create_response = client.post(
         "/api/reservations",
         json={
@@ -302,7 +322,7 @@ def test_member_center_cancel_action_redirects_and_updates_status():
 def test_member_center_shows_next_visit_and_reservation_summary():
     reset_demo_state()
     client = TestClient(app)
-    client.post("/api/session/login", json={"persona": "customer"})
+    client.post("/api/session/login", json={"persona": "customer", "identifier": "13800001001", "verificationCode": "260520"})
     client.post(
         "/api/reservations",
         json={

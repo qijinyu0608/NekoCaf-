@@ -1,54 +1,153 @@
 <?xml version='1.0' encoding='utf-8'?>
-<mxfile host="app.diagrams.net" modified="2026-05-07T00:00:00Z" agent="Codex" version="24.7.10">
-  <diagram id="diagram-1" name="Page-1">
-    <mxGraphModel dx="1600" dy="1200" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1654" pageHeight="1169" math="0" shadow="0">
+<mxfile host="app.diagrams.net" modified="2026-05-12T00:00:00Z" agent="Codex" version="24.7.10">
+  <diagram id="diagram-1" name="L3 - Member Service 组件图">
+    <mxGraphModel dx="1760" dy="1100" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1760" pageHeight="1100" math="0" shadow="0">
       <root>
         <mxCell id="0" />
         <mxCell id="1" parent="0" />
-        <mxCell id="ctrl" value="MemberController" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#F4E7DB;strokeColor=#5A5A5A;" vertex="1" parent="1">
-          <mxGeometry x="120" y="220" width="220" height="100" as="geometry" />
+        <mxCell id="title" value="&lt;b&gt;L3 - Member Service 组件图&lt;/b&gt;" style="text;html=1;strokeColor=none;fillColor=none;fontSize=22;fontStyle=1;fontColor=#111827;" vertex="1" parent="1">
+          <mxGeometry x="40" y="28" width="1680" height="32" as="geometry" />
         </mxCell>
-        <mxCell id="app" value="MemberApplicationService" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#F4E7DB;strokeColor=#5A5A5A;" vertex="1" parent="1">
-          <mxGeometry x="430" y="220" width="260" height="100" as="geometry" />
+        <mxCell id="boundary" value="&lt;b&gt;Member Service [container]&lt;/b&gt;" style="rounded=0;whiteSpace=wrap;html=1;fillColor=none;strokeColor=#8D8D8D;dashed=1;fontColor=#555555;fontSize=14;" vertex="1" parent="1">
+          <mxGeometry x="55" y="95" width="1270" height="805" as="geometry" />
         </mxCell>
-        <mxCell id="profile" value="ProfilePolicy" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#E8EEF5;strokeColor=#5A5A5A;" vertex="1" parent="1">
-          <mxGeometry x="790" y="140" width="220" height="90" as="geometry" />
+        <mxCell id="admin" value="&lt;b&gt;管理员&lt;/b&gt;&lt;br&gt;黑名单&lt;br&gt;权益审批" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#0F4C81;strokeColor=#0F4C81;fontColor=#FFFFFF;fontSize=15;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="70" y="135" width="160" height="80" as="geometry" />
         </mxCell>
-        <mxCell id="loyalty" value="LoyaltyService" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#E8EEF5;strokeColor=#5A5A5A;" vertex="1" parent="1">
-          <mxGeometry x="790" y="280" width="220" height="90" as="geometry" />
+        <mxCell id="api" value="&lt;b&gt;Member API&lt;/b&gt;&lt;br&gt;&lt;i&gt;[REST Controller]&lt;/i&gt;&lt;br&gt;会员资料、偏好、积分、优惠券接口" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#2F86D7;strokeColor=#2F86D7;fontColor=#FFFFFF;fontSize=15;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="515" y="145" width="250" height="100" as="geometry" />
         </mxCell>
-        <mxCell id="coupon" value="CouponService" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#E8EEF5;strokeColor=#5A5A5A;" vertex="1" parent="1">
-          <mxGeometry x="790" y="420" width="220" height="90" as="geometry" />
+        <mxCell id="app" value="&lt;b&gt;Member Application Service&lt;/b&gt;&lt;br&gt;&lt;i&gt;[Application Service]&lt;/i&gt;&lt;br&gt;资料更新、权益变更、隐私字段脱敏" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#2F86D7;strokeColor=#2F86D7;fontColor=#FFFFFF;fontSize=15;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="500" y="335" width="280" height="110" as="geometry" />
         </mxCell>
-        <mxCell id="repo" value="MemberRepository" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#DDE9E2;strokeColor=#5A5A5A;" vertex="1" parent="1">
-          <mxGeometry x="430" y="470" width="260" height="100" as="geometry" />
+        <mxCell id="profile" value="&lt;b&gt;Profile Policy&lt;/b&gt;&lt;br&gt;&lt;i&gt;[Domain Policy]&lt;/i&gt;&lt;br&gt;手机号唯一、偏好标签、GDPR 字段校验" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#DCEEFF;strokeColor=#4F7FA8;fontColor=#111827;fontSize=14;" vertex="1" parent="1">
+          <mxGeometry x="145" y="330" width="230" height="105" as="geometry" />
         </mxCell>
-        <mxCell id="audit" value="AuditPublisher" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#DDE9E2;strokeColor=#5A5A5A;" vertex="1" parent="1">
-          <mxGeometry x="120" y="470" width="220" height="100" as="geometry" />
+        <mxCell id="loyalty" value="&lt;b&gt;Loyalty Service&lt;/b&gt;&lt;br&gt;&lt;i&gt;[Domain Service]&lt;/i&gt;&lt;br&gt;积分账户、等级成长、权益冻结" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#DCEEFF;strokeColor=#4F7FA8;fontColor=#111827;fontSize=14;" vertex="1" parent="1">
+          <mxGeometry x="905" y="260" width="250" height="105" as="geometry" />
         </mxCell>
-        <mxCell id="db" value="Member / Profile /&#10;Loyalty / Coupon" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#DDE9E2;strokeColor=#5A5A5A;" vertex="1" parent="1">
-          <mxGeometry x="430" y="680" width="260" height="120" as="geometry" />
+        <mxCell id="coupon" value="&lt;b&gt;Coupon Service&lt;/b&gt;&lt;br&gt;&lt;i&gt;[Domain Service]&lt;/i&gt;&lt;br&gt;优惠券发放、核销、过期处理" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#DCEEFF;strokeColor=#4F7FA8;fontColor=#111827;fontSize=14;" vertex="1" parent="1">
+          <mxGeometry x="905" y="445" width="250" height="105" as="geometry" />
         </mxCell>
-        <mxCell id="e1" value="" style="endArrow=block;html=1;rounded=0;strokeColor=#5A5A5A;" edge="1" parent="1" source="ctrl" target="app">
-          <mxGeometry relative="1" as="geometry" />
+        <mxCell id="repo" value="&lt;b&gt;Member Repository&lt;/b&gt;&lt;br&gt;&lt;i&gt;[Repository]&lt;/i&gt;&lt;br&gt;Member / Profile / Loyalty / Coupon" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#DCEEFF;strokeColor=#4F7FA8;fontColor=#111827;fontSize=14;" vertex="1" parent="1">
+          <mxGeometry x="330" y="625" width="250" height="105" as="geometry" />
         </mxCell>
-        <mxCell id="e2" value="校验" style="endArrow=block;html=1;rounded=0;strokeColor=#5A5A5A;" edge="1" parent="1" source="app" target="profile">
-          <mxGeometry relative="1" as="geometry" />
+        <mxCell id="audit" value="&lt;b&gt;Audit Publisher&lt;/b&gt;&lt;br&gt;&lt;i&gt;[Infrastructure]&lt;/i&gt;&lt;br&gt;敏感操作审计、会员变更事件" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#DCEEFF;strokeColor=#4F7FA8;fontColor=#111827;fontSize=14;" vertex="1" parent="1">
+          <mxGeometry x="700" y="625" width="250" height="105" as="geometry" />
         </mxCell>
-        <mxCell id="e3" value="积分" style="endArrow=block;html=1;rounded=0;strokeColor=#5A5A5A;" edge="1" parent="1" source="app" target="loyalty">
-          <mxGeometry relative="1" as="geometry" />
+        <mxCell id="privacy" value="&lt;b&gt;Privacy Guard&lt;/b&gt;&lt;br&gt;&lt;i&gt;[Policy]&lt;/i&gt;&lt;br&gt;脱敏&lt;br&gt;最小可见" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#DCEEFF;strokeColor=#4F7FA8;fontColor=#111827;fontSize=14;" vertex="1" parent="1">
+          <mxGeometry x="145" y="625" width="150" height="105" as="geometry" />
         </mxCell>
-        <mxCell id="e4" value="权益" style="endArrow=block;html=1;rounded=0;strokeColor=#5A5A5A;" edge="1" parent="1" source="app" target="coupon">
-          <mxGeometry relative="1" as="geometry" />
+        <mxCell id="db" value="&lt;b&gt;Member DB&lt;/b&gt;&lt;br&gt;&lt;i&gt;[MySQL]&lt;/i&gt;&lt;br&gt;会员与权益主数据" style="shape=cylinder;whiteSpace=wrap;html=1;boundedLbl=1;backgroundOutline=1;size=15;fillColor=#2F86D7;strokeColor=#2F86D7;fontColor=#FFFFFF;fontSize=14;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="330" y="955" width="220" height="95" as="geometry" />
         </mxCell>
-        <mxCell id="e5" value="持久化" style="endArrow=block;html=1;rounded=0;strokeColor=#5A5A5A;" edge="1" parent="1" source="app" target="repo">
-          <mxGeometry relative="1" as="geometry" />
+        <mxCell id="redis" value="&lt;b&gt;Redis&lt;/b&gt;&lt;br&gt;&lt;i&gt;[Cache]&lt;/i&gt;&lt;br&gt;会话、权益快照" style="shape=cylinder;whiteSpace=wrap;html=1;boundedLbl=1;backgroundOutline=1;size=15;fillColor=#2F86D7;strokeColor=#2F86D7;fontColor=#FFFFFF;fontSize=14;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="700" y="955" width="190" height="95" as="geometry" />
         </mxCell>
-        <mxCell id="e6" value="审计" style="endArrow=block;html=1;rounded=0;strokeColor=#5A5A5A;" edge="1" parent="1" source="app" target="audit">
-          <mxGeometry relative="1" as="geometry" />
+        <mxCell id="mq" value="&lt;b&gt;RabbitMQ&lt;/b&gt;&lt;br&gt;&lt;i&gt;[AMQP]&lt;/i&gt;&lt;br&gt;member.* 审计事件" style="shape=cylinder;whiteSpace=wrap;html=1;boundedLbl=1;backgroundOutline=1;size=15;fillColor=#2F86D7;strokeColor=#2F86D7;fontColor=#FFFFFF;fontSize=14;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="1020" y="955" width="200" height="95" as="geometry" />
         </mxCell>
-        <mxCell id="e7" value="" style="endArrow=block;html=1;rounded=0;strokeColor=#5A5A5A;" edge="1" parent="1" source="repo" target="db">
-          <mxGeometry relative="1" as="geometry" />
+        <mxCell id="reservation" value="&lt;b&gt;Reservation Service&lt;/b&gt;&lt;br&gt;预约前身份、权益、黑名单校验" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#9B9B9B;strokeColor=#9B9B9B;fontColor=#FFFFFF;fontSize=15;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="1440" y="260" width="245" height="95" as="geometry" />
+        </mxCell>
+        <mxCell id="notify" value="&lt;b&gt;Notification Service&lt;/b&gt;&lt;br&gt;权益变更、等级升级提醒" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#9B9B9B;strokeColor=#9B9B9B;fontColor=#FFFFFF;fontSize=15;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="1440" y="445" width="245" height="95" as="geometry" />
+        </mxCell>
+        <mxCell id="ops" value="&lt;b&gt;Operations Governance&lt;/b&gt;&lt;br&gt;会员异常、黑名单与授权审批" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#9B9B9B;strokeColor=#9B9B9B;fontColor=#FFFFFF;fontSize=15;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="1440" y="630" width="245" height="95" as="geometry" />
+        </mxCell>
+        <mxCell id="note" value="&lt;b&gt;隐私边界&lt;/b&gt;&lt;br&gt;服务内部保留明文字段&lt;br&gt;对外只暴露脱敏 DTO 与授权后的权益结论" style="shape=note;whiteSpace=wrap;html=1;fillColor=#FFF8CC;strokeColor=#9A8F4F;fontColor=#111827;fontSize=13;" vertex="1" parent="1">
+          <mxGeometry x="1030" y="135" width="245" height="95" as="geometry" />
+        </mxCell>
+        <mxCell id="edge_1" value="管理指令" style="endArrow=block;html=1;rounded=0;strokeWidth=1.4;strokeColor=#6B7280;" edge="1" parent="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="230" y="175" as="sourcePoint" />
+            <mxPoint x="515" y="175" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="edge_2" value="DTO/Command" style="endArrow=block;html=1;rounded=0;strokeWidth=1.4;strokeColor=#6B7280;" edge="1" parent="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="640" y="245" as="sourcePoint" />
+            <mxPoint x="640" y="335" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="edge_3" value="资料校验" style="endArrow=block;html=1;rounded=0;strokeWidth=1.4;strokeColor=#6B7280;" edge="1" parent="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="500" y="390" as="sourcePoint" />
+            <mxPoint x="375" y="382" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="edge_4" value="积分等级" style="endArrow=block;html=1;rounded=0;strokeWidth=1.4;strokeColor=#6B7280;" edge="1" parent="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="780" y="382" as="sourcePoint" />
+            <mxPoint x="905" y="312" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="edge_5" value="优惠券" style="endArrow=block;html=1;rounded=0;strokeWidth=1.4;strokeColor=#6B7280;" edge="1" parent="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="780" y="405" as="sourcePoint" />
+            <mxPoint x="905" y="498" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="edge_6" value="持久化" style="endArrow=block;html=1;rounded=0;strokeWidth=1.4;strokeColor=#6B7280;" edge="1" parent="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="560" y="445" as="sourcePoint" />
+            <mxPoint x="455" y="625" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="edge_7" value="审计事件" style="endArrow=block;html=1;rounded=0;strokeWidth=1.4;strokeColor=#6B7280;" edge="1" parent="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="710" y="445" as="sourcePoint" />
+            <mxPoint x="825" y="625" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="edge_8" value="脱敏输出" style="endArrow=block;html=1;rounded=0;strokeWidth=1.4;strokeColor=#6B7280;" edge="1" parent="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="500" y="415" as="sourcePoint" />
+            <mxPoint x="295" y="675" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="edge_9" value="JDBC" style="endArrow=block;html=1;rounded=0;strokeWidth=1.4;strokeColor=#6B7280;" edge="1" parent="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="455" y="730" as="sourcePoint" />
+            <mxPoint x="440" y="955" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="edge_10" value="缓存权益快照" style="endArrow=block;html=1;rounded=0;strokeWidth=1.4;strokeColor=#6B7280;" edge="1" parent="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="825" y="730" as="sourcePoint" />
+            <mxPoint x="795" y="955" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="edge_11" value="AMQP" style="endArrow=block;html=1;rounded=0;strokeWidth=1.4;strokeColor=#6B7280;" edge="1" parent="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="825" y="730" as="sourcePoint" />
+            <mxPoint x="1120" y="955" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="edge_12" value="verifyMember" style="endArrow=block;html=1;rounded=0;strokeWidth=1.4;strokeColor=#6B7280;" edge="1" parent="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="1155" y="312" as="sourcePoint" />
+            <mxPoint x="1440" y="312" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="edge_13" value="权益提醒" style="endArrow=block;html=1;rounded=0;strokeWidth=1.4;strokeColor=#6B7280;" edge="1" parent="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="1155" y="498" as="sourcePoint" />
+            <mxPoint x="1440" y="498" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="edge_14" value="异常会员审批" style="endArrow=block;html=1;rounded=0;strokeWidth=1.4;strokeColor=#6B7280;" edge="1" parent="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="825" y="625" as="sourcePoint" />
+            <mxPoint x="1440" y="678" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="edge_15" value="" style="endArrow=block;html=1;rounded=0;strokeWidth=1.4;strokeColor=#9AA0A6;dashed=1;" edge="1" parent="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="1030" y="135" as="sourcePoint" />
+            <mxPoint x="765" y="335" as="targetPoint" />
+          </mxGeometry>
         </mxCell>
       </root>
     </mxGraphModel>

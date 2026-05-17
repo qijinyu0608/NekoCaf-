@@ -1,0 +1,90 @@
+{% extends "base.html" %}
+
+{% block title %}NekoCafé | 智慧猫咖预约{% endblock %}
+
+{% block content %}
+  <main class="page public-brand-page">
+    <section class="public-hero">
+      <div class="public-hero-copy">
+        <span class="eyebrow hero-badge">预约制猫咖体验</span>
+        <h1>先选好时段，再把下午留给猫和咖啡</h1>
+        <p>
+          NekoCafé 把门店余位、今日在店猫咪和会员权益放在到店前。你可以提前选城市、门店和互动区，到店后直接落座，不用把时间花在排队和碰运气上。
+        </p>
+        <div class="public-entry-actions">
+          <button class="primary-cta" data-login-persona="customer" type="button">立即预约</button>
+          <a class="secondary-button" href="/stores">浏览门店</a>
+        </div>
+        <dl class="public-quick-facts" aria-label="预约信息">
+          <div>
+            <dt>今日可约</dt>
+            <dd>18:30 起</dd>
+          </div>
+          <div>
+            <dt>城市</dt>
+            <dd>上海 / 杭州 / 南京</dd>
+          </div>
+          <div>
+            <dt>互动区</dt>
+            <dd>窗边 / 安静 / 轻互动</dd>
+          </div>
+        </dl>
+      </div>
+      <div class="public-experience-panel" aria-label="NekoCafé 今日体验">
+        <img
+          class="public-hero-photo"
+          src="/static/assets/cats/pudding.jpg"
+          alt="布丁，一只蓝眼睛布偶猫"
+        />
+        <div class="public-reservation-note">
+          <span>上海静安店</span>
+          <strong>布丁今日在店</strong>
+          <p>推荐 2 人窗边位，18:30 / 19:00 仍可预约。</p>
+        </div>
+        <div class="public-mini-menu" aria-label="今日推荐">
+          <span>燕麦拿铁</span>
+          <span>海盐芝士卷</span>
+        </div>
+      </div>
+    </section>
+
+    <section class="public-feature-grid" aria-label="预约体验亮点">
+      <article class="feature-card public-feature-card">
+        <div class="section-label">选好再出发</div>
+        <h2>门店余位提前看</h2>
+        <p>按城市、日期和人数筛选门店，先确认可预约时段，再安排今天的猫咖行程。</p>
+      </article>
+      <article class="feature-card public-feature-card">
+        <div class="section-label">猫咪档案预览</div>
+        <h2>先认识今天的陪伴</h2>
+        <p>查看猫咪性格、年龄和互动偏好，选择更适合安静陪伴或轻互动的区域。</p>
+      </article>
+      <article class="feature-card public-feature-card">
+        <div class="section-label">咖啡与轻食</div>
+        <h2>把等待变成体验</h2>
+        <p>到店前了解推荐饮品和轻食组合，预约、积分和优惠券在同一个会员流程里完成。</p>
+      </article>
+    </section>
+
+    <section class="public-visit-flow feature-card">
+      <div>
+        <div class="section-label">今天怎么来</div>
+        <h2>三步完成一次从容到店</h2>
+      </div>
+      <ol class="public-flow-list">
+        <li>
+          <strong>挑一家顺路的店</strong>
+          <span>看地址、营业时间和最早可约时段。</span>
+        </li>
+        <li>
+          <strong>选时段和互动区</strong>
+          <span>按同行人数选择窗边、安静或轻互动区域。</span>
+        </li>
+        <li>
+          <strong>到店核销预约</strong>
+          <span>凭预约信息入座，积分和权益自动记录。</span>
+        </li>
+      </ol>
+    </section>
+  </main>
+{% endblock %}

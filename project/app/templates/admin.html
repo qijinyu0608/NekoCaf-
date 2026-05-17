@@ -7,8 +7,8 @@
     <section class="detail-header">
       <div>
         <span class="eyebrow">管理员后台</span>
-        <h1>三个系统</h1>
-        <p>顾客、店员、管理员分开使用，管理员负责全局范围和权限。</p>
+        <h1>运营看板</h1>
+        <p>用门店开放、预约容量、城市覆盖和权限边界判断当前运营健康度。</p>
       </div>
       <div class="profile-pill">
         <span class="user-avatar">{{ actor.display_name[:1] }}</span>
@@ -19,26 +19,128 @@
       </div>
     </section>
 
-    <section class="staff-stats-grid admin-stats-grid">
-      <article class="feature-card summary-card">
+    <section class="admin-kpi-grid">
+      <article class="feature-card admin-kpi-card">
         <div class="section-label">城市</div>
         <strong class="summary-number">{{ cityCount }}</strong>
-        <p>当前覆盖城市</p>
+        <p>覆盖城市网络</p>
       </article>
-      <article class="feature-card summary-card">
-        <div class="section-label">门店</div>
+      <article class="feature-card admin-kpi-card">
+        <div class="section-label">营业门店</div>
         <strong class="summary-number">{{ openStoreCount }}</strong>
-        <p>营业中 / 共 {{ storeCount }} 家</p>
+        <p>{{ openStorePercent }}% 开放预约 · 共 {{ storeCount }} 家</p>
       </article>
-      <article class="feature-card summary-card">
-        <div class="section-label">角色</div>
-        <strong class="summary-number">{{ roleCount }}</strong>
-        <p>顾客、店员、管理员</p>
+      <article class="feature-card admin-kpi-card">
+        <div class="section-label">可约时段</div>
+        <strong class="summary-number">{{ totalAvailableSlots }}</strong>
+        <p>今日 2 人预约 · 店均 {{ averageSlotsPerOpenStore }}</p>
       </article>
-      <article class="feature-card summary-card">
+      <article class="feature-card admin-kpi-card">
         <div class="section-label">待到店</div>
         <strong class="summary-number">{{ staffStats.booked }}</strong>
         <p>默认门店今日预约</p>
+      </article>
+    </section>
+
+    <section class="admin-dashboard-grid">
+      <article class="feature-card admin-chart-card">
+        <div class="card-header-line">
+          <div>
+            <div class="section-label">门店状态</div>
+            <strong>开放预约占比</strong>
+          </div>
+          <span class="metric-note">{{ openStoreCount }} / {{ storeCount }} 家</span>
+        </div>
+        <div class="donut-chart" style="--value: {{ openStorePercent }};">
+          <span>{{ openStorePercent }}%</span>
+        </div>
+        <div class="chart-legend">
+          <span><i class="legend-dot open"></i>营业中 {{ openStoreCount }}</span>
+          <span><i class="legend-dot paused"></i>暂停预约 {{ pausedStoreCount }}</span>
+        </div>
+      </article>
+
+      <article class="feature-card admin-chart-card">
+        <div class="card-header-line">
+          <div>
+            <div class="section-label">城市覆盖</div>
+            <strong>门店分布</strong>
+          </div>
+          <span class="metric-note">{{ cityCount }} 城市</span>
+        </div>
+        <div class="bar-chart-list">
+          {% for item in cityStoreBars[:8] %}
+            <div class="bar-chart-row">
+              <span>{{ item.city }}</span>
+              <div class="bar-track"><i style="width: {{ item.percent }}%;"></i></div>
+              <strong>{{ item.count }}</strong>
+            </div>
+          {% endfor %}
+        </div>
+      </article>
+
+      <article class="feature-card admin-chart-card wide">
+        <div class="card-header-line">
+          <div>
+            <div class="section-label">预约容量</div>
+            <strong>今日可约时段 Top 5</strong>
+          </div>
+          <span class="metric-note">{{ defaultDate if defaultDate else "今日" }}</span>
+        </div>
+        <div class="rank-chart-list">
+          {% for item in topStoreBars %}
+            <div class="rank-chart-row">
+              <div>
+                <strong>{{ loop.index }}</strong>
+                <span>{{ item.label }}</span>
+              </div>
+              <div class="bar-track"><i style="width: {{ item.percent }}%;"></i></div>
+              <em>{{ item.count }} 个时段</em>
+            </div>
+          {% endfor %}
+        </div>
+      </article>
+
+      <article class="feature-card admin-chart-card">
+        <div class="card-header-line">
+          <div>
+            <div class="section-label">到店漏斗</div>
+            <strong>默认门店今日状态</strong>
+          </div>
+          <span class="metric-note">{{ staffStats.total }} 条预约</span>
+        </div>
+        <div class="stacked-chart" aria-label="预约状态分布">
+          {% for item in reservationMix %}
+            <span class="stack-segment segment-{{ loop.index }}" style="width: {{ item.percent }}%;" title="{{ item.label }} {{ item.count }}"></span>
+          {% endfor %}
+        </div>
+        <div class="metric-list">
+          {% for item in reservationMix %}
+            <div>
+              <span>{{ item.label }}</span>
+              <strong>{{ item.count }}</strong>
+            </div>
+          {% endfor %}
+        </div>
+      </article>
+
+      <article class="feature-card admin-chart-card">
+        <div class="card-header-line">
+          <div>
+            <div class="section-label">权限密度</div>
+            <strong>账号权限项</strong>
+          </div>
+          <a class="card-link" href="/permissions">管理权限</a>
+        </div>
+        <div class="bar-chart-list compact">
+          {% for item in permissionProfileBars %}
+            <div class="bar-chart-row">
+              <span>{{ item.label }}</span>
+              <div class="bar-track"><i style="width: {{ item.percent }}%;"></i></div>
+              <strong>{{ item.count }}</strong>
+            </div>
+          {% endfor %}
+        </div>
       </article>
     </section>
 
@@ -114,6 +216,10 @@
     </section>
 
     <section class="detail-grid admin-system-grid">
+      <div class="admin-section-heading">
+        <div class="section-label">三个系统边界</div>
+        <h2>顾客、店员、管理员各看各的</h2>
+      </div>
       {% for system in systems %}
         <article class="feature-card admin-system-card">
           <div class="card-header-line">

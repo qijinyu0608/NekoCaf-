@@ -7,7 +7,14 @@ def test_customer_session_login_me_and_logout_flow():
     reset_demo_state()
     client = TestClient(app)
 
-    login_response = client.post("/api/session/login", json={"persona": "customer"})
+    login_response = client.post(
+        "/api/session/login",
+        json={
+            "persona": "customer",
+            "identifier": "13800001001",
+            "verificationCode": "260520",
+        },
+    )
     assert login_response.status_code == 200
     assert "nekocafe_session=" in login_response.headers["set-cookie"]
     assert login_response.json()["role"] == "customer"
@@ -45,10 +52,30 @@ def test_customer_session_login_me_and_logout_flow():
     assert me_after_logout.status_code == 401
 
 
+def test_session_login_rejects_missing_or_wrong_credential():
+    reset_demo_state()
+    client = TestClient(app)
+
+    missing_response = client.post("/api/session/login", json={"persona": "admin"})
+    wrong_response = client.post(
+        "/api/session/login",
+        json={
+            "persona": "staff",
+            "identifier": "staff-sh-001",
+            "accessCode": "wrong-code",
+        },
+    )
+
+    assert missing_response.status_code == 401
+    assert missing_response.json()["detail"]["code"] == "AUTHENTICATION_FAILED"
+    assert wrong_response.status_code == 401
+    assert wrong_response.json()["detail"]["code"] == "AUTHENTICATION_FAILED"
+
+
 def test_customer_cannot_access_staff_api():
     reset_demo_state()
     client = TestClient(app)
-    client.post("/api/session/login", json={"persona": "customer"})
+    client.post("/api/session/login", json={"persona": "customer", "identifier": "13800001001", "verificationCode": "260520"})
 
     response = client.get(
         "/api/staff/reservations",
@@ -68,7 +95,7 @@ def test_staff_session_uses_staff_permissions_without_customer_booking_permissio
     reset_demo_state()
     client = TestClient(app)
 
-    login_response = client.post("/api/session/login", json={"persona": "staff"})
+    login_response = client.post("/api/session/login", json={"persona": "staff", "identifier": "staff-sh-001", "accessCode": "SH-NEKO-2026"})
     session_response = client.get("/api/session/me")
     create_response = client.post(
         "/api/reservations",
@@ -92,7 +119,7 @@ def test_staff_session_uses_staff_permissions_without_customer_booking_permissio
 def test_current_permission_profile_endpoint_exposes_actor_scope():
     reset_demo_state()
     client = TestClient(app)
-    client.post("/api/session/login", json={"persona": "staff"})
+    client.post("/api/session/login", json={"persona": "staff", "identifier": "staff-sh-001", "accessCode": "SH-NEKO-2026"})
 
     response = client.get("/api/permissions/me")
 
@@ -112,9 +139,9 @@ def test_admin_can_query_permission_profiles_but_customer_cannot():
     reset_demo_state()
     client = TestClient(app)
 
-    client.post("/api/session/login", json={"persona": "customer"})
+    client.post("/api/session/login", json={"persona": "customer", "identifier": "13800001001", "verificationCode": "260520"})
     customer_response = client.get("/api/permissions/profiles")
-    client.post("/api/session/login", json={"persona": "admin"})
+    client.post("/api/session/login", json={"persona": "admin", "identifier": "admin-001", "accessCode": "ADMIN-NEKO-2026"})
     admin_response = client.get("/api/permissions/profiles")
 
     assert customer_response.status_code == 403

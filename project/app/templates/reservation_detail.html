@@ -45,6 +45,13 @@
           <p>营业时间 {{ reservation.businessHours }} · 门店电话 {{ reservation.phone }}</p>
           <div class="reservation-detail-actions">
             <a class="primary-cta inline-button" href="/member">查看我的预约</a>
+            <a class="secondary-button" href="/cats?storeId={{ reservation.storeId }}">查看本店猫咪</a>
+            <a
+              class="secondary-button"
+              href="/?storeId={{ reservation.storeId }}&date={{ reservation.businessDate }}&partySize={{ reservation.partySize }}"
+            >
+              再约这家店
+            </a>
             {% if reservation.status == "BOOKED" %}
               <form action="/reservations/{{ reservation.reservationId }}/cancel" method="post">
                 <button class="text-action inline-text-action" type="submit">取消预约</button>

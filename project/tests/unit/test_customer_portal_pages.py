@@ -6,7 +6,7 @@ from app.main import app, reset_demo_state
 def test_homepage_renders_logged_in_member_welcome_and_latest_reservation_summary():
     reset_demo_state()
     client = TestClient(app)
-    client.post("/api/session/login", json={"persona": "customer"})
+    client.post("/api/session/login", json={"persona": "customer", "identifier": "13800001001", "verificationCode": "260520"})
     client.post(
         "/api/reservations",
         json={
@@ -27,7 +27,7 @@ def test_homepage_renders_logged_in_member_welcome_and_latest_reservation_summar
 def test_member_reservations_render_customer_friendly_visit_time():
     reset_demo_state()
     client = TestClient(app)
-    client.post("/api/session/login", json={"persona": "customer"})
+    client.post("/api/session/login", json={"persona": "customer", "identifier": "13800001001", "verificationCode": "260520"})
     client.post(
         "/api/reservations",
         json={
@@ -47,7 +47,7 @@ def test_member_reservations_render_customer_friendly_visit_time():
 def test_member_reservation_records_show_store_table_party_status_and_time():
     reset_demo_state()
     client = TestClient(app)
-    client.post("/api/session/login", json={"persona": "customer"})
+    client.post("/api/session/login", json={"persona": "customer", "identifier": "13800001001", "verificationCode": "260520"})
     client.post(
         "/api/reservations",
         json={
@@ -70,7 +70,7 @@ def test_member_reservation_records_show_store_table_party_status_and_time():
 def test_customer_reservation_detail_page_shows_confirmation_and_visit_guidance():
     reset_demo_state()
     client = TestClient(app)
-    client.post("/api/session/login", json={"persona": "customer"})
+    client.post("/api/session/login", json={"persona": "customer", "identifier": "13800001001", "verificationCode": "260520"})
     create_response = client.post(
         "/api/reservations",
         json={
@@ -99,7 +99,7 @@ def test_customer_reservation_detail_page_shows_confirmation_and_visit_guidance(
 def test_reservation_detail_page_requires_customer_scope():
     reset_demo_state()
     client = TestClient(app)
-    client.post("/api/session/login", json={"persona": "customer"})
+    client.post("/api/session/login", json={"persona": "customer", "identifier": "13800001001", "verificationCode": "260520"})
     create_response = client.post(
         "/api/reservations",
         json={
@@ -112,7 +112,7 @@ def test_reservation_detail_page_requires_customer_scope():
     client.post("/api/session/logout")
 
     anonymous_response = client.get(f"/reservations/{reservation_id}")
-    client.post("/api/session/login", json={"persona": "staff"})
+    client.post("/api/session/login", json={"persona": "staff", "identifier": "staff-sh-001", "accessCode": "SH-NEKO-2026"})
     staff_response = client.get(f"/reservations/{reservation_id}")
 
     assert anonymous_response.status_code == 200
@@ -124,7 +124,7 @@ def test_reservation_detail_page_requires_customer_scope():
 def test_customer_detail_pages_render_real_data_after_customer_login():
     reset_demo_state()
     client = TestClient(app)
-    client.post("/api/session/login", json={"persona": "customer"})
+    client.post("/api/session/login", json={"persona": "customer", "identifier": "13800001001", "verificationCode": "260520"})
 
     member_response = client.get("/member")
     cats_response = client.get("/cats")
@@ -161,10 +161,27 @@ def test_customer_detail_pages_render_real_data_after_customer_login():
     assert "visual-cat" not in recommendations_response.text
 
 
+def test_cat_catalog_has_store_scale_coverage_and_unique_local_avatars():
+    reset_demo_state()
+    client = TestClient(app)
+    client.post("/api/session/login", json={"persona": "customer", "identifier": "13800001001", "verificationCode": "260520"})
+
+    response = client.get("/api/cats/me")
+
+    assert response.status_code == 200
+    cats = response.json()
+    avatar_urls = {cat["avatarUrl"] for cat in cats}
+    store_ids = {cat["storeId"] for cat in cats}
+    assert len(cats) >= 100
+    assert len(store_ids) == 100
+    assert len(avatar_urls) >= 100
+    assert all(url.startswith("/static/assets/cats/") and url.endswith(".jpg") for url in avatar_urls)
+
+
 def test_member_center_links_to_profile_edit_and_updates_member_profile():
     reset_demo_state()
     client = TestClient(app)
-    client.post("/api/session/login", json={"persona": "customer"})
+    client.post("/api/session/login", json={"persona": "customer", "identifier": "13800001001", "verificationCode": "260520"})
 
     member_response = client.get("/member")
     edit_response = client.get("/member/profile/edit")
@@ -200,7 +217,7 @@ def test_member_center_links_to_profile_edit_and_updates_member_profile():
 def test_staff_cannot_edit_customer_profile_page():
     reset_demo_state()
     client = TestClient(app)
-    client.post("/api/session/login", json={"persona": "staff"})
+    client.post("/api/session/login", json={"persona": "staff", "identifier": "staff-sh-001", "accessCode": "SH-NEKO-2026"})
 
     edit_response = client.get("/member/profile/edit")
     update_response = client.post(
@@ -219,6 +236,7 @@ def test_staff_cannot_edit_customer_profile_page():
 def test_homepage_accepts_store_query_to_focus_recommended_store():
     reset_demo_state()
     client = TestClient(app)
+    client.post("/api/session/login", json={"persona": "customer", "identifier": "13800001001", "verificationCode": "260520"})
 
     response = client.get("/?storeId=store-shanghai-jingan")
 
@@ -230,6 +248,7 @@ def test_homepage_accepts_store_query_to_focus_recommended_store():
 def test_homepage_store_query_switches_matched_recommendation_context():
     reset_demo_state()
     client = TestClient(app)
+    client.post("/api/session/login", json={"persona": "customer", "identifier": "13800001001", "verificationCode": "260520"})
 
     response = client.get("/?storeId=store-shanghai-pudong")
 
@@ -242,7 +261,7 @@ def test_homepage_store_query_switches_matched_recommendation_context():
 def test_cat_archive_is_scoped_to_selected_store_not_whole_city():
     reset_demo_state()
     client = TestClient(app)
-    client.post("/api/session/login", json={"persona": "customer"})
+    client.post("/api/session/login", json={"persona": "customer", "identifier": "13800001001", "verificationCode": "260520"})
 
     response = client.get("/cats", params={"storeId": "store-shanghai-pudong"})
 

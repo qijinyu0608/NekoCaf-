@@ -29,9 +29,16 @@ testpaths = ["tests"]
 [tool.setuptools]
 packages = [
     "app",
+    "app.core",
+    "app.db",
+    "app.repositories",
+    "app.routes",
+    "app.routes.api",
+    "app.routes.pages",
+    "app.services",
     "libs",
     "libs.common",
 ]
 
 [tool.setuptools.package-data]
-app = ["templates/*.html", "static/*"]
+app = ["templates/*.html", "static/*", "static/assets/cats/*"]

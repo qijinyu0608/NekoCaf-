@@ -18,6 +18,7 @@ from lab2_batch2_common import (
     d2_6_export_dir,
 )
 from lab2_common import DIAGRAM_DIR, artifact_stem, ensure_dirs
+from rebuild_d2_4_c4_diagrams import main as rebuild_d2_4_c4_diagrams
 
 
 C4_DIAGRAM_DIR = DIAGRAM_DIR / artifact_stem("D2-4")
@@ -265,12 +266,7 @@ if __name__ == "__main__":
     ER_DIAGRAM_DIR.mkdir(parents=True, exist_ok=True)
     ER_EXPORT_DIR.mkdir(parents=True, exist_ok=True)
 
-    build_l1_system_context()
-    build_l2_container()
-    build_l3_member()
-    build_l3_reservation()
-    build_l4_code_view()
+    rebuild_d2_4_c4_diagrams()
     build_er_core()
     build_er_store_cat()
     build_er_recommendation()
-    copy_inner_exports()

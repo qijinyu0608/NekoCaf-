@@ -112,6 +112,7 @@
                 class="slot-pill {% if loop.first %}selected{% endif %}"
                 data-slot-id="{{ slot.slotId }}"
                 data-store-id="{{ slot.storeId }}"
+                data-time="{{ slot.startAt[11:16] }}"
                 data-zone="{{ slot.zoneName }}"
                 type="button"
               >
@@ -120,6 +121,31 @@
               </button>
             {% endfor %}
           </div>
+          <section class="booking-live-summary" aria-label="预约摘要">
+            <div class="section-label">预约摘要</div>
+            <dl>
+              <div>
+                <dt>门店</dt>
+                <dd id="summary-store">{{ selectedStore.cityName }} · {{ selectedStore.storeName }}</dd>
+              </div>
+              <div>
+                <dt>日期</dt>
+                <dd id="summary-date">{{ defaultDate }}</dd>
+              </div>
+              <div>
+                <dt>人数</dt>
+                <dd id="summary-party">{{ defaultPartySize }}人</dd>
+              </div>
+              <div>
+                <dt>时段</dt>
+                <dd id="summary-slot">{% if slots %}{{ slots[0].startAt[11:16] }} 到店{% else %}请选择时段{% endif %}</dd>
+              </div>
+              <div>
+                <dt>互动区</dt>
+                <dd id="summary-zone">{% if slots %}{{ slots[0].zoneName }}{% else %}待选择{% endif %}</dd>
+              </div>
+            </dl>
+          </section>
           <button class="primary-cta" id="booking-submit" type="submit">立即预约</button>
           <p class="booking-note">预约保障 · 免排队 · 优先入座</p>
           <p class="inline-message" id="booking-message" aria-live="polite"></p>
@@ -200,6 +226,13 @@
               <span>{{ tag }}</span>
             {% endfor %}
           </div>
+          <button
+            class="secondary-button recommendation-apply-button"
+            data-apply-recommendation="true"
+            type="button"
+          >
+            按推荐填入
+          </button>
         </div>
       </article>
     </section>

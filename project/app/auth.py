@@ -1,4 +1,5 @@
 from dataclasses import dataclass
+from hmac import compare_digest
 
 from fastapi import Cookie, HTTPException
 
@@ -89,8 +90,63 @@ PERSONA_TOKENS = {
     "admin": "mock-admin-token",
 }
 
+AUTH_CREDENTIALS = {
+    "customer": {
+        "identifier": "13800001001",
+        "verificationCode": "260520",
+    },
+    "staff": {
+        "identifier": "staff-sh-001",
+        "accessCode": "SH-NEKO-2026",
+    },
+    "admin": {
+        "identifier": "admin-001",
+        "accessCode": "ADMIN-NEKO-2026",
+    },
+}
 
-def create_session(persona: str) -> dict[str, object]:
+
+def _normalize(value: str | None) -> str:
+    return (value or "").strip()
+
+
+def _require_matching_credential(
+    persona: str,
+    *,
+    identifier: str | None,
+    access_code: str | None,
+    verification_code: str | None,
+) -> None:
+    expected = AUTH_CREDENTIALS.get(persona)
+    submitted_identifier = _normalize(identifier)
+    if expected is None or not compare_digest(submitted_identifier, expected["identifier"]):
+        raise HTTPException(
+            status_code=401,
+            detail={
+                "code": "AUTHENTICATION_FAILED",
+                "message": "身份信息或访问码不正确，请重新输入。",
+            },
+        )
+
+    secret_field = "verificationCode" if persona == "customer" else "accessCode"
+    submitted_secret = _normalize(verification_code if persona == "customer" else access_code)
+    if not compare_digest(submitted_secret, expected[secret_field]):
+        raise HTTPException(
+            status_code=401,
+            detail={
+                "code": "AUTHENTICATION_FAILED",
+                "message": "身份信息或访问码不正确，请重新输入。",
+            },
+        )
+
+
+def create_session(
+    persona: str,
+    *,
+    identifier: str | None = None,
+    access_code: str | None = None,
+    verification_code: str | None = None,
+) -> dict[str, object]:
     actor = PERSONAS.get(persona)
     token = PERSONA_TOKENS.get(persona)
     if actor is None or token is None:
@@ -101,6 +157,12 @@ def create_session(persona: str) -> dict[str, object]:
                 "message": "Requested persona does not exist in the mock session catalog.",
             },
         )
+    _require_matching_credential(
+        persona,
+        identifier=identifier,
+        access_code=access_code,
+        verification_code=verification_code,
+    )
     return {"sessionToken": token, **actor.to_session_payload()}
 
 

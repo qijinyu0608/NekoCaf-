@@ -1,97 +1,96 @@
-# NekoCafé v1
+# NekoCafé
 
-NekoCafé 当前实现已经从“React 前端 + 双 FastAPI 服务”收束为一个更容易继续演进的全栈单体：
+NekoCafé is a small reservation and operations platform for a cat cafe chain. It uses a FastAPI application for the main customer and staff experience, plus two lightweight service PoCs for reservation and member-domain APIs.
 
-- `FastAPI`
-- `Jinja`
-- 少量原生 JavaScript
-- `SQLite`
+The project is intentionally simple to run locally: Python, SQLite, Docker Compose, and a small set of tests are enough to exercise the core flows.
 
-本轮重点是把顾客首页先做成更像真实产品的预约站，同时保留最小店员后台，支撑实验三 `D3-2` 的可运行仓库和实验四后续测试闭环。
+## Features
 
-## 实验三 D3-2 对应能力
+- Customer portal with store browsing, reservation creation, member profile, cat profiles, and recommendations
+- Staff console for daily reservations, status filtering, and check-in workflow
+- Admin views for store status and permission overview
+- Reservation service PoC with health checks and available-slot lookup
+- Member service PoC with health checks, member profile, and points-account lookup
+- Prometheus metrics endpoint and Compose-based local observability setup
+- Unit, integration, contract, property, and basic end-to-end test assets
 
-本仓库采用 Monorepo。当前主体验证链路由 `app/` 中的 FastAPI 全栈单体承载，同时保留两个可独立启动的核心服务 PoC：
+## Tech Stack
 
-- `services/reservation/`: 预约服务，暴露健康检查与可预约时段查询
-- `services/member/`: 会员服务，暴露健康检查、会员资料和积分账户查询
+- Python 3.11+
+- FastAPI
+- Jinja2 templates
+- SQLite
+- Pytest
+- Docker Compose
+- Helm manifests for deployment configuration
+- GitHub Actions for CI
 
-配套工程要件包括 `.editorconfig`、`.pre-commit-config.yaml`、`docker-compose.yml`、双服务 Dockerfile、Helm values、Prometheus 配置、Runbook 与 Rollback 文档。
+## Repository Layout
 
-## 当前能力
+```text
+.
+├── app/                    Main FastAPI web application
+├── services/
+│   ├── reservation/        Reservation service PoC
+│   └── member/             Member service PoC
+├── libs/                   Shared helpers
+├── infra/
+│   ├── docker/             Application Dockerfile
+│   ├── helm/               Kubernetes/Helm deployment manifests
+│   └── observability/      Prometheus and alert configuration
+├── tests/                  Unit, integration, contract, property, and e2e tests
+├── scripts/                Demo and utility scripts
+├── docker-compose.yml
+├── Makefile
+└── pyproject.toml
+```
 
-- 顾客首页：立即预约、会员积分、我的猫咪档案、智能推荐
-- 门店探索：多城市门店筛选、门店地址/营业时间/电话、可约时段摘要、直达预约
-- 预约确认：预约详情、桌位信息、到店须知、取消入口
-- 会员中心：积分、权益、下一次到店、预约记录
-- 猫咪档案：当前会员关联猫咪资料
-- 智能推荐：基于偏好的门店建议
-- 店员后台：今日预约、状态筛选、到店确认
-- 管理员后台：三类系统入口、权限概览、门店营业/暂停预约控制
-- 单体会话：顾客 persona / 店员 persona / 管理员 persona
-- 本地持久化：SQLite
+## Quick Start
 
-## 目录
-
-- `app/`: 单体应用代码、模板、静态资源
-- `data/`: SQLite 数据文件
-- `tests/`: 单元与页面级测试
-- `infra/`: Docker 与观测配置
-- `docs/`: runbook / rollback 等工程文档
-
-## 本地开发
+Create a virtual environment and install development dependencies:
 
 ```bash
-python3.12 -m venv .venv
+python3 -m venv .venv
 .venv/bin/pip install -e '.[dev]'
+```
+
+Run the test suite:
+
+```bash
 .venv/bin/pytest -q
 ```
 
-启动应用：
+Start the main web application:
 
 ```bash
 make run-app
 ```
 
-默认地址：
+Open the app at:
 
-- 首页：[http://127.0.0.1:8000/](http://127.0.0.1:8000/)
-- 门店探索：[http://127.0.0.1:8000/stores](http://127.0.0.1:8000/stores)
-- 预约确认：`http://127.0.0.1:8000/reservations/{reservation_id}`
-- 店员后台：[http://127.0.0.1:8000/staff](http://127.0.0.1:8000/staff)
-- 管理员后台：[http://127.0.0.1:8000/admin](http://127.0.0.1:8000/admin)
-- 权限管理：[http://127.0.0.1:8000/permissions](http://127.0.0.1:8000/permissions)
-- 健康检查：[http://127.0.0.1:8000/healthz](http://127.0.0.1:8000/healthz)
-- 指标：[http://127.0.0.1:8000/metrics](http://127.0.0.1:8000/metrics)
+- Home: http://127.0.0.1:8000/
+- Store browsing: http://127.0.0.1:8000/stores
+- Staff console: http://127.0.0.1:8000/staff
+- Admin console: http://127.0.0.1:8000/admin
+- Health check: http://127.0.0.1:8000/healthz
+- Metrics: http://127.0.0.1:8000/metrics
 
-## 最小演示链路
+## Docker Compose
 
-```bash
-make demo-flow
-```
-
-该脚本会完成：
-
-1. 建立顾客会话
-2. 查询门店
-3. 查询时段
-4. 创建预约
-5. 查询预约详情 API
-6. 检查预约确认页面
-7. 查询我的预约
-8. 切换店员会话并查看今日预约
-
-## 容器化
+Build and start the full local stack:
 
 ```bash
 make compose-up
-docker compose ps
-make compose-down
 ```
 
-Prometheus 会抓取单体应用的 `/metrics`，并检查 `reservation-service`、`member-service` 两个核心服务 PoC 的健康端点。
+This starts:
 
-服务验证：
+- Main app on http://127.0.0.1:8000
+- Reservation service on http://127.0.0.1:8001
+- Member service on http://127.0.0.1:8002
+- Prometheus on http://127.0.0.1:9090
+
+Check service endpoints:
 
 ```bash
 curl http://127.0.0.1:8001/healthz
@@ -99,3 +98,26 @@ curl "http://127.0.0.1:8001/stores/store-shanghai-jingan/slots?date=2026-05-20&p
 curl http://127.0.0.1:8002/healthz
 curl http://127.0.0.1:8002/members/member-1001
 ```
+
+Stop the stack:
+
+```bash
+make compose-down
+```
+
+## Demo Flow
+
+Run the scripted happy path:
+
+```bash
+make demo-flow
+```
+
+The script creates a customer session, queries stores and slots, creates a reservation, checks reservation detail APIs/pages, and switches to the staff view.
+
+## Development Notes
+
+- Runtime SQLite data is generated locally and ignored by Git.
+- Python caches, test reports, coverage files, virtual environments, and build artifacts are ignored.
+- Static cat and brand images are included because the web UI depends on them.
+- CI configuration lives in `.github/workflows/ci.yml`.

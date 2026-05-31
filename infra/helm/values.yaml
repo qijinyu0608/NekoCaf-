@@ -1,0 +1,38 @@
+nameOverride: ""
+fullnameOverride: ""
+
+services:
+  member:
+    replicaCount: 1
+    image:
+      repository: ghcr.io/nekocafe/member-service
+      tag: "0.1.0"
+      pullPolicy: IfNotPresent
+    service:
+      type: ClusterIP
+      port: 8002
+    containerPort: 8002
+    resources:
+      requests:
+        cpu: 100m
+        memory: 128Mi
+      limits:
+        cpu: 300m
+        memory: 256Mi
+  reservation:
+    replicaCount: 1
+    image:
+      repository: ghcr.io/nekocafe/reservation-service
+      tag: "0.1.0"
+      pullPolicy: IfNotPresent
+    service:
+      type: ClusterIP
+      port: 8001
+    containerPort: 8001
+    resources:
+      requests:
+        cpu: 100m
+        memory: 128Mi
+      limits:
+        cpu: 300m
+        memory: 256Mi

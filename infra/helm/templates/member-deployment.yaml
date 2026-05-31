@@ -1,0 +1,27 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "nekocafe.fullname" . }}-member
+  labels:
+    {{- include "nekocafe.labels" . | nindent 4 }}
+    app.kubernetes.io/component: member
+spec:
+  replicas: {{ .Values.services.member.replicaCount }}
+  selector:
+    matchLabels:
+      app.kubernetes.io/instance: {{ .Release.Name }}
+      app.kubernetes.io/component: member
+  template:
+    metadata:
+      labels:
+        {{- include "nekocafe.labels" . | nindent 8 }}
+        app.kubernetes.io/component: member
+    spec:
+      containers:
+        - name: member
+          image: "{{ .Values.services.member.image.repository }}:{{ .Values.services.member.image.tag }}"
+          imagePullPolicy: {{ .Values.services.member.image.pullPolicy }}
+          ports:
+            - containerPort: {{ .Values.services.member.containerPort }}
+          resources:
+            {{- toYaml .Values.services.member.resources | nindent 12 }}

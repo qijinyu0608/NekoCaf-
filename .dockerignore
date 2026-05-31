@@ -1,0 +1,10 @@
+.git
+.pytest_cache
+.venv
+__pycache__
+*.pyc
+nekocafe_course_project.egg-info
+tests
+docs
+infra/helm
+infra/observability

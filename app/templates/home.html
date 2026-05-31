@@ -1,0 +1,246 @@
+{% extends "base.html" %}
+
+{% block title %}NekoCafé | 立即预约{% endblock %}
+
+{% block content %}
+  <main class="page home-page">
+    <section class="hero hero-surface reservation-shell">
+      <div class="hero-copy hero-copy-landing">
+        <span class="eyebrow hero-badge">预约到店</span>
+        <h1>选门店、定时段，<br />一步完成预约</h1>
+        <p>
+          NekoCafé 保留门店、猫咪互动区与会员权益信息，让到店前的选择更清楚。
+        </p>
+        {% if actor and actor.role == "customer" %}
+          <p class="hero-welcome">欢迎回来，{{ actor.display_name }}</p>
+        {% endif %}
+        <div class="hero-actions">
+          <a href="/member" class="primary-cta inline-button">查看会员权益</a>
+          <a href="{{ catStoreHref }}" class="hero-inline-link">浏览猫咪档案</a>
+        </div>
+        <div class="hero-quick-stats booking-summary-panel">
+          {% if actor and actor.role == "customer" and latestReservation %}
+            <article class="quick-stat">
+              <span>最新预约</span>
+              <strong>{{ latestReservation.displayStartAt }}</strong>
+            </article>
+            <article class="quick-stat">
+              <span>互动分区</span>
+              <strong>{{ latestReservation.zoneName }}</strong>
+            </article>
+            <article class="quick-stat">
+              <span>会员积分</span>
+              <strong>{{ points.currentPoints }}</strong>
+            </article>
+          {% else %}
+            <article class="quick-stat">
+              <span>预约保障</span>
+              <strong>免排队</strong>
+            </article>
+            <article class="quick-stat">
+              <span>到店体验</span>
+              <strong>优先入座</strong>
+            </article>
+            <article class="quick-stat">
+              <span>会员权益</span>
+              <strong>{{ points.couponCount }} 张券</strong>
+            </article>
+          {% endif %}
+        </div>
+        <div class="experience-strip">
+          {% for cat in cats[:3] %}
+            <img
+              class="cat-photo mini"
+              src="{{ cat.avatarUrl }}"
+              alt="{{ cat.name }}的头像"
+              loading="lazy"
+            />
+          {% endfor %}
+          <span>真实猫咪档案 · 到店前可预览互动区</span>
+        </div>
+      </div>
+
+      <section class="booking-card booking-card-landing">
+        <div class="card-title-row">
+          <h2>立即预约</h2>
+          <span class="subtle-label" id="booking-city-label">{{ selectedCity }}</span>
+        </div>
+        <form class="booking-form" id="booking-form">
+          <div class="booking-fields">
+            <label>
+              城市
+              <select id="city-select" name="city">
+                {% for city in cities %}
+                  <option value="{{ city }}" {% if city == bookingCity %}selected{% endif %}>{{ city }}</option>
+                {% endfor %}
+              </select>
+            </label>
+            <label>
+              门店
+              <select id="store-select" name="storeId">
+                {% for store in cityStores %}
+                  <option value="{{ store.storeId }}" {% if store.storeId == defaultStoreId %}selected{% endif %}>
+                    {{ store.storeName }} · {{ store.district }}
+                  </option>
+                {% endfor %}
+              </select>
+            </label>
+            <label>
+              日期
+              <input id="date-input" name="date" type="date" value="{{ defaultDate }}" />
+            </label>
+            <label>
+              人数
+              <select id="party-size-select" name="partySize">
+                {% for size in [1, 2, 3, 4, 5, 6] %}
+                  <option value="{{ size }}" {% if size == defaultPartySize %}selected{% endif %}>{{ size }}人</option>
+                {% endfor %}
+              </select>
+            </label>
+            <label>
+              互动区
+              <select id="interaction-select" name="interactionMode">
+                <option value="安静陪伴">安静陪伴</option>
+                <option value="轻陪伴">轻陪伴</option>
+                <option value="轻互动">轻互动</option>
+              </select>
+            </label>
+          </div>
+          <div class="slot-list" id="slot-list">
+            {% for slot in slots %}
+              <button
+                class="slot-pill {% if loop.first %}selected{% endif %}"
+                data-slot-id="{{ slot.slotId }}"
+                data-store-id="{{ slot.storeId }}"
+                data-time="{{ slot.startAt[11:16] }}"
+                data-zone="{{ slot.zoneName }}"
+                type="button"
+              >
+                <strong>{{ slot.startAt[11:16] }}</strong>
+                <span>{{ slot.zoneName }} · 余{{ slot.remainingCapacity }}位</span>
+              </button>
+            {% endfor %}
+          </div>
+          <section class="booking-live-summary" aria-label="预约摘要">
+            <div class="section-label">预约摘要</div>
+            <dl>
+              <div>
+                <dt>门店</dt>
+                <dd id="summary-store">{{ selectedStore.cityName }} · {{ selectedStore.storeName }}</dd>
+              </div>
+              <div>
+                <dt>日期</dt>
+                <dd id="summary-date">{{ defaultDate }}</dd>
+              </div>
+              <div>
+                <dt>人数</dt>
+                <dd id="summary-party">{{ defaultPartySize }}人</dd>
+              </div>
+              <div>
+                <dt>时段</dt>
+                <dd id="summary-slot">{% if slots %}{{ slots[0].startAt[11:16] }} 到店{% else %}请选择时段{% endif %}</dd>
+              </div>
+              <div>
+                <dt>互动区</dt>
+                <dd id="summary-zone">{% if slots %}{{ slots[0].zoneName }}{% else %}待选择{% endif %}</dd>
+              </div>
+            </dl>
+          </section>
+          <button class="primary-cta" id="booking-submit" type="submit">立即预约</button>
+          <p class="booking-note">预约保障 · 免排队 · 优先入座</p>
+          <p class="inline-message" id="booking-message" aria-live="polite"></p>
+        </form>
+      </section>
+    </section>
+
+    <section class="home-insight-grid">
+      <article class="feature-card points-summary-card">
+        <div class="card-header-line">
+          <div>
+            <div class="section-label">会员积分</div>
+            <p class="metric-label">当前积分</p>
+          </div>
+          <a href="/member" class="card-link">会员中心</a>
+        </div>
+        <div class="points-summary">
+          <div>
+            <strong class="metric-number">{{ points.currentPoints }}</strong>
+            <p class="metric-note">可用优惠券 {{ points.couponCount }} 张</p>
+          </div>
+          <div class="growth-ring">
+            <span>成长值</span>
+            <strong>{{ points.growthValue }}</strong>
+            <small>{{ points.growthValue }} / {{ points.growthTarget }}</small>
+          </div>
+        </div>
+        <div class="tag-row compact-tags">
+          {% for item in points.benefitSummary %}
+            <span>{{ item }}</span>
+          {% endfor %}
+        </div>
+      </article>
+
+      <article class="feature-card cat-mini-card">
+        <div class="card-header-line">
+          <div>
+            <div class="section-label">我的猫咪档案</div>
+            <p class="metric-label">偏好猫咪</p>
+          </div>
+          <a href="{{ catStoreHref }}" class="card-link">门店猫咪</a>
+        </div>
+        <div class="cat-summary">
+          <img
+            class="cat-photo cat-avatar"
+            src="{{ cats[0].avatarUrl }}"
+            alt="{{ cats[0].name }}的头像"
+            loading="lazy"
+          />
+          <div>
+            <strong>{{ cats[0].name }} ({{ cats[0].englishName }}) {{ cats[0].gender }}</strong>
+            <p>{{ cats[0].ageLabel }} · {{ cats[0].breed }}</p>
+            <p>{{ cats[0].personalityTags[0] }}</p>
+            <p>{{ cats[0].companionSummary }}</p>
+          </div>
+        </div>
+      </article>
+
+      <article class="feature-card recommendation-mini-card">
+        <div class="card-header-line">
+          <div>
+            <div class="section-label">智能推荐</div>
+            <p class="metric-label">推荐门店</p>
+          </div>
+          <a
+            href="/?storeId={{ selectedRecommendation.storeId }}&date={{ defaultDate }}&partySize={{ defaultPartySize }}"
+            class="card-link"
+            id="booking-recommendation-link"
+          >
+            按推荐预约
+          </a>
+        </div>
+        <div class="recommendation-copy">
+          <strong id="store-highlight-name">{{ selectedRecommendation.summary }}</strong>
+          <p id="booking-recommendation-summary">{{ selectedRecommendation.detail }}</p>
+          <div class="tag-row" id="booking-recommendation-tags">
+            {% for tag in selectedRecommendation.reasonTags %}
+              <span>{{ tag }}</span>
+            {% endfor %}
+          </div>
+          <button
+            class="secondary-button recommendation-apply-button"
+            data-apply-recommendation="true"
+            type="button"
+          >
+            按推荐填入
+          </button>
+        </div>
+      </article>
+    </section>
+  </main>
+{% endblock %}
+
+{% block scripts %}
+  <script>
+    window.NEKOCAFE_BOOTSTRAP = {{ bootstrap | tojson }};
+  </script>
+{% endblock %}

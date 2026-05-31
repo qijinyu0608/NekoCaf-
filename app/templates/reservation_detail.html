@@ -1,0 +1,81 @@
+{% extends "base.html" %}
+
+{% block title %}NekoCafé | 预约确认{% endblock %}
+
+{% block content %}
+  <main class="page detail-page reservation-detail-page">
+    <section class="detail-header reservation-detail-header">
+      <div>
+        <span class="eyebrow">预约确认</span>
+        <h1>到店前确认你的预约信息</h1>
+        <p>请按预约时间到店，店员会根据预约号与桌位信息完成接待。</p>
+      </div>
+      {% if reservation %}
+        <div class="profile-pill">
+          <span>{{ reservation.statusLabel }}</span>
+          <strong>{{ reservation.reservationId }}</strong>
+        </div>
+      {% endif %}
+    </section>
+
+    {% if reservation %}
+      <section class="reservation-confirmation-grid">
+        <article class="feature-card reservation-confirmation-card">
+          <div class="section-label">本次到店</div>
+          <h2>{{ reservation.storeName }}</h2>
+          <div class="confirmation-meta-grid">
+            <div>
+              <span>到店时间</span>
+              <strong>{{ reservation.displayStartAt }}</strong>
+            </div>
+            <div>
+              <span>人数</span>
+              <strong>{{ reservation.partySize }}人</strong>
+            </div>
+            <div>
+              <span>桌位</span>
+              <strong>{{ reservation.tableCode }}</strong>
+            </div>
+            <div>
+              <span>互动区</span>
+              <strong>{{ reservation.zoneName }}</strong>
+            </div>
+          </div>
+          <p>{{ reservation.cityName }} · {{ reservation.district }} · {{ reservation.address }}</p>
+          <p>营业时间 {{ reservation.businessHours }} · 门店电话 {{ reservation.phone }}</p>
+          <div class="reservation-detail-actions">
+            <a class="primary-cta inline-button" href="/member">查看我的预约</a>
+            <a class="secondary-button" href="/cats?storeId={{ reservation.storeId }}">查看本店猫咪</a>
+            <a
+              class="secondary-button"
+              href="/?storeId={{ reservation.storeId }}&date={{ reservation.businessDate }}&partySize={{ reservation.partySize }}"
+            >
+              再约这家店
+            </a>
+            {% if reservation.status == "BOOKED" %}
+              <form action="/reservations/{{ reservation.reservationId }}/cancel" method="post">
+                <button class="text-action inline-text-action" type="submit">取消预约</button>
+              </form>
+            {% endif %}
+          </div>
+        </article>
+
+        <aside class="feature-card visit-guide-card">
+          <div class="section-label">到店须知</div>
+          <ul class="visit-guide-list">
+            <li>建议提前 10 分钟到店，保留座位至预约后 15 分钟。</li>
+            <li>如需调整人数，请联系门店确认剩余容量。</li>
+            <li>进入猫咪互动区前请按店员指引完成手部清洁。</li>
+          </ul>
+        </aside>
+      </section>
+    {% else %}
+      <section class="feature-card empty-card commercial-empty-card">
+        <div class="section-label">查看预约详情</div>
+        <h2>请先以会员身份进入</h2>
+        <p>登录后可以查看预约状态、门店地址、桌位信息与到店须知。</p>
+        <button class="primary-cta inline-button" data-login-persona="customer" type="button">体验会员</button>
+      </section>
+    {% endif %}
+  </main>
+{% endblock %}

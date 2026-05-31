@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>{% block title %}NekoCafé{% endblock %}</title>
+    <link rel="stylesheet" href="{{ url_for('static', path='app.css') }}?v={{ assetVersion }}" />
+  </head>
+  <body>
+    <header class="site-header">
+      <div class="brand-text">
+        <a href="{{ brandHomeHref }}" class="brand-title">NekoCafé</a>
+        <p>智慧餐饮预约平台</p>
+      </div>
+      <nav class="top-nav">
+        <span class="city-chip" id="active-city-label">{{ selectedCity }}</span>
+        {% if actor and "permissions.manage" in actor.permissions %}
+          <a href="/admin" class="{% if page == 'admin' %}active{% endif %}">管理员后台</a>
+          <a href="/permissions" class="{% if page == 'permissions' %}active{% endif %}">权限管理</a>
+        {% elif not actor or "reservation.create.self" in actor.permissions %}
+          <a href="/" class="{% if page == 'home' %}active{% endif %}">立即预约</a>
+          <a href="/stores" class="{% if page == 'stores' %}active{% endif %}">门店探索</a>
+          {% if not actor or "member.profile.read.self" in actor.permissions %}
+            <a href="/member" class="{% if page == 'member' %}active{% endif %}">会员中心</a>
+          {% endif %}
+          {% if not actor or "cat.read.self" in actor.permissions %}
+            <a href="{{ catStoreHref }}" class="{% if page == 'cats' %}active{% endif %}">猫咪档案</a>
+          {% endif %}
+          {% if not actor or "recommendation.read.self" in actor.permissions %}
+            <a href="/recommendations" class="{% if page == 'recommendations' %}active{% endif %}">智能推荐</a>
+          {% endif %}
+        {% elif actor and "staff.reservations.read" in actor.permissions %}
+          <a href="/staff" class="{% if page == 'staff' %}active{% endif %}">店员后台</a>
+        {% endif %}
+      </nav>
+      <div class="user-area">
+        {% if actor %}
+          <span class="user-chip" aria-label="当前登录用户">
+            <span class="user-avatar">{{ actor.display_name[:1] }}</span>
+            <span>{{ actor.display_name }}</span>
+          </span>
+          <button class="text-action" data-logout type="button">退出</button>
+        {% else %}
+          <button class="text-action" data-login-persona="customer" type="button">预约体验</button>
+          <button class="text-action muted-action" data-login-workspace="true" type="button">工作台</button>
+        {% endif %}
+      </div>
+    </header>
+
+    {% if not actor %}
+      <section class="auth-dialog" id="auth-dialog" aria-hidden="true">
+        <div class="auth-backdrop" data-auth-close></div>
+        <form class="auth-panel" id="auth-form" aria-labelledby="auth-title">
+          <div class="card-header-line">
+            <div>
+              <div class="section-label">身份验证</div>
+              <h2 id="auth-title">登录 NekoCafé</h2>
+            </div>
+            <button class="text-action" data-auth-close type="button">关闭</button>
+          </div>
+          <div class="auth-entry-grid" role="tablist" aria-label="登录入口">
+            <button class="auth-entry-option active" data-auth-persona="customer" type="button">
+              <strong>预约用户</strong>
+              <span>手机号 + 会员验证码</span>
+            </button>
+            <button class="auth-entry-option" data-auth-persona="staff" type="button">
+              <strong>门店工作台</strong>
+              <span>工号 / 账号 + 门店访问码</span>
+            </button>
+            <button class="auth-entry-option" data-auth-persona="admin" type="button">
+              <strong>运营控制台</strong>
+              <span>工号 / 账号 + 管理访问码</span>
+            </button>
+          </div>
+          <input id="auth-persona" name="persona" type="hidden" value="customer" />
+          <label>
+            <span id="auth-identifier-label">手机号</span>
+            <input id="auth-identifier" name="identifier" autocomplete="username" value="13800001001" />
+          </label>
+          <label>
+            <span id="auth-secret-label">会员验证码</span>
+            <input id="auth-secret" name="secret" autocomplete="one-time-code" value="260520" />
+          </label>
+          <p class="auth-hint" id="auth-hint">演示会员：13800001001 / 260520</p>
+          <button class="primary-cta" id="auth-submit" type="submit">进入</button>
+          <p class="inline-message" id="auth-message" aria-live="polite"></p>
+        </form>
+      </section>
+    {% endif %}
+
+    {% block content %}{% endblock %}
+
+    {% block scripts %}{% endblock %}
+    <script src="{{ url_for('static', path='app.js') }}?v={{ assetVersion }}" defer></script>
+  </body>
+  </html>

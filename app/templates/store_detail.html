@@ -1,0 +1,67 @@
+{% extends "base.html" %}
+
+{% block title %}NekoCafé | {{ store.storeName }}{% endblock %}
+
+{% block content %}
+  <main class="page detail-page store-detail-page">
+    <section class="detail-header store-detail-header">
+      <div>
+        <span class="eyebrow">{{ store.cityName }} · {{ store.district }}</span>
+        <h1>{{ store.storeName }}</h1>
+        <p>{{ store.summary }}</p>
+      </div>
+      <div class="profile-pill">
+        <span>{{ defaultDate.replace("-", "/") }}</span>
+        <strong>{{ defaultPartySize }}人</strong>
+      </div>
+    </section>
+
+    <section class="store-detail-grid">
+      <article class="feature-card store-detail-main-card">
+        <div class="section-label">门店信息</div>
+        <div class="store-detail-trust-grid">
+          <div>
+            <span>地址</span>
+            <strong>{{ store.address }}</strong>
+          </div>
+          <div>
+            <span>营业时间</span>
+            <strong>{{ store.businessHours }}</strong>
+          </div>
+          <div>
+            <span>电话</span>
+            <strong>{{ store.phone }}</strong>
+          </div>
+        </div>
+        <div class="tag-row compact-tags">
+          {% for tag in store.featureTags %}
+            <span>{{ tag }}</span>
+          {% endfor %}
+        </div>
+        <div class="store-detail-actions">
+          <a class="primary-cta inline-button" href="/?storeId={{ store.storeId }}&date={{ defaultDate }}&partySize={{ defaultPartySize }}">选择这家店预约</a>
+          <a class="secondary-button" href="/cats?storeId={{ store.storeId }}">查看本店猫咪</a>
+        </div>
+      </article>
+
+      <aside class="feature-card store-detail-slot-card">
+        <div class="card-header-line">
+          <div>
+            <div class="section-label">今日可约时段</div>
+            <p class="metric-label">按当前人数筛选</p>
+          </div>
+          <a class="card-link" href="/?storeId={{ store.storeId }}&date={{ defaultDate }}&partySize={{ defaultPartySize }}">进入预约</a>
+        </div>
+        {% if slots %}
+          <div class="store-detail-slot-list">
+            {% for slot in slots[:6] %}
+              <span>{{ slot.startAt[11:16] }} · {{ slot.zoneName }} · 余{{ slot.remainingCapacity }}位</span>
+            {% endfor %}
+          </div>
+        {% else %}
+          <p class="compact-copy">当前人数下暂无可约时段，可以调整人数或换一天再看。</p>
+        {% endif %}
+      </aside>
+    </section>
+  </main>
+{% endblock %}

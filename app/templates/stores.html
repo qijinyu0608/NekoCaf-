@@ -1,0 +1,137 @@
+{% extends "base.html" %}
+
+{% block title %}NekoCafé | 门店探索{% endblock %}
+
+{% block content %}
+  <main class="page detail-page store-directory-page">
+    <section class="detail-header store-directory-header">
+      <div>
+        <span class="eyebrow">门店探索</span>
+        <h1>选择门店</h1>
+        <p>按城市筛选，查看可约时段与门店信息。</p>
+      </div>
+      <div class="profile-pill">
+        <span>{{ defaultDate.replace("-", "/") }}</span>
+        <strong>{{ defaultPartySize }}人</strong>
+      </div>
+    </section>
+
+    <section class="feature-card store-search-panel">
+      <form class="store-search-form" action="/stores" method="get">
+        <label>
+          搜索
+          <input name="q" value="{{ storeSearchQuery }}" placeholder="门店名、城市、区域" />
+        </label>
+        <label>
+          城市
+          <select class="city-select-grouped" name="city">
+            <option value="">全部城市</option>
+            {% for group in cityGroups %}
+              <optgroup label="{{ group.name }}">
+                {% for city in group.cities %}
+                  <option value="{{ city }}" {% if city == activeCity %}selected{% endif %}>{{ city }}</option>
+                {% endfor %}
+              </optgroup>
+            {% endfor %}
+          </select>
+        </label>
+        <label>
+          日期
+          <input name="date" value="{{ defaultDate }}" type="date" />
+        </label>
+        <label>
+          人数
+          <select name="partySize">
+            {% for size in [1, 2, 3, 4] %}
+              <option value="{{ size }}" {% if size == defaultPartySize %}selected{% endif %}>{{ size }}人</option>
+            {% endfor %}
+          </select>
+        </label>
+        <button class="primary-cta inline-button" type="submit">筛选门店</button>
+      </form>
+      <div class="store-filter-groups" aria-label="城市分组">
+        <a href="/stores" class="city-filter {% if not activeCity %}active{% endif %}">全部</a>
+        {% for group in cityGroups %}
+          <div class="city-group">
+            <span>{{ group.name }}</span>
+            <div>
+              {% for city in group.cities %}
+                <a href="/stores?city={{ city }}" class="city-filter {% if city == activeCity %}active{% endif %}">{{ city }}</a>
+              {% endfor %}
+            </div>
+          </div>
+        {% endfor %}
+      </div>
+      <p class="metric-note">显示第 {{ pageStartStore }}-{{ pageEndStore }} / {{ totalStoreCount }} 家门店{% if storeSearchQuery %} · 搜索“{{ storeSearchQuery }}”{% endif %}</p>
+    </section>
+
+    <section class="store-card-grid">
+      {% for store in storesWithAvailability %}
+        <article class="feature-card store-availability-card">
+          <div class="card-header-line">
+            <div>
+              <div class="section-label">{{ store.cityName }} · {{ store.district }}</div>
+              <h2>{{ store.storeName }}</h2>
+            </div>
+            <span class="availability-badge">{{ store.availableSlotCount }} 个时段</span>
+          </div>
+          <p class="compact-copy">{{ store.summary }}</p>
+          <div class="store-trust-line">
+            <span>{{ store.address }}</span>
+            <span>{{ store.businessHours }}</span>
+            <span>{{ store.phone }}</span>
+          </div>
+          <div class="tag-row compact-tags">
+            {% for tag in store.featureTags %}
+              <span>{{ tag }}</span>
+            {% endfor %}
+          </div>
+          <div class="slot-preview-row">
+            {% if store.earliestAvailableTime %}
+              <div>
+                <span>最早可约</span>
+                <strong>{{ store.earliestAvailableTime }}</strong>
+              </div>
+              {% for slot in store.slotPreview %}
+                <span class="slot-preview-pill">{{ slot.displayTime }} · {{ slot.zoneName }} · 余{{ slot.remainingCapacity }}位</span>
+              {% endfor %}
+            {% else %}
+              <div>
+                <span>今日状态</span>
+                <strong>暂无可约</strong>
+              </div>
+            {% endif %}
+          </div>
+          <div class="store-card-actions">
+            <a class="primary-cta inline-button" href="/?storeId={{ store.storeId }}">选择门店预约</a>
+            <a class="secondary-button" href="/stores/{{ store.storeId }}">查看详情</a>
+          </div>
+        </article>
+      {% endfor %}
+    </section>
+    {% if totalStorePages > 1 %}
+      <nav class="pagination-nav" aria-label="门店分页">
+        <span class="pagination-summary">第 {{ currentStorePage }} / {{ totalStorePages }} 页</span>
+        {% if prevStorePageUrl %}
+          <a class="pagination-link" href="{{ prevStorePageUrl }}">上一页</a>
+        {% else %}
+          <span class="pagination-link disabled" aria-disabled="true">上一页</span>
+        {% endif %}
+        <div class="pagination-pages">
+          {% for pageLink in storePageLinks %}
+            {% if pageLink.isCurrent %}
+              <span class="pagination-page active" aria-current="page">{{ pageLink.page }}</span>
+            {% else %}
+              <a class="pagination-page" href="{{ pageLink.url }}">{{ pageLink.page }}</a>
+            {% endif %}
+          {% endfor %}
+        </div>
+        {% if nextStorePageUrl %}
+          <a class="pagination-link" href="{{ nextStorePageUrl }}">下一页</a>
+        {% else %}
+          <span class="pagination-link disabled" aria-disabled="true">下一页</span>
+        {% endif %}
+      </nav>
+    {% endif %}
+  </main>
+{% endblock %}

@@ -1,0 +1,107 @@
+{% extends "base.html" %}
+
+{% block title %}NekoCafé | 店员后台{% endblock %}
+
+{% block content %}
+  <main class="page staff-page">
+    <section class="detail-header">
+      <div>
+        <span class="eyebrow">店员工作台</span>
+        <h1>今日预约、筛选与到店确认</h1>
+      </div>
+      {% if actor and actor.role == "staff" %}
+        <div class="profile-pill">
+          <span class="user-avatar">{{ actor.display_name[:1] }}</span>
+          <div>
+            <strong>{{ actor.display_name }}</strong>
+            <p>仅本店数据 · {{ activeStoreId }}</p>
+          </div>
+        </div>
+      {% endif %}
+    </section>
+
+    {% if actor and actor.role == "staff" %}
+      <section class="staff-dashboard-shell">
+      <section class="staff-stats-grid">
+        <article class="feature-card summary-card">
+          <div class="section-label">总预约</div>
+          <strong class="summary-number">{{ stats.total }}</strong>
+          <p>当前日期全部预约</p>
+        </article>
+        <article class="feature-card summary-card">
+          <div class="section-label">待到店</div>
+          <strong class="summary-number">{{ stats.booked }}</strong>
+          <p>等待顾客到店确认</p>
+        </article>
+        <article class="feature-card summary-card">
+          <div class="section-label">已到店</div>
+          <strong class="summary-number">{{ stats.checkedIn }}</strong>
+          <p>已完成核销</p>
+        </article>
+        <article class="feature-card summary-card">
+          <div class="section-label">已取消</div>
+          <strong class="summary-number">{{ stats.cancelled }}</strong>
+          <p>顾客取消或失效记录</p>
+        </article>
+      </section>
+
+      <section class="feature-card filter-card">
+        <form class="staff-filter-form" method="get">
+          <label>
+            营业日期
+            <input type="date" name="businessDate" value="{{ businessDate }}" />
+          </label>
+          <label>
+            状态
+            <select name="status">
+              <option value="" {% if not statusFilter %}selected{% endif %}>全部</option>
+              <option value="BOOKED" {% if statusFilter == 'BOOKED' %}selected{% endif %}>已预约</option>
+              <option value="CHECKED_IN" {% if statusFilter == 'CHECKED_IN' %}selected{% endif %}>已到店</option>
+              <option value="CANCELLED" {% if statusFilter == 'CANCELLED' %}selected{% endif %}>已取消</option>
+            </select>
+          </label>
+          <input type="hidden" name="storeId" value="{{ activeStoreId }}" />
+          <button class="primary-cta inline-button" type="submit">筛选</button>
+        </form>
+      </section>
+
+      <section class="feature-card reservation-board staff-reservation-list">
+        <div class="section-label">今日预约</div>
+        {% if reservations %}
+          <div class="list-stack">
+            {% for reservation in reservations %}
+              <article class="reservation-row staff-row">
+                <div>
+                  <strong>{{ reservation.displayStartAt }}</strong>
+                  <p>{{ reservation.memberNickname }} · {{ reservation.partySize }}人 · {{ reservation.tableCode }}</p>
+                  <p>{{ reservation.zoneName }} · {{ reservation.interactionLabel }}</p>
+                </div>
+                <div class="status-group">
+                  <span class="tag">{{ reservation.statusLabel }}</span>
+                  {% if reservation.status == "BOOKED" %}
+                    <button
+                      class="text-action"
+                      data-checkin-id="{{ reservation.reservationId }}"
+                      type="button"
+                    >
+                      确认到店
+                    </button>
+                  {% endif %}
+                </div>
+              </article>
+            {% endfor %}
+          </div>
+        {% else %}
+          <p>当前日期暂无预约。</p>
+        {% endif %}
+      </section>
+      </section>
+    {% else %}
+      <section class="feature-card empty-card">
+        <div class="section-label">进入店员后台</div>
+        <p>顾客首页与后台分离，店员入口只保留今日预约与到店确认。</p>
+        <button class="primary-cta inline-button" data-login-persona="staff" type="button">进入后台</button>
+      </section>
+    {% endif %}
+  </main>
+{% endblock %}

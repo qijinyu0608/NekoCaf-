@@ -1,0 +1,27 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "nekocafe.fullname" . }}-reservation
+  labels:
+    {{- include "nekocafe.labels" . | nindent 4 }}
+    app.kubernetes.io/component: reservation
+spec:
+  replicas: {{ .Values.services.reservation.replicaCount }}
+  selector:
+    matchLabels:
+      app.kubernetes.io/instance: {{ .Release.Name }}
+      app.kubernetes.io/component: reservation
+  template:
+    metadata:
+      labels:
+        {{- include "nekocafe.labels" . | nindent 8 }}
+        app.kubernetes.io/component: reservation
+    spec:
+      containers:
+        - name: reservation
+          image: "{{ .Values.services.reservation.image.repository }}:{{ .Values.services.reservation.image.tag }}"
+          imagePullPolicy: {{ .Values.services.reservation.image.pullPolicy }}
+          ports:
+            - containerPort: {{ .Values.services.reservation.containerPort }}
+          resources:
+            {{- toYaml .Values.services.reservation.resources | nindent 12 }}

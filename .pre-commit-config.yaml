@@ -1,0 +1,13 @@
+repos:
+  - repo: local
+    hooks:
+      - id: pytest
+        name: pytest
+        entry: .venv/bin/pytest -q
+        language: system
+        pass_filenames: false
+      - id: docker-compose-config
+        name: docker compose config
+        entry: docker compose config
+        language: system
+        pass_filenames: false
